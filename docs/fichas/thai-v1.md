@@ -1,7 +1,7 @@
 # Ficha da Thai · versão 1
 
 - **Criada em:** 29/10/2026
-- **Revisar em:** fim de novembro ou começo de dezembro de 2026, depois de 4 a 6 semanas de uso
+- **Revisar em:** semana de 10/12/2026 (6 semanas de uso)
 - **Onde está no código:** a constante `DAYS` em `index.html` (ids `a1`…`e6`)
 - **Quem acompanha:** o Júnior acompanha a execução na academia
 

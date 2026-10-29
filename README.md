@@ -11,6 +11,8 @@ Treino a dois: fichas de treino com registro de carga por série, cronômetro de
 - `demo.html`: cópia do app com 4 meses de treinos inventados, pra testar sem mexer nos dados reais (nada é salvo)
 - `brand/`: ícone (SVG mestre, versões quadrada e maskable), conceitos de logo descartados
 - `design/`: propostas de tela inicial e paletas avaliadas
+- `config.js`: endereço e chave pública do Supabase (sincronização)
+- `supabase/setup.sql`: cria a tabela e as regras de segurança no Supabase
 - `sw.js`: deixa o app funcionando sem internet (suba a `VERSAO` a cada mudança)
 
 ## Publicar no GitHub Pages
@@ -29,3 +31,16 @@ Os treinos ficam salvos no navegador de cada aparelho (localStorage) e não sinc
 - `docs/HISTORICO.md`: versões de cada ficha
 - `docs/fichas/`: por que cada exercício, técnica e faixa de repetição foi escolhido, e o que revisar na próxima versão
 - `CLAUDE.md`: instruções para o Claude revisar as fichas
+
+## Sincronização (Supabase)
+
+Com a sincronização ligada, os treinos ficam na nuvem: backup automático e os mesmos dados nos dois celulares. Sem internet, as mudanças ficam numa fila e sobem quando a conexão volta.
+
+1. Crie um projeto grátis em supabase.com.
+2. Em **SQL Editor**, rode o arquivo `supabase/setup.sql` inteiro.
+3. Em **Authentication > Sign In / Providers**, desligue "Allow new users to sign up".
+4. Em **Authentication > Users > Add user**, crie as duas contas (e-mail e senha), com "Auto Confirm User" marcado.
+5. Em **Project Settings > API**, copie a "Project URL" e a chave "anon public" para o `config.js`.
+6. No app, toque em **Entrar** (canto de cima da tela inicial) e entre com a conta.
+
+A chave "anon" pode ficar pública: quem protege os dados é o login e as regras do `setup.sql`. Nunca coloque a chave "service_role" no repositório.

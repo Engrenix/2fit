@@ -49,6 +49,29 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 /* Cabeçalho */
 .top{display:flex;flex-direction:column;gap:12px;padding-top:4px}
 
+/* Conta e sincronização */
+.acct{position:fixed;z-index:6;top:max(14px, calc(env(safe-area-inset-top, 0px) + 10px));right:max(16px, env(safe-area-inset-right, 0px));border:0;border-radius:99px;padding:8px 14px;font:800 13px var(--f-body);background:rgba(255,255,255,.85);color:#5A1E39;box-shadow:0 4px 14px rgba(0,0,0,.12);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.acct.on::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#1F9D6B;margin-right:6px;vertical-align:1px}
+.acct.warn::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#D9822B;margin-right:6px;vertical-align:1px}
+.sync.clickable{cursor:pointer;border:0;font:inherit}
+.sync.warn i{background:#D9822B}
+.sheet-bg{position:fixed;inset:0;z-index:50;background:rgba(20,16,18,.45);display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:100%;max-width:520px;background:#FFFFFF;color:#2B2420;border-radius:22px 22px 0 0;padding:18px max(18px, env(safe-area-inset-right, 0px)) calc(22px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px));display:flex;flex-direction:column;gap:12px;animation:sheetUp .3s cubic-bezier(.2,.8,.2,1)}
+@keyframes sheetUp{from{transform:translateY(40%);opacity:.4}}
+.sheet form,#acctOn{display:flex;flex-direction:column;gap:12px}
+.sheet form .bk-btn{flex:none;height:48px;margin-top:4px}
+.sheet .bk-row .bk-btn{height:48px}
+.sheet-h{display:flex;justify-content:space-between;align-items:center}
+.sheet-h h3{margin:0;font-family:var(--f-display);font-stretch:118%;font-weight:900;font-size:22px}
+.sheet-x{border:0;background:#F2EEEA;width:34px;height:34px;border-radius:50%;font-size:15px;color:#6B5F57}
+.sheet-txt{margin:0;font-size:14px;color:#6B5F57}
+.sheet-txt.small{font-size:12.5px}
+.sheet-txt b{color:#2B2420}
+.sheet-err{margin:0;font-size:13.5px;font-weight:700;color:#B3261E}
+.inp{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8C8178}
+.inp input{height:46px;border:1px solid #E5DED6;border-radius:12px;padding:0 12px;font:500 16px var(--f-body);letter-spacing:0;text-transform:none;color:#2B2420;background:#FBF9F6}
+.inp input:focus{outline:2px solid #E8689A;outline-offset:0;border-color:transparent}
+
 /* Painel */
 .brand-side{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
 .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:14px}
@@ -353,11 +376,13 @@ details.guide .in b{color:var(--ink)}
   .ring .num{font-size:16px}
 }
 </style>
+<script src="config.js"></script>
 </head>
 <body>
 
 
 <main class="split" id="v-home">
+  <button type="button" class="acct" id="acctBtn" hidden>Entrar</button>
   <a class="half h-thai" href="#thai" data-go="thai" aria-label="Abrir o treino da Thai">
     <span class="bigword" aria-hidden="true">THAI</span>
     <span class="hwho">Treino da</span>
@@ -499,6 +524,24 @@ details.guide .in b{color:var(--ink)}
     <button id="tskip" type="button">Pular</button>
   </div>
 </div>
+<div class="sheet-bg" id="acctSheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="acctTitle">
+    <div class="sheet-h"><h3 id="acctTitle">Sincronização</h3><button type="button" class="sheet-x" id="acctClose" aria-label="Fechar">✕</button></div>
+    <form id="loginForm" novalidate>
+      <p class="sheet-txt">Entre pra guardar os treinos na nuvem e ver os mesmos dados nos dois celulares.</p>
+      <label class="inp"><span>E-mail</span><input id="loginEmail" type="email" autocomplete="username" inputmode="email" autocapitalize="none" required></label>
+      <label class="inp"><span>Senha</span><input id="loginPass" type="password" autocomplete="current-password" required></label>
+      <p class="sheet-err" id="loginErr" hidden></p>
+      <button type="submit" class="bk-btn" id="loginBtn">Entrar</button>
+    </form>
+    <div id="acctOn" hidden>
+      <p class="sheet-txt">Conectado como <b id="acctEmail"></b></p>
+      <p class="sheet-txt" id="acctStatus"></p>
+      <div class="bk-row"><button type="button" class="bk-btn" id="syncNow">Sincronizar agora</button><button type="button" class="bk-btn ghost" id="logoutBtn">Sair</button></div>
+      <p class="sheet-txt small">Ao sair, os treinos continuam salvos neste celular.</p>
+    </div>
+  </div>
+</div>
 <canvas id="confetti" aria-hidden="true"></canvas>
 <div class="toast" id="toast" role="status">Treino fechado</div>
 
@@ -637,6 +680,7 @@ let db=null, dbOk=false;
 const timers={}, chains={};
 function setSync(on, txt){ const el=document.getElementById('sync'); el.classList.toggle('on',on); el.querySelector('span').textContent=txt; }
 function queueRemote(id){
+  if(typeof SB_ON!=='undefined' && SB_ON){ sbMark(id); return; }
   if(!dbOk) return;
   clearTimeout(timers[id]);
   timers[id]=setTimeout(()=>{
@@ -1226,6 +1270,125 @@ function importBackup(file){
 document.addEventListener('click',ev=>{ if(ev.target.closest('#bkExport')){ if(demo){ toast('Saia do exemplo pra exportar seus treinos'); return; } exportBackup(); } });
 document.addEventListener('change',ev=>{ if(ev.target.id==='bkFile' && ev.target.files[0]){ importBackup(ev.target.files[0]); ev.target.value=''; } });
 
+/* ---------- Sincronização com o Supabase (só no site hospedado; config em config.js) ----------
+   Cada sessão e o config viram uma linha em twofit_docs. Vence quem tiver o updatedAt maior.
+   Sem internet, as mudanças ficam numa fila (localStorage) e sobem quando a conexão volta. */
+const SBC = window.TWOFIT_SUPABASE || {};
+const SB_ON = !window.claude && !!(SBC.url && SBC.anonKey);
+const SB_AUTH_KEY='2fit-auth', SB_DIRTY_KEY='2fit-pendentes';
+let sbAuth=null; try{ sbAuth=JSON.parse(localStorage.getItem(SB_AUTH_KEY)||'null'); }catch(e){}
+let sbDirty=new Set(); try{ sbDirty=new Set(JSON.parse(localStorage.getItem(SB_DIRTY_KEY)||'[]')); }catch(e){}
+let sbTimer=null, sbBusy=false, sbLast=0, sbErr='';
+const sbSaveAuth=()=>{ try{ sbAuth?localStorage.setItem(SB_AUTH_KEY,JSON.stringify(sbAuth)):localStorage.removeItem(SB_AUTH_KEY); }catch(e){} };
+const sbSaveDirty=()=>{ try{ localStorage.setItem(SB_DIRTY_KEY,JSON.stringify([...sbDirty])); }catch(e){} };
+async function sbAuthCall(grant, body){
+  const r=await fetch(`${SBC.url}/auth/v1/token?grant_type=${grant}`,{method:'POST',headers:{apikey:SBC.anonKey,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok){ const e=new Error(j.error_description||j.msg||j.message||'Falha ao entrar'); e.status=r.status; throw e; }
+  sbAuth={access:j.access_token,refresh:j.refresh_token,exp:Date.now()+((j.expires_in||3600)-60)*1000,email:(j.user&&j.user.email)||(sbAuth&&sbAuth.email)||''};
+  sbSaveAuth(); return sbAuth;
+}
+async function sbToken(){
+  if(!sbAuth) return null;
+  if(Date.now()<sbAuth.exp) return sbAuth.access;
+  try{ await sbAuthCall('refresh_token',{refresh_token:sbAuth.refresh}); return sbAuth.access; }
+  catch(e){ if(e.status>=400 && e.status<500){ sbAuth=null; sbSaveAuth(); } return null; }
+}
+async function sbFetch(path,opt={}){
+  const t=await sbToken(); if(!t) throw new Error('Entre de novo pra sincronizar');
+  const r=await fetch(`${SBC.url}/rest/v1/${path}`,{...opt,headers:{apikey:SBC.anonKey,Authorization:`Bearer ${t}`,'Content-Type':'application/json',...(opt.headers||{})}});
+  if(!r.ok){ const j=await r.json().catch(()=>({})); throw new Error(j.message||('Erro '+r.status)); }
+  return r.status===204||r.status===201 ? null : r.json().catch(()=>null);
+}
+function sbMark(id){ sbDirty.add(id); sbSaveDirty(); updSyncUI(); clearTimeout(sbTimer); sbTimer=setTimeout(sbFlush,900); }
+async function sbFlush(){
+  if(!SB_ON||!sbAuth||sbBusy||!sbDirty.size||!navigator.onLine) return;
+  sbBusy=true; const ids=[...sbDirty];
+  const rows=ids.map(id=>{ const o=id==='config'?state.config:state.sessions[id]; return o?{id,kind:id==='config'?'config':'session',data:o,updated_at:o.updatedAt||0}:null; }).filter(Boolean);
+  let ok=false;
+  try{
+    if(rows.length) await sbFetch('twofit_docs?on_conflict=id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(rows)});
+    ids.forEach(id=>sbDirty.delete(id)); sbSaveDirty(); sbErr=''; sbLast=Date.now(); ok=true;
+  }catch(e){ sbErr=e.message; }
+  sbBusy=false; updSyncUI();
+  if(ok && sbDirty.size) sbFlush();
+}
+async function sbPull(){
+  if(!SB_ON||!sbAuth||!navigator.onLine) return;
+  try{
+    const rows=await sbFetch('twofit_docs?select=id,kind,data,updated_at&limit=10000');
+    let changed=false; const seen=new Set();
+    for(const r of rows||[]){
+      seen.add(r.id);
+      const remote=r.updated_at||0;
+      if(r.kind==='config'){
+        const local=state.config.updatedAt||0;
+        if(remote>local){ state.config=r.data; changed=true; } else if(local>remote) sbDirty.add('config');
+      } else {
+        const l=state.sessions[r.id], local=l?(l.updatedAt||0):-1;
+        if(remote>local){ state.sessions[r.id]=r.data; changed=true; } else if(local>remote) sbDirty.add(r.id);
+      }
+    }
+    for(const [id,s] of Object.entries(state.sessions)) if(!seen.has(id) && s.updatedAt) sbDirty.add(id);
+    if(!seen.has('config') && state.config.updatedAt) sbDirty.add('config');
+    sbSaveDirty(); sbErr=''; sbLast=Date.now();
+    if(changed){ saveLocal(); softRender(); renderHome(); if(!$('#v-painel').hidden) renderPanel(); }
+    await sbFlush();
+  }catch(e){ sbErr=e.message; }
+  updSyncUI();
+}
+function syncLabel(){
+  if(!sbAuth) return {t:'Entrar pra sincronizar',c:''};
+  if(!navigator.onLine) return {t:sbDirty.size?'Offline · sobe depois':'Offline',c:'warn'};
+  if(sbErr) return {t:'Erro ao sincronizar',c:'warn'};
+  if(sbDirty.size||sbBusy) return {t:'Sincronizando…',c:'on'};
+  return {t:'Sincronizado',c:'on'};
+}
+function updSyncUI(){
+  if(!SB_ON) return;
+  const L=syncLabel();
+  const b=$('#acctBtn'); b.hidden=false; b.textContent=sbAuth?L.t:'Entrar'; b.className='acct '+(sbAuth?L.c:'');
+  const s=$('#sync'); if(s){ s.classList.add('clickable'); s.classList.toggle('on',L.c==='on'); s.classList.toggle('warn',L.c==='warn'); s.querySelector('span').textContent=L.t; s.setAttribute('role','button'); s.tabIndex=0; }
+  if(!$('#acctSheet').hidden) fillSheet();
+}
+function fillSheet(){
+  $('#loginForm').hidden=!!sbAuth; $('#acctOn').hidden=!sbAuth;
+  if(sbAuth){
+    $('#acctEmail').textContent=sbAuth.email||'sua conta';
+    const L=syncLabel(); const when=sbLast?` · última vez às ${new Date(sbLast).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`:'';
+    $('#acctStatus').textContent = sbErr ? `Não deu pra sincronizar: ${sbErr}` : L.t+when;
+  }
+}
+function openSheet(){ fillSheet(); $('#acctSheet').hidden=false; if(!sbAuth) setTimeout(()=>{ try{ $('#loginEmail').focus(); }catch(e){} },250); }
+function closeSheet(){ $('#acctSheet').hidden=true; }
+function sbInit(){
+  if(!SB_ON) return;
+  updSyncUI(); sbPull();
+  document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') sbPull(); });
+  window.addEventListener('online',()=>{ updSyncUI(); sbPull(); });
+  window.addEventListener('offline',updSyncUI);
+  setInterval(()=>{ if(document.visibilityState==='visible') sbPull(); },30000);
+}
+document.addEventListener('click',ev=>{
+  if(!SB_ON) return;
+  if(ev.target.closest('#acctBtn') || ev.target.closest('#sync.clickable')){ openSheet(); return; }
+  if(ev.target.closest('#acctClose') || ev.target.id==='acctSheet'){ closeSheet(); return; }
+  if(ev.target.closest('#syncNow')){ sbPull().then(()=>toast(sbErr?'Não deu pra sincronizar':'Sincronizado')); return; }
+  if(ev.target.closest('#logoutBtn')){ sbAuth=null; sbSaveAuth(); updSyncUI(); fillSheet(); toast('Você saiu. Os treinos continuam neste celular'); return; }
+});
+document.addEventListener('submit',async ev=>{
+  if(ev.target.id!=='loginForm') return;
+  ev.preventDefault();
+  const email=$('#loginEmail').value.trim(), pass=$('#loginPass').value, err=$('#loginErr'), btn=$('#loginBtn');
+  err.hidden=true;
+  if(!email||!pass){ err.textContent='Preencha o e-mail e a senha.'; err.hidden=false; return; }
+  if(!navigator.onLine){ err.textContent='Sem internet agora. Tente de novo quando conectar.'; err.hidden=false; return; }
+  btn.disabled=true; btn.textContent='Entrando…';
+  try{ await sbAuthCall('password',{email,password:pass}); $('#loginPass').value=''; await sbPull(); closeSheet(); toast('Pronto, sincronizado'); }
+  catch(e){ err.textContent = /invalid/i.test(e.message) ? 'E-mail ou senha incorretos.' : `Não deu pra entrar: ${e.message}`; err.hidden=false; }
+  btn.disabled=false; btn.textContent='Entrar';
+});
+
 /* ---------- Offline e armazenamento persistente (só no site hospedado) ---------- */
 try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{}); }catch(e){}
 try{
@@ -1246,6 +1409,7 @@ let rz; window.addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout((
 
 renderTabs(); renderPhase(); renderDay(); renderCal(); renderHome(); route();
 connect();
+sbInit();
 </script>
 
 </body>
