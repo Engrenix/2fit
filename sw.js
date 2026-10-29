@@ -2,7 +2,7 @@
    Página: tenta a rede primeiro (pra pegar atualizações) e usa a cópia guardada se estiver offline.
    Ícones, manifest e fontes: usa a cópia guardada e atualiza em segundo plano.
    Ao mudar arquivos do app, suba o número da versão abaixo. */
-const VERSAO = '2fit-v8';
+const VERSAO = '2fit-v9';
 const ARQUIVOS = [
   './',
   './index.html',
