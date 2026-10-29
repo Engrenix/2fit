@@ -8,6 +8,7 @@ Treino a dois: fichas de treino com registro de carga por série, cronômetro de
 - `manifest.webmanifest`: nome e ícones para "Adicionar à tela de início"
 - `icon.svg`, `favicon.ico`, `favicon-*.png`, `apple-touch-icon.png`, `icon-*.png`: ícones
 - `og-image.png`: imagem da prévia do link no WhatsApp
+- `sw.js`: deixa o app funcionando sem internet (suba a `VERSAO` a cada mudança)
 
 ## Publicar no GitHub Pages
 
@@ -18,7 +19,7 @@ Se o repositório tiver outro nome, troque `https://engrenix.github.io/2fit/` na
 
 ## Dados
 
-Os treinos ficam salvos no navegador de cada aparelho (localStorage). Não sincroniza entre celulares.
+Os treinos ficam salvos no navegador de cada aparelho (localStorage) e não sincronizam entre celulares. No painel, "Exportar treinos" gera um arquivo de backup, e "Importar backup" restaura ou passa os dados pra outro celular.
 
 ## Histórico e racional dos treinos
 

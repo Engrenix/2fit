@@ -61,6 +61,11 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 .periods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--chip);border-radius:12px;padding:4px;gap:4px}
 .periods button{border:0;background:transparent;padding:9px 4px;border-radius:9px;font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap}
 .periods button[aria-pressed="true"]{background:var(--surface);color:var(--accent);box-shadow:0 1px 3px rgba(78,45,61,.12)}
+.bk-txt{margin:0;font-size:13.5px;color:var(--muted);max-width:60ch}
+.bk-row{display:flex;gap:8px;flex-wrap:wrap}
+.bk-btn{display:inline-flex;align-items:center;justify-content:center;flex:1 1 140px;min-height:44px;border:0;border-radius:12px;background:var(--accent);color:var(--surface);font-weight:800;font-size:14px;cursor:pointer;padding:0 14px}
+.bk-btn.ghost{background:var(--surface);color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
+#bkInfo.late{color:var(--accent);font-weight:700}
 .kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 @media (min-width:620px){.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -466,6 +471,15 @@ details.guide .in b{color:var(--ink)}
   <section class="panel">
     <div class="panel-h"><h4>Frequência por dia</h4><span class="hint">vezes que treinou em cada dia</span></div>
     <div class="freq" id="chFreq"></div>
+  </section>
+  <section class="panel" id="backupSec">
+    <div class="panel-h"><h4>Backup dos treinos</h4><span class="hint" id="bkInfo">nenhum backup ainda</span></div>
+    <p class="bk-txt">Salva todo o histórico num arquivo. Guarde no Arquivos do iPhone ou mande pra você mesmo no WhatsApp. Pra restaurar ou passar pra outro celular, use Importar.</p>
+    <div class="bk-row">
+      <button type="button" class="bk-btn" id="bkExport">Exportar treinos</button>
+      <label class="bk-btn ghost" for="bkFile">Importar backup</label>
+      <input type="file" id="bkFile" accept=".json,application/json" hidden>
+    </div>
   </section>
 </div>
 
@@ -1024,6 +1038,7 @@ const every=n=>Math.max(1,Math.ceil(n/8));
 
 function renderPanel(){
   $('#demoBtn').hidden=!!demo; $('#demoNote').hidden=!demo;
+  renderBackupInfo();
   document.querySelectorAll('[data-period]').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.period===period)));
   const S=SRC(), R=periodRange(), PR=prevRange(R);
   const days=daysSet(), marks=MARKS();
@@ -1126,6 +1141,57 @@ document.addEventListener('click',ev=>{
   const pb=ev.target.closest('[data-period]'); if(pb){ period=pb.dataset.period; renderPanel(); }
 });
 document.addEventListener('change',ev=>{ if(ev.target.id==='liftAll'){ liftSel=ev.target.value; liftTouched=true; drawLift(liftWeeks(),SRC()); } });
+/* ---------- Backup: exportar e importar o histórico ---------- */
+const BK_KEY='2fit-ultimo-backup';
+function renderBackupInfo(){
+  let last=null; try{ last=localStorage.getItem(BK_KEY); }catch(e){}
+  const el=$('#bkInfo'); if(!el) return;
+  if(!last){ el.textContent= Object.keys(state.sessions).length ? 'nenhum backup ainda' : ''; el.classList.toggle('late', Object.keys(state.sessions).length>0); return; }
+  const days=daysBetween(last,TODAY);
+  el.textContent = days===0 ? 'último: hoje' : `último: há ${days} ${days===1?'dia':'dias'}`;
+  el.classList.toggle('late', days>14);
+}
+async function exportBackup(){
+  const json=JSON.stringify({app:'2fit',formato:1,exportadoEm:new Date().toISOString(),sessions:state.sessions,config:state.config});
+  const name=`2fit-backup-${TODAY}.json`;
+  const done=()=>{ try{ localStorage.setItem(BK_KEY,TODAY); }catch(e){} renderBackupInfo(); toast('Backup salvo'); };
+  if(window.claude && window.claude.use){
+    let dl=null; try{ dl=await window.claude.use('downloads'); }catch(e){}
+    if(dl){ try{ await dl.save({filename:name,data:json}); done(); }catch(e){ if(e && e.code!=='declined') toast('Não deu pra salvar o arquivo aqui'); } return; }
+  }
+  const file=new File([json],name,{type:'application/json'});
+  try{ if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:'Backup 2Fit'}); done(); return; } }
+  catch(e){ if(e && e.name==='AbortError') return; }
+  const a=document.createElement('a'); a.href=URL.createObjectURL(file); a.download=name; document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1500); done();
+}
+function importBackup(file){
+  const r=new FileReader();
+  r.onload=()=>{
+    let d=null; try{ d=JSON.parse(r.result); }catch(e){}
+    if(!d || d.app!=='2fit' || typeof d.sessions!=='object'){ toast('Esse arquivo não é um backup do 2Fit'); return; }
+    let n=0;
+    for(const [id,s] of Object.entries(d.sessions)){
+      if(!s || typeof s!=='object' || !s.day) continue;
+      const cur=state.sessions[id];
+      if(!cur || (s.updatedAt||0)>(cur.updatedAt||0)){ state.sessions[id]=s; n++; queueRemote(id); }
+    }
+    if(d.config && (d.config.updatedAt||0)>(state.config.updatedAt||0)){ state.config=d.config; queueRemote('config'); }
+    saveLocal(); softRender(); renderPanel();
+    toast(n ? `${n} ${n===1?'treino restaurado':'treinos restaurados'}` : 'Nada novo nesse backup');
+  };
+  r.readAsText(file);
+}
+document.addEventListener('click',ev=>{ if(ev.target.closest('#bkExport')){ if(demo){ toast('Saia do exemplo pra exportar seus treinos'); return; } exportBackup(); } });
+document.addEventListener('change',ev=>{ if(ev.target.id==='bkFile' && ev.target.files[0]){ importBackup(ev.target.files[0]); ev.target.value=''; } });
+
+/* ---------- Offline e armazenamento persistente (só no site hospedado) ---------- */
+try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{}); }catch(e){}
+try{
+  if('serviceWorker' in navigator && location.protocol==='https:' && !window.claude)
+    window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}catch(e){}
+
 const tipEl=document.createElement('div'); tipEl.className='tip'; tipEl.hidden=true; document.body.appendChild(tipEl);
 document.addEventListener('pointerover',ev=>{ const t=ev.target.closest('[data-tip]'); if(!t){ tipEl.hidden=true; return; } const r=t.getBoundingClientRect(); tipEl.textContent=t.dataset.tip; tipEl.style.left=Math.min(innerWidth-70,Math.max(70,r.left+r.width/2))+'px'; tipEl.style.top=r.top+'px'; tipEl.hidden=false; });
 let rz; window.addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{ if(!$('#v-painel').hidden) renderPanel(); },200); });
