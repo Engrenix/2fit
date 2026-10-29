@@ -19,3 +19,9 @@ Se o repositório tiver outro nome, troque `https://engrenix.github.io/2fit/` na
 ## Dados
 
 Os treinos ficam salvos no navegador de cada aparelho (localStorage). Não sincroniza entre celulares.
+
+## Histórico e racional dos treinos
+
+- `docs/HISTORICO.md`: versões de cada ficha
+- `docs/fichas/`: por que cada exercício, técnica e faixa de repetição foi escolhido, e o que revisar na próxima versão
+- `CLAUDE.md`: instruções para o Claude revisar as fichas

@@ -1,0 +1,25 @@
+# 2Fit · instruções para o Claude
+
+App de treino do casal (Júnior e Thai). Tudo roda num arquivo só: `index.html` (HTML, CSS e JS). Também é publicado como artifact no claude.ai; os dois precisam ficar iguais.
+
+## Antes de mexer numa ficha de treino
+
+1. Leia `docs/HISTORICO.md` pra saber qual é a versão atual de cada ficha.
+2. Leia o arquivo da versão atual em `docs/fichas/` (ex.: `thai-v1.md`). Ele tem o contexto da pessoa, os princípios usados, o motivo de cada exercício, o volume planejado e o checklist da próxima revisão.
+3. Use os dados reais do painel (frequência, séries por músculo, evolução de carga) pra justificar qualquer mudança. Se não tiver acesso aos dados, peça um print do painel no filtro de 60 dias.
+4. Pesquise se saiu evidência nova sobre o assunto antes de manter ou trocar uma técnica.
+
+## Ao criar uma nova versão da ficha
+
+- Crie `docs/fichas/<pessoa>-v<N>.md` no mesmo formato da anterior, com uma seção "O que mudou desde a vN-1 e por quê".
+- Mantenha os ids dos exercícios que continuam (`a1`, `c2`…), pra não quebrar o histórico de carga e o gráfico de evolução. Exercício novo ganha um id novo, nunca reaproveita um id antigo.
+- Atualize a constante `DAYS` no `index.html` e os grupos e metas (`GROUPS`) do painel, se mudarem.
+- Registre a mudança em `docs/HISTORICO.md`.
+
+## Regras do app
+
+- Teste sempre pensando em iPhone (os dois usam iOS): campos com fonte de 16px ou mais, teclado numérico com vírgula na carga e só números nas repetições.
+- A carga é guardada com ponto e exibida com vírgula (`kgNorm` e `kgShow`).
+- A semana vai de segunda a domingo e zera sozinha. O histórico nunca é apagado.
+- Tela inicial: metade de cima rosa (Thai), metade de baixo verde-escuro (Júnior). A ficha da Thai é rosa; a do Júnior será em tons neutros.
+- O repositório pode ser público: não coloque aqui detalhes pessoais além do necessário pro treino.
