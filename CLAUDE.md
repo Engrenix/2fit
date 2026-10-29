@@ -13,7 +13,7 @@ App de treino do casal (Júnior e Thai). Tudo roda num arquivo só: `index.html`
 
 - Crie `docs/fichas/<pessoa>-v<N>.md` no mesmo formato da anterior, com uma seção "O que mudou desde a vN-1 e por quê".
 - Mantenha os ids dos exercícios que continuam (`a1`, `c2`…), pra não quebrar o histórico de carga e o gráfico de evolução. Exercício novo ganha um id novo, nunca reaproveita um id antigo.
-- Atualize a constante `DAYS` no `index.html` e os grupos e metas (`GROUPS`) do painel, se mudarem.
+- Atualize a constante da ficha no `index.html` (`DAYS_THAI` ou `DAYS_JR`) e os grupos e metas do painel (`GROUPS_BY`), se mudarem. Os ids e as chaves de dia nunca se repetem entre as duas fichas (os do Júnior começam com `j`).
 - Registre a mudança em `docs/HISTORICO.md`.
 
 ## Regras do app
@@ -21,7 +21,8 @@ App de treino do casal (Júnior e Thai). Tudo roda num arquivo só: `index.html`
 - Teste sempre pensando em iPhone (os dois usam iOS): campos com fonte de 16px ou mais, teclado numérico com vírgula na carga e só números nas repetições.
 - A carga é guardada com ponto e exibida com vírgula (`kgNorm` e `kgShow`).
 - A semana vai de segunda a domingo e zera sozinha. O histórico nunca é apagado.
-- Tela inicial: metade de cima rosa (Thai), metade de baixo verde-escuro (Júnior). A ficha da Thai é rosa; a do Júnior será em tons neutros.
+- Tela inicial: metade de cima rosa (Thai), metade de baixo verde-escuro (Júnior). A ficha da Thai é rosa; a do Júnior é em tons neutros (classe `jr` no body e no html).
+- Ficha e painel são as mesmas telas pros dois: `setWho()` troca a ficha, as metas e os textos. Rotas: `#thai`/`#painel` e `#junior`/`#painel-jr`. O painel só mostra as sessões da ficha aberta.
 - Anotações por exercício ficam em `state.config.notes[idDoExercicio]` (até 120 caracteres) e valem pra todas as semanas. Ao trocar um exercício na ficha, a anotação do id antigo deixa de aparecer.
 - Sincronização: no site hospedado, com `config.js` preenchido, cada sessão e o config viram uma linha em `twofit_docs` no Supabase (REST direto, sem biblioteca). Vence o `updatedAt` maior, também no banco (trigger). Fila offline em `localStorage['2fit-pendentes']`. No artifact do claude.ai, a sincronização usa o `db` do próprio artifact. Pra revisar uma ficha, dá pra ler o histórico direto da tabela.
 - Login: com a sincronização ligada, quem não está logado vê a tela de login cheia (`#v-login`). O login fica guardado no celular e só volta se a pessoa sair da conta ou se o Supabase disser que o login acabou (nunca por falta de internet).

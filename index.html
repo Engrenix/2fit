@@ -191,19 +191,25 @@ html:has(#v-login:not([hidden])),body:has(#v-login:not([hidden])){background:#FF
 .cal-foot b{color:var(--ink);font-variant-numeric:tabular-nums}
 .cal-foot i{display:inline-block;width:10px;height:10px;border-radius:3px;margin:0 4px 0 10px;vertical-align:-1px}
 
-/* Início e Júnior em tons neutros (areia); só a ficha da Thai fica rosa */
-body:has(#v-home:not([hidden])),body:has(#v-junior:not([hidden])){
+/* Início e Júnior em tons neutros (areia, com o verde-escuro do Júnior no destaque); a ficha da Thai fica rosa */
+body:has(#v-home:not([hidden])){
   --bg:#F7F4EF; --surface:#FFFFFF; --ink:#2F2B27; --muted:#857B71; --line:#E8E1D7;
   --accent:#4A4038; --accent-soft:#EDE6DC; --accent-ink:#FFFFFF; --chip:#F0EBE3;
 }
 /* Na tela inicial, o fundo da página (e a barra de status do iPhone) fica no rosa da metade de cima */
 html{background:#FFF3F7}
-html:has(#v-junior:not([hidden])){background:#F7F4EF}
+html.jr,html:has(body.jr){background:#F7F4EF}
 html:has(#v-home:not([hidden])),body:has(#v-home:not([hidden])){background:#FFD9E6}
 body.neutral{
   --bg:#F7F4EF; --surface:#FFFFFF; --ink:#2F2B27; --muted:#857B71; --line:#E8E1D7;
   --accent:#4A4038; --accent-soft:#EDE6DC; --accent-ink:#FFFFFF; --chip:#F0EBE3;
 }
+body.jr{
+  --bg:#F7F4EF; --surface:#FFFFFF; --ink:#26302B; --muted:#7D8079; --line:#E5E1D8;
+  --accent:#2F4A3E; --accent-soft:#DCE6DF; --accent-ink:#FFFFFF; --body:#ECE7DF; --chip:#EFEBE4;
+}
+body.jr .to-panel{box-shadow:0 6px 16px rgba(47,74,62,.25)}
+body.jr .inp input:focus{outline-color:#2F4A3E}
 /* Início dividido: metade de cima Thai, metade de baixo Júnior */
 .split{position:fixed;inset:0;z-index:5;display:flex;flex-direction:column}
 .split[hidden],[hidden]{display:none!important}
@@ -419,7 +425,7 @@ details.guide .in b{color:var(--ink)}
 }
 </style>
 <script src="config.js"></script>
-<script>try{var c=sessionStorage.getItem('2fit-nav');if(c){sessionStorage.removeItem('2fit-nav');var r=document.documentElement;r.classList.add('nav-in');r.style.setProperty('--veil',c);}}catch(e){}</script>
+<script>try{var h=location.hash.slice(1);if(/^(junior|painel-jr|j[A-Za-z]+)$/.test(h))document.documentElement.classList.add('jr');}catch(e){}try{var c=sessionStorage.getItem('2fit-nav');if(c){sessionStorage.removeItem('2fit-nav');var r=document.documentElement;r.classList.add('nav-in');r.style.setProperty('--veil',c);}}catch(e){}</script>
 
 <main class="split" id="v-home">
   <button type="button" class="acct" id="acctBtn" hidden>Entrar</button>
@@ -435,7 +441,7 @@ details.guide .in b{color:var(--ink)}
     <span class="bigword" aria-hidden="true">JR</span>
     <span class="hwho">Treino do</span>
     <span class="hname">Júnior</span>
-    <span class="htag">Em construção</span>
+    <span class="hinfo" id="jrToday">Hoje</span>
     <span class="hgo" aria-hidden="true">→</span>
   </a>
 </main>
@@ -462,27 +468,17 @@ details.guide .in b{color:var(--ink)}
   </div>
 </div>
 
-<main class="home" id="v-junior" hidden>
-  <a class="back" href="#home" data-go="home">← Início</a>
-  <div class="wip">
-    <div class="wip-stripes" aria-hidden="true"></div>
-    <div class="kicker">Treino do Júnior</div>
-    <h2>Em construção</h2>
-    <p>A ficha do Júnior ainda está sendo montada. Assim que ficar pronta, ela aparece aqui, com registro de carga e cronômetro igual à da Thai.</p>
-    <a class="btn" href="#thai" data-go="thai">Ver o treino da Thai</a>
-  </div>
-</main>
 
 <div class="wrap" id="v-thai" hidden>
   <div class="topbar">
     <a class="back" href="#home" data-go="home">← Início</a>
-    <a class="to-panel" href="#painel" data-go="painel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Ver painel</a>
+    <a class="to-panel" id="toPanel" href="#painel" data-go="painel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Ver painel</a>
   </div>
   <header class="top">
     <div class="brand">
       <div>
-        <div class="kicker">Hipertrofia · Glúteo superior em foco</div>
-        <h1>Treino da <em>Thai</em></h1>
+        <div class="kicker" id="fKicker">Hipertrofia · Glúteo superior em foco</div>
+        <h1 id="fTitle">Treino da <em>Thai</em></h1>
       </div>
       <div class="sync" id="sync"><i></i><span>Salvo neste aparelho</span></div>
     </div>
@@ -499,9 +495,9 @@ details.guide .in b{color:var(--ink)}
   <details class="guide" id="guide">
     <summary>Como usar a ficha</summary>
     <div class="in">
-      <p><b>RIR</b> é quantas repetições sobrariam no tanque. "1–2" quer dizer parar quando ainda daria para fazer mais uma ou duas com boa técnica. Quem conta é o Junior, olhando a velocidade da repetição.</p>
+      <p><b>RIR</b> é quantas repetições sobrariam no tanque. "1–2" quer dizer parar quando ainda daria para fazer mais uma ou duas com boa técnica.</p>
       <p><b>Progressão:</b> quando todas as séries chegarem no topo da faixa (por exemplo 10 de 8–10), sobe a carga na próxima vez. A ficha avisa com o selo verde "Subir carga".</p>
-      <p><b>Calibração:</b> nas duas primeiras semanas, a última série dos exercícios de máquina vai até a falha de verdade, para ela descobrir quanto aguenta. Nos compostos pesados, nunca até a falha.</p>
+      <p><b>Calibração:</b> nas duas primeiras semanas, a última série dos exercícios de máquina vai até a falha de verdade, para descobrir quanto aguenta. Nos compostos pesados, nunca até a falha.</p>
       <p><b>Alongado:</b> os exercícios com esse selo carregam o músculo esticado, que é onde ele mais cresce. Capricha na parte de baixo do movimento.</p>
       <p><b>Descanso:</b> marcar a série inicia o cronômetro com o tempo daquele exercício.</p>
     </div>
@@ -509,11 +505,11 @@ details.guide .in b{color:var(--ink)}
 </div>
 
 <div class="wrap" id="v-painel" hidden>
-  <a class="back" href="#thai" data-go="thai">← Ficha</a>
+  <a class="back" id="pBack" href="#thai" data-go="thai">← Ficha</a>
   <header class="top">
     <div class="brand">
       <div>
-        <div class="kicker">Treino da Thai</div>
+        <div class="kicker" id="pKicker">Treino da Thai</div>
         <h1>Pai<em>nel</em></h1>
       </div>
       <button class="demo-btn" id="demoBtn" type="button">Ver com dados de exemplo</button>
@@ -604,7 +600,7 @@ details.guide .in b{color:var(--ink)}
 
 <script>
 /* ---------- Ficha ---------- */
-const DAYS = [
+const DAYS_THAI = [
  {key:'infA', dow:1, short:'Seg', title:'Inferior A', sub:'Glúteo', ex:[
   {id:'a1', n:'Elevação pélvica com barra', s:4, r:'8–10', rest:150, rir:'1–2', p:['gluteomax','gluteomed'], q:['posterior'], o:'<strong>Pausa de 1 s no topo.</strong> Queixo para baixo e costelas fechadas, empurrando pelo calcanhar. Não arqueie a lombar no final.', yt:'elevação pélvica barra hip thrust'},
   {id:'a2', n:'Agachamento búlgaro', per:'cada perna', s:3, r:'8–10', rest:120, rir:'1–2', p:['gluteomax','quad'], q:['adutor','gluteomed'], al:true, o:'<strong>Tronco inclinado à frente</strong> e passo longo: tira carga do quadríceps e joga no glúteo. Desce até sentir o glúteo esticar.', yt:'agachamento búlgaro foco glúteo'},
@@ -651,6 +647,59 @@ const DAYS = [
   {id:'e6', n:'Abdução com tronco inclinado', s:3, r:'15–20', rest:60, rir:'0–1', p:['gluteomed'], q:[], o:'O glúteo de cima entra escondido. <strong>Drop set</strong> na última série.', yt:'cadeira abdutora tronco inclinado'}
  ]}
 ];
+
+/* Ficha do Júnior (v1): estética em cima do crossfit. Detalhes e motivos em docs/fichas/junior-v1.md */
+const OMBRO='<strong>Ombro esquerdo:</strong> se doer mais que 3 de 10, ou continuar doendo no dia seguinte, corta 1 série de ombro na semana.';
+const LAT='Sobe com o braço <strong>um pouco à frente do corpo</strong> (uns 30°), polegar pra cima, só até a altura do ombro. Nunca com o polegar pra baixo.';
+const DAYS_JR = [
+ {key:'jA', dow:1, short:'Seg', title:'Treino A', sub:'Costas em largura e bíceps', ex:[
+  {id:'ja1', n:'Puxada alta pegada neutra', s:3, r:'6–10', rest:150, rir:'1–2', p:['dorsal'], q:['biceps','trap'], al:true, o:'Em cima, deixa a dorsal esticar antes de puxar. Leva os cotovelos em direção ao quadril, peito pra cima.', yt:'puxada alta pegada neutra'},
+  {id:'ja2', n:'Remada baixa sentada', s:3, r:'8–12', rest:120, rir:'1–2', p:['dorsal','trap'], q:['deltpost','biceps'], al:true, o:'Deixa os ombros irem à frente pra esticar as costas e puxa até a barriga, sem jogar o tronco pra trás.', yt:'remada baixa sentada triângulo'},
+  {id:'ja3', n:'Pullover no cabo', s:2, r:'10–15', rest:75, rir:'0–1', p:['dorsal'], q:[], al:true, o:'Braços quase esticados, começa bem acima da cabeça e leva a barra até a coxa. É o que mais abre a dorsal sem cansar o braço.', yt:'pullover no cabo dorsal'},
+  {id:'ja4', n:'Crucifixo inverso na máquina', s:3, r:'12–20', rest:60, rir:'0–1', p:['deltpost'], q:['trap'], o:'Braços quase esticados, abre até a linha do corpo. Ajuda a postura e dá contorno ao ombro visto de costas.', yt:'crucifixo inverso máquina'},
+  {id:'ja5', n:'Elevação lateral no cabo', per:'um braço de cada vez', s:3, r:'12–20', rest:60, rir:'0–1', p:['delt'], q:[], al:true, o:LAT, yt:'elevação lateral no cabo unilateral'},
+  {id:'ja6', n:'Rosca inclinada com halteres', s:3, r:'8–12', rest:75, rir:'0–1', p:['biceps'], q:[], al:true, o:'Banco a 45° e braço pendurado atrás do corpo: o bíceps trabalha esticado, a posição que mais faz crescer.', yt:'rosca inclinada halteres banco'}
+ ]},
+ {key:'jB', dow:2, short:'Ter', title:'Treino B', sub:'Peito superior, ombro e tríceps', ex:[
+  {id:'jb0', n:'Rotação externa no cabo', per:'aquecimento', warm:true, s:2, r:'15', rest:45, rir:'leve', p:['deltpost'], q:[], o:'<strong>Leve, só pra aquecer o manguito.</strong> Cotovelo colado no corpo a 90°, gira o antebraço pra fora devagar. Protege o ombro esquerdo.', yt:'rotação externa no cabo manguito rotador'},
+  {id:'jb1', n:'Supino inclinado com halteres', per:'pegada neutra, 30°', s:3, r:'6–10', rest:150, rir:'1–2', p:['peito'], q:['delt','triceps'], al:true, o:'Banco a 30° e palmas viradas uma pra outra: mais seguro pro ombro. Desce até sentir o peito esticar. '+OMBRO, yt:'supino inclinado halteres pegada neutra'},
+  {id:'jb2', n:'Crossover de baixo pra cima', s:3, r:'10–15', rest:75, rir:'0–1', p:['peito'], q:['delt'], o:'Polias embaixo, leva as mãos até a altura do queixo. Pega a parte de cima do peito.', yt:'crossover de baixo para cima peitoral superior'},
+  {id:'jb3', n:'Elevação lateral no cabo', per:'um braço de cada vez', s:4, r:'12–20', rest:60, rir:'0–1', p:['delt'], q:[], al:true, o:LAT+' <strong>Última série:</strong> na falha, continua com meias repetições na parte de baixo.', yt:'elevação lateral no cabo unilateral'},
+  {id:'jb4', n:'Tríceps acima da cabeça no cabo', s:3, r:'10–15', rest:75, rir:'0–1', p:['triceps'], q:[], al:true, o:'Cotovelos apontando pra frente, desce até o tríceps esticar. <strong>Se incomodar o ombro</strong>, troca pela corda no pulley.', yt:'tríceps francês na polia'},
+  {id:'jb5', n:'Panturrilha em pé', s:4, r:'8–15', rest:60, rir:'0–1', p:['panturrilha'], q:[], al:true, o:'<strong>Pausa de 2 s lá embaixo</strong>, com a panturrilha esticada. Sobe até a ponta do pé, sem quicar.', yt:'panturrilha em pé máquina'}
+ ]},
+ {key:'jbt', dow:3, short:'Qua', title:'Cross e beach tennis', sub:'Sem academia hoje', rest:true,
+  restTitle:'Cross e beach tennis', restText:'Hoje não tem academia. O cross do almoço e o beach tennis já são carga suficiente, e a quarta fica no meio da semana pra recuperar.',
+  restTips:['Quinta é costas e ombro posterior: chega com o ombro descansado.','Se o ombro esquerdo reclamou no beach tennis, corta 1 série de ombro na quinta.']},
+ {key:'jC', dow:4, short:'Qui', title:'Treino C', sub:'Costas, ombro posterior e bíceps', ex:[
+  {id:'jc1', n:'Puxada unilateral no cabo', per:'cada lado', s:3, r:'8–12', rest:90, rir:'1–2', p:['dorsal'], q:['biceps'], al:true, o:'Sentado ou ajoelhado, deixa o braço subir bem esticado e puxa o cotovelo em direção ao quadril.', yt:'puxada unilateral no cabo dorsal'},
+  {id:'jc2', n:'Remada com peito apoiado', per:'cotovelo aberto', s:3, r:'8–12', rest:120, rir:'1–2', p:['dorsal','trap'], q:['deltpost','biceps'], o:'Peito colado no apoio, sem roubar com a lombar. Cotovelos abertos pegam a parte de cima das costas.', yt:'remada peito apoiado máquina'},
+  {id:'jc3', n:'Face pull', s:3, r:'15–20', rest:60, rir:'1–2', p:['deltpost'], q:['trap'], o:'Corda na altura do rosto, puxa abrindo as mãos e girando pra fora no final. Ótimo pro manguito do ombro esquerdo.', yt:'face pull corda execução'},
+  {id:'jc4', n:'Elevação lateral na máquina', s:3, r:'12–20', rest:60, rir:'0–1', p:['delt'], q:[], o:'Sobe só até a altura do ombro. Se a máquina incomodar o ombro esquerdo, troca pelo cabo. '+OMBRO, yt:'elevação lateral máquina'},
+  {id:'jc5', n:'Rosca no cabo com braço atrás', per:'Bayesian', s:3, r:'10–15', rest:75, rir:'0–1', p:['biceps'], q:[], al:true, o:'De costas pra polia, braço atrás da linha do corpo: o bíceps trabalha esticado o tempo todo.', yt:'rosca bayesian cabo'},
+  {id:'jc6', n:'Mesa flexora', s:3, r:'8–12', rest:90, rir:'0–1', p:['posterior'], q:[], al:true, o:'O cross quase não trabalha a flexão do joelho. Se tiver a sentada, prefira: o posterior trabalha mais esticado.', yt:'mesa flexora execução'}
+ ]},
+ {key:'jD', dow:5, short:'Sex', title:'Treino D', sub:'Peito, ombro e braços', ex:[
+  {id:'jd0', n:'Rotação externa no cabo', per:'aquecimento', warm:true, s:2, r:'15', rest:45, rir:'leve', p:['deltpost'], q:[], o:'<strong>Leve, só pra aquecer o manguito.</strong> Cotovelo colado no corpo a 90°, gira o antebraço pra fora devagar.', yt:'rotação externa no cabo manguito rotador'},
+  {id:'jd1', n:'Supino inclinado na máquina', per:'pegada neutra se tiver', s:3, r:'6–10', rest:150, rir:'1–2', p:['peito'], q:['delt','triceps'], o:'Desce controlando até o peito esticar, sem deixar o ombro ir pra frente. <strong>Se o cross do dia acabou com o ombro, tira 1 série.</strong>', yt:'supino inclinado máquina'},
+  {id:'jd2', n:'Voador (peck deck)', s:2, r:'12–15', rest:75, rir:'0–1', p:['peito'], q:[], al:true, o:'Abre até o peito esticar, sem deixar o ombro passar da linha do corpo. Junta as mãos apertando o peito.', yt:'voador peck deck execução'},
+  {id:'jd3', n:'Elevação lateral no cabo', per:'um braço de cada vez', s:3, r:'12–20', rest:60, rir:'0–1', p:['delt'], q:[], al:true, o:LAT+' <strong>Última série:</strong> meias repetições no final.', yt:'elevação lateral no cabo unilateral'},
+  {id:'jd4', n:'Tríceps no pulley', s:3, r:'10–15', rest:60, rir:'0–1', p:['triceps'], q:[], o:'Cotovelos colados no corpo, estica o braço todo lá embaixo.', yt:'tríceps pulley barra'},
+  {id:'jd5', n:'Rosca martelo', s:2, r:'10–12', rest:60, rir:'0–1', p:['biceps','antebraco'], q:[], o:'Palmas viradas uma pra outra. Engrossa o braço visto de frente.', yt:'rosca martelo halteres'},
+  {id:'jd6', n:'Panturrilha sentado', s:4, r:'10–20', rest:60, rir:'0–1', p:['panturrilha'], q:[], al:true, o:'Pausa de 2 s lá embaixo. Sentado pega a parte de dentro da panturrilha (sóleo).', yt:'panturrilha sentado máquina'}
+ ]},
+ {key:'jcor', dow:6, short:'Sáb', title:'Coringa', sub:'Costas e panturrilha', optional:true, note:'Só se a semana foi bem dormida e o ombro está tranquilo.', ex:[
+  {id:'je1', n:'Puxada alta', s:3, r:'8–12', rest:90, rir:'1–2', p:['dorsal'], q:['biceps'], al:true, o:'Pegada aberta ou neutra, puxa até o queixo com o peito pra cima.', yt:'puxada alta pegada aberta'},
+  {id:'je2', n:'Pullover no cabo', s:2, r:'12–15', rest:75, rir:'0–1', p:['dorsal'], q:[], al:true, o:'Segura 1 s com os braços lá em cima, alongando a dorsal.', yt:'pullover no cabo dorsal'},
+  {id:'je3', n:'Panturrilha em pé', s:3, r:'10–15', rest:60, rir:'0–1', p:['panturrilha'], q:[], al:true, o:'Pausa de 2 s lá embaixo.', yt:'panturrilha em pé máquina'},
+  {id:'je4', n:'Rosca inclinada com halteres', s:2, r:'10–12', rest:75, rir:'0–1', p:['biceps'], q:[], al:true, o:'Banco a 45°, braço pendurado atrás do corpo.', yt:'rosca inclinada halteres banco'},
+  {id:'je5', n:'Abdominal na polia', s:3, r:'10–15', rest:60, rir:'1–2', p:['abdomen'], q:[], o:'Enrola a coluna puxando as costelas em direção ao quadril. O quadril fica parado.', yt:'abdominal na polia ajoelhado'}
+ ]}
+];
+const PLANS={thai:DAYS_THAI, jr:DAYS_JR};
+const whoOf=h=>(h==='junior'||h==='painel-jr'||DAYS_JR.some(d=>d.key===h))?'jr':'thai';
+let WHO='thai'; try{ WHO=whoOf(location.hash.slice(1)); }catch(e){}
+let DAYS=PLANS[WHO];
 
 /* ---------- Corpo (mapa muscular) ---------- */
 const REG = {
@@ -785,13 +834,18 @@ const CHECK = '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
 
 function renderTabs(){
   $('#tabs').innerHTML = DAYS.map(d=>{ const st=dayState(d.key); return `<button class="tab ${st}" role="tab" id="tab-${d.key}" aria-selected="${d.key===current}" data-k="${d.key}">
-     ${d.dow===dow?'<i class="today" title="Hoje"></i>':''}${st==='full'?'<i class="tdone" title="Feito esta semana">✓</i>':''}<b>${d.short}</b><span>${esc(d.rest?'Beach':d.optional?'Coringa':d.title)}</span></button>`; }).join('');
+     ${d.dow===dow?'<i class="today" title="Hoje"></i>':''}${st==='full'?'<i class="tdone" title="Feito esta semana">✓</i>':''}<b>${d.short}</b><span>${esc(d.rest?'Beach':d.optional?'Coringa':d.title.replace('Treino ',''))}</span></button>`; }).join('');
 }
 function renderPhase(){}
 
 function renderDay(){
   const d = DAYS.find(x=>x.key===current);
   const el = $('#day');
+  if(d.rest && d.restText){
+    el.innerHTML = `<div class="rest-card"><div class="kicker">Quarta-feira</div><h3>${esc(d.restTitle)}</h3><p>${esc(d.restText)}</p>
+      <ul>${d.restTips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>`;
+    $('#evoSec').hidden=true; return;
+  }
   if(d.rest){
     el.innerHTML = `<div class="rest-card"><div class="kicker">Quarta-feira</div><h3>Dia de beach tennis</h3>
       <p>Hoje não tem musculação. O beach tennis já cansa perna e ombro, e a quarta fica no meio da semana justamente para separar os treinos de inferior.</p>
@@ -806,7 +860,7 @@ function renderDay(){
      <div>
        <div class="kicker">${d.optional?'Sábado · opcional':esc(['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][d.dow])}</div>
        <h2>${esc(d.title)}</h2>
-       <p>${esc(d.sub)}${d.optional?'. Se for, ótimo; se não for, a semana já está completa.':''}</p>
+       <p>${esc(d.sub)}${d.optional?`. ${d.note?esc(d.note)+' ':''}Se for, ótimo; se não for, a semana já está completa.`:''}</p>
        <div class="meta"><span class="chip">${d.ex.length} exercícios</span><span class="chip">${totalSets} séries</span></div>
      </div>
      <div class="ring"><svg viewBox="0 0 84 84"><circle class="bg" cx="42" cy="42" r="36"/><circle class="fg" id="ringfg" cx="42" cy="42" r="36" stroke-dasharray="226.2" stroke-dashoffset="226.2"/></svg>
@@ -838,7 +892,7 @@ function exCard(d,e,i,s){
       <div class="idx">${done?'✓':i+1}</div>
       <div class="ex-title">
         <h3>${esc(e.n)} ${e.per?`<span class="per">· ${esc(e.per)}</span>`:''}</h3>
-        <div class="chips"><span class="chip">${n} × ${e.r}</span><span class="chip">RIR ${rirFor(e)}</span><span class="chip">${e.rest>=120?(e.rest/60).toString().replace('.',',')+' min':e.rest+' s'}</span>${e.al?'<span class="chip al">Alongado</span>':''}</div>
+        <div class="chips"><span class="chip">${n} × ${e.r}</span>${e.warm?'<span class="chip">Aquecimento</span>':`<span class="chip">RIR ${rirFor(e)}</span>`}<span class="chip">${e.rest>=120?(e.rest/60).toString().replace('.',',')+' min':e.rest+' s'}</span>${e.al?'<span class="chip al">Alongado</span>':''}</div>
       </div>
       <button class="mapbtn" type="button" data-map="${e.id}" aria-label="Ver músculos trabalhados">${bodySVG(e.p,e.q,false)}</button>
     </div>
@@ -1022,24 +1076,30 @@ function confetti(){
 }
 
 /* ---------- Início ---------- */
+function todayTxt(plan){
+  const d=plan.find(x=>x.dow===dow);
+  if(!d) return 'Hoje: descanso';
+  if(d.rest) return plan===DAYS_JR?'Hoje: cross e beach tennis':'Hoje: beach tennis';
+  const s=session(d.key,false); const n=s?d.ex.filter(e=>s.done[e.id]).length:0;
+  return `Hoje: ${d.title}${n?` · ${n} de ${d.ex.length} feitos`:''}`;
+}
 function renderHome(){
-  const d=DAYS.find(x=>x.dow===dow);
-  const el=$('#thaiToday');
-  if(!d){ el.textContent='Hoje: descanso'; }
-  else if(d.rest){ el.textContent='Hoje: beach tennis'; }
-  else { const s=session(d.key,false); const n=s?d.ex.filter(e=>s.done[e.id]).length:0; el.textContent=`Hoje: ${d.title}${n?` · ${n} de ${d.ex.length} feitos`:''}`; }
+  $('#thaiToday').textContent=todayTxt(DAYS_THAI);
+  $('#jrToday').textContent=todayTxt(DAYS_JR);
   try{ const n=new Date(); $('#homeDate').textContent=`${['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][n.getDay()]} · ${n.getDate()} ${MONTHS[n.getMonth()].slice(0,3)}`; }catch(e){}
 }
 function route(){
   let h=''; try{ h=location.hash.slice(1); }catch(e){}
   let v='home';
-  if(h==='thai'||DAYS.some(d=>d.key===h)) v='thai'; else if(h==='junior') v='junior'; else if(h==='painel') v='painel';
+  if(h==='thai'||DAYS_THAI.some(d=>d.key===h)) v='thai';
+  else if(h==='junior'||DAYS_JR.some(d=>d.key===h)) v='junior';
+  else if(h==='painel'||h==='painel-jr') v=h;
   show(v);
 }
 /* O Safari do iPhone escolhe a cor da barra de cima quando a página carrega e não troca depois.
    No site hospedado, ao ir pra uma tela de outra cor, a página recarrega já nessa tela
    (vem do cache do celular, então é rápido e funciona offline). */
-const TOP_COLOR={home:'#FFD9E6',thai:'#FFF3F7',painel:'#FFF3F7',junior:'#F7F4EF'};
+const TOP_COLOR={home:'#FFD9E6',thai:'#FFF3F7',painel:'#FFF3F7',junior:'#F7F4EF','painel-jr':'#F7F4EF'};
 const IS_SITE = location.protocol==='https:' && !window.claude;
 let loadedColor=null;
 function show(v){
@@ -1051,13 +1111,34 @@ function show(v){
     setTimeout(()=>location.reload(),150); return;
   }
   if(!loadedColor) loadedColor=TOP_COLOR[v];
-  $('#v-home').hidden=v!=='home'; $('#v-junior').hidden=v!=='junior'; $('#v-thai').hidden=v!=='thai'; $('#v-painel').hidden=v!=='painel';
-  document.body.classList.toggle('neutral', v==='home'||v==='junior');
-  if(v==='painel') renderPanel();
-  try{ const m=document.querySelector('meta[name="theme-color"]'); if(m) m.content = v==='home' ? '#FFD9E6' : v==='junior' ? '#F7F4EF' : '#FFF3F7'; }catch(e){}
-  if(v!=='thai') $('#timer').classList.remove('show');
+  if(v!=='home') setWho(v==='junior'||v==='painel-jr'?'jr':'thai');
+  const ficha=v==='thai'||v==='junior', painel=v==='painel'||v==='painel-jr';
+  $('#v-home').hidden=v!=='home'; $('#v-thai').hidden=!ficha; $('#v-painel').hidden=!painel;
+  document.body.classList.toggle('neutral', v==='home');
+  document.body.classList.toggle('jr', v!=='home'&&WHO==='jr');
+  document.documentElement.classList.toggle('jr', v!=='home'&&WHO==='jr');
+  if(painel) renderPanel();
+  try{ const m=document.querySelector('meta[name="theme-color"]'); if(m) m.content = TOP_COLOR[v]; }catch(e){}
+  if(!ficha) $('#timer').classList.remove('show');
   if(v==='home') renderHome();
   window.scrollTo(0,0);
+}
+/* Mesma tela de ficha e de painel pros dois; muda a ficha (DAYS), as metas e os textos */
+function applyWhoTexts(){
+  const jr=WHO==='jr';
+  $('#fKicker').textContent = jr ? 'Estética · complemento do crossfit' : 'Hipertrofia · Glúteo superior em foco';
+  $('#fTitle').innerHTML = jr ? 'Treino do <em>Júnior</em>' : 'Treino da <em>Thai</em>';
+  $('#pKicker').textContent = jr ? 'Treino do Júnior' : 'Treino da Thai';
+  const tp=$('#toPanel'); tp.dataset.go = jr?'painel-jr':'painel'; tp.setAttribute('href', jr?'#painel-jr':'#painel');
+  const pb=$('#pBack'); pb.dataset.go = jr?'junior':'thai'; pb.setAttribute('href', jr?'#junior':'#thai');
+}
+function setWho(w){
+  if(w===WHO && DAYS===PLANS[w]){ applyWhoTexts(); return; }
+  WHO=w; DAYS=PLANS[w]; GROUPS=GROUPS_BY[w];
+  current=(DAYS.find(d=>d.dow===dow)||DAYS[0]).key;
+  demo=null; liftTouched=false; liftSel=DEF_LIFT[w]; $('#liftAll').innerHTML='';
+  $('#timer').classList.remove('show');
+  applyWhoTexts(); renderTabs(); renderDay();
 }
 document.addEventListener('click',ev=>{
   const a=ev.target.closest('[data-go]'); if(!a) return;
@@ -1109,8 +1190,17 @@ document.addEventListener('click',ev=>{
 
 /* ---------- Painel ---------- */
 const addDays=(iso,n)=>{ const [y,m,d]=iso.split('-').map(Number); const dt=new Date(y,m-1,d); dt.setDate(dt.getDate()+n); return isoOf(dt); };
-const EXMAP={}; DAYS.forEach(d=>(d.ex||[]).forEach(e=>EXMAP[e.id]={...e,day:d.key}));
-const GROUPS=[
+const EXMAP={}; [...DAYS_THAI,...DAYS_JR].forEach(d=>(d.ex||[]).forEach(e=>EXMAP[e.id]={...e,day:d.key}));
+const GROUPS_BY={jr:[
+  {k:'Ombro lateral', m:['delt'], lo:12, hi:16},
+  {k:'Ombro posterior', m:['deltpost'], lo:6, hi:10},
+  {k:'Costas', m:['dorsal','trap'], lo:12, hi:16},
+  {k:'Peito', m:['peito'], lo:10, hi:14},
+  {k:'Bíceps', m:['biceps'], lo:8, hi:12},
+  {k:'Tríceps', m:['triceps'], lo:6, hi:10},
+  {k:'Panturrilha', m:['panturrilha'], lo:8, hi:12},
+  {k:'Posterior', m:['posterior'], lo:3, hi:6}
+], thai:[
   {k:'Glúteo', m:['gluteomax','gluteomed'], lo:16, hi:22},
   {k:'Posterior', m:['posterior'], lo:10, hi:14},
   {k:'Quadríceps', m:['quad'], lo:6, hi:10},
@@ -1119,25 +1209,27 @@ const GROUPS=[
   {k:'Bíceps', m:['biceps'], lo:10, hi:14},
   {k:'Tríceps', m:['triceps'], lo:4, hi:8},
   {k:'Abdômen', m:['abdomen','obliquo'], lo:4, hi:8}
-];
-const LIFTS=[['a1','Elevação pélvica'],['c1','Terra romeno'],['b1','Puxada alta'],['b5','Rosca direta']];
-let demo=null, liftSel='a1', liftTouched=false;
+]};
+let GROUPS=GROUPS_BY[WHO];
+const DEF_LIFT={thai:'a1', jr:'ja1'};
+let demo=null, liftSel=DEF_LIFT[WHO], liftTouched=false;
 function fillLiftSelect(){
   const selEl=$('#liftAll');
   if(!selEl.options.length) selEl.innerHTML=DAYS.filter(d=>!d.rest).map(d=>`<optgroup label="${esc(d.short+' · '+d.title)}">${d.ex.map(e=>`<option value="${e.id}">${esc(e.n)}</option>`).join('')}</optgroup>`).join('');
   selEl.value=liftSel;
 }
-/* Abre num exercício que já tem histórico (a elevação pélvica, se tiver), até ela escolher outro */
+/* Abre num exercício que já tem histórico (o primeiro da ficha, se tiver), até escolher outro */
 function pickLift(S){
   if(liftTouched) return;
   const weeksWith=id=>new Set(S.filter(s=>doneSets(s).some(x=>x.id===id&&x.kg>0)).map(weekOf)).size;
-  if(weeksWith('a1')){ liftSel='a1'; return; }
-  let best='a1', n=0; Object.keys(EXMAP).forEach(id=>{ const k=weeksWith(id); if(k>n){ n=k; best=id; } });
+  const def=DEF_LIFT[WHO];
+  if(weeksWith(def)){ liftSel=def; return; }
+  let best=def, n=0; DAYS.forEach(d=>(d.ex||[]).forEach(e=>{ const k=weeksWith(e.id); if(k>n){ n=k; best=e.id; } }));
   liftSel=best;
 }
 function makeMock(){
   let seed=7; const rnd=()=>{ seed=(seed*16807)%2147483647; return seed/2147483647; };
-  const BASE={a1:50,a2:8,a3:12,a4:35,a5:25,b1:30,b2:12,b3:8,b4:4,b5:12,b6:6,b7:10,b8:30,c1:35,c2:25,c3:10,c4:80,c5:8,c6:20,d1:20,d2:5,d3:15,d4:15,d5:12,d6:8,d7:12,d8:0,d9:30,e1:30,e2:30,e3:15,e4:6,e5:8,e6:30};
+  const BASE={ja1:60,ja2:55,ja3:20,ja4:35,ja5:7.5,ja6:12,jb0:5,jb1:28,jb2:12.5,jb3:7.5,jb4:20,jb5:80,jc1:30,jc2:50,jc3:25,jc4:30,jc5:10,jc6:40,jd0:5,jd1:50,jd2:45,jd3:7.5,jd4:30,jd5:16,jd6:40,je1:60,je2:20,je3:80,je4:12,je5:35,a1:50,a2:8,a3:12,a4:35,a5:25,b1:30,b2:12,b3:8,b4:4,b5:12,b6:6,b7:10,b8:30,c1:35,c2:25,c3:10,c4:80,c5:8,c6:20,d1:20,d2:5,d3:15,d4:15,d5:12,d6:8,d7:12,d8:0,d9:30,e1:30,e2:30,e3:15,e4:6,e5:8,e6:30};
   const out={};
   for(let w=17; w>=0; w--){
     const wk=addDays(WEEK,-7*w);
@@ -1161,7 +1253,7 @@ function makeMock(){
   }
   return out;
 }
-const SRC=()=>Object.values(demo||state.sessions);
+const SRC=()=>{ const keys=new Set(DAYS.map(d=>d.key)); return Object.values(demo||state.sessions).filter(s=>keys.has(s.day)); };
 const MARKS=()=>demo?{}:(state.config.marks||{});
 const doneSets=s=>Object.entries(s.sets||{}).flatMap(([id,a])=>(Array.isArray(a)?a:[]).filter(x=>x&&x.done).map(x=>({id,kg:+x.kg||0,reps:+x.reps||0})));
 const volOf=s=>doneSets(s).reduce((a,x)=>a+x.kg*x.reps,0);
@@ -1222,7 +1314,7 @@ function renderPanel(){
   $('#chMus').closest('.panel').querySelector('.hint').textContent = period==='semana' ? 'faixa clara = meta semanal' : 'média do período · faixa clara = meta';
   pickLift(S); fillLiftSelect();
   if(!S.length){
-    ['#chVol','#chMus','#chLift','#chFreq'].forEach(id=>$(id).innerHTML='<p class="empty-p">Os gráficos aparecem quando ela marcar as primeiras séries na ficha. Pra ver como fica, toque em “Ver com dados de exemplo”.</p>');
+    ['#chVol','#chMus','#chLift','#chFreq'].forEach(id=>$(id).innerHTML='<p class="empty-p">Os gráficos aparecem quando as primeiras séries forem marcadas na ficha. Pra ver como fica, toque em “Ver com dados de exemplo”.</p>');
     return;
   }
   if(period==='d365'){
@@ -1249,7 +1341,7 @@ function drawVol(labels,vals,tips,hl){
 }
 function drawMus(SR,wk){
   const cnt={}; GROUPS.forEach(g=>cnt[g.k]=0);
-  SR.forEach(s=>doneSets(s).forEach(x=>{ const e=EXMAP[x.id]; if(!e) return; GROUPS.forEach(g=>{ if(e.p.some(m=>g.m.includes(m))) cnt[g.k]++; }); }));
+  SR.forEach(s=>doneSets(s).forEach(x=>{ const e=EXMAP[x.id]; if(!e||e.warm) return; GROUPS.forEach(g=>{ if(e.p.some(m=>g.m.includes(m))) cnt[g.k]++; }); }));
   const scale=26;
   $('#chMus').innerHTML=GROUPS.map((g,i)=>{ const v=Math.round(cnt[g.k]/wk), ok=v>=g.lo;
     return `<div class="mrow"><span>${g.k}</span><span class="t"><span class="band" style="left:${g.lo/scale*100}%;width:${(g.hi-g.lo)/scale*100}%"></span><span class="f ${ok?'ok':''}" style="width:${Math.min(100,v/scale*100)}%;animation-delay:${i*50}ms"></span></span><span class="n">${v}<small>/${g.lo}</small></span></div>`; }).join('');
@@ -1283,7 +1375,7 @@ function drawFreq(days,marks,R){
   }
   $('#chFreq').innerHTML=WD.map((w,i)=>{
     const plan=DAYS.find(x=>x.dow===((i+1)%7));
-    const name=plan?(plan.rest?'Beach tennis':plan.title):'Descanso';
+    const name=plan?(plan.rest?plan.title.replace('Cross e ','').replace(/^b/,'B'):plan.title):'Descanso';
     const untracked=!plan||plan.rest;
     const pct=tot[i]?hit[i]/tot[i]:0, ok=pct>=0.75;
     return `<div class="frow${untracked?' off':''}"><span class="fd"><b>${w}</b><small>${esc(name)}</small></span>
