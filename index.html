@@ -983,7 +983,18 @@ function route(){
   if(h==='thai'||DAYS.some(d=>d.key===h)) v='thai'; else if(h==='junior') v='junior'; else if(h==='painel') v='painel';
   show(v);
 }
+/* O Safari do iPhone escolhe a cor da barra de cima quando a página carrega e não troca depois.
+   No site hospedado, ao ir pra uma tela de outra cor, a página recarrega já nessa tela
+   (vem do cache do celular, então é rápido e funciona offline). */
+const TOP_COLOR={home:'#FFD9E6',thai:'#FFF3F7',painel:'#FFF3F7',junior:'#F7F4EF'};
+const IS_SITE = location.protocol==='https:' && !window.claude;
+let loadedColor=null;
 function show(v){
+  if(IS_SITE && loadedColor && TOP_COLOR[v]!==loadedColor){
+    try{ history.replaceState(null,'','#'+v); }catch(e){}
+    location.reload(); return;
+  }
+  if(!loadedColor) loadedColor=TOP_COLOR[v];
   $('#v-home').hidden=v!=='home'; $('#v-junior').hidden=v!=='junior'; $('#v-thai').hidden=v!=='thai'; $('#v-painel').hidden=v!=='painel';
   document.body.classList.toggle('neutral', v==='home'||v==='junior');
   if(v==='painel') renderPanel();

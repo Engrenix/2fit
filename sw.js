@@ -1,11 +1,13 @@
-/* 2Fit · funciona sem internet depois da primeira visita.
-   Página: tenta a rede primeiro (pra pegar atualizações) e usa a cópia guardada se estiver offline.
-   Ícones, manifest e fontes: usa a cópia guardada e atualiza em segundo plano.
-   Ao mudar arquivos do app, suba o número da versão abaixo. */
-const VERSAO = '2fit-v11';
+/* 2Fit · funciona sem internet e abre na hora.
+   Tudo do próprio site (página, config.js, ícones) vem primeiro da cópia guardada no celular,
+   e uma cópia nova é buscada em segundo plano pra próxima abertura.
+   Ao publicar uma versão, suba o número abaixo: o celular baixa tudo de novo,
+   troca pra versão nova e o app recarrega sozinho uma vez. */
+const VERSAO = '2fit-v12';
 const ARQUIVOS = [
   './',
   './index.html',
+  './config.js',
   './manifest.webmanifest',
   './icon.svg',
   './favicon.ico',
@@ -15,7 +17,12 @@ const ARQUIVOS = [
 ];
 
 self.addEventListener('install', ev => {
-  ev.waitUntil(caches.open(VERSAO).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));
+  // cache: 'reload' ignora o cache HTTP do GitHub Pages (até 10 min) e pega os arquivos novos de verdade
+  ev.waitUntil(
+    caches.open(VERSAO)
+      .then(c => c.addAll(ARQUIVOS.map(u => new Request(u, { cache: 'reload' }))))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', ev => {
@@ -26,6 +33,16 @@ self.addEventListener('activate', ev => {
   );
 });
 
+function atualizar(req, chave) {
+  return fetch(req, { cache: 'no-store' }).then(res => {
+    if (res && (res.ok || res.type === 'opaque')) {
+      const copia = res.clone();
+      caches.open(VERSAO).then(c => c.put(chave || req, copia));
+    }
+    return res;
+  });
+}
+
 self.addEventListener('fetch', ev => {
   const req = ev.request;
   if (req.method !== 'GET') return;
@@ -34,23 +51,21 @@ self.addEventListener('fetch', ev => {
   const fonte = url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com';
   if (!proprio && !fonte) return;
 
-  // Página e config.js: sempre a versão mais nova da rede; a cópia guardada só offline
-  if (req.mode === 'navigate' || (proprio && url.pathname.endsWith('/config.js'))) {
-    const chave = req.mode === 'navigate' ? './index.html' : './config.js';
+  // Página: cópia guardada na hora (trocar de tela recarrega a página), atualiza em segundo plano
+  if (req.mode === 'navigate') {
+    const chave = url.pathname.endsWith('/demo.html') ? './demo.html' : './index.html';
     ev.respondWith(
-      fetch(req, { cache: 'no-store' })
-        .then(res => { const copia = res.clone(); caches.open(VERSAO).then(c => c.put(chave, copia)); return res; })
-        .catch(() => caches.match(chave))
+      caches.match(chave).then(salvo => {
+        const rede = atualizar(req, chave).catch(() => salvo);
+        return salvo || rede;
+      })
     );
     return;
   }
 
   ev.respondWith(
-    caches.match(req).then(salvo => {
-      const rede = fetch(req).then(res => {
-        if (res && (res.ok || res.type === 'opaque')) { const copia = res.clone(); caches.open(VERSAO).then(c => c.put(req, copia)); }
-        return res;
-      }).catch(() => salvo);
+    caches.match(req, { ignoreSearch: true }).then(salvo => {
+      const rede = atualizar(req).catch(() => salvo);
       return salvo || rede;
     })
   );
