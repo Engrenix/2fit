@@ -1229,8 +1229,15 @@ document.addEventListener('change',ev=>{ if(ev.target.id==='bkFile' && ev.target
 /* ---------- Offline e armazenamento persistente (só no site hospedado) ---------- */
 try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{}); }catch(e){}
 try{
-  if('serviceWorker' in navigator && location.protocol==='https:' && !window.claude)
-    window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+  if('serviceWorker' in navigator && location.protocol==='https:' && !window.claude){
+    /* Atualização: procura versão nova ao abrir e ao voltar pro app; quando chega, recarrega uma vez */
+    let reloaded=false; const hadSW=!!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener('controllerchange',()=>{ if(reloaded||!hadSW) return; reloaded=true; location.reload(); });
+    window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(reg=>{
+      reg.update().catch(()=>{});
+      document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') reg.update().catch(()=>{}); });
+    }).catch(()=>{}));
+  }
 }catch(e){}
 
 const tipEl=document.createElement('div'); tipEl.className='tip'; tipEl.hidden=true; document.body.appendChild(tipEl);
