@@ -8,6 +8,9 @@ Treino a dois: fichas de treino com registro de carga por série, cronômetro de
 - `manifest.webmanifest`: nome e ícones para "Adicionar à tela de início"
 - `icon.svg`, `favicon.ico`, `favicon-*.png`, `apple-touch-icon.png`, `icon-*.png`: ícones
 - `og-image.png`: imagem da prévia do link no WhatsApp
+- `demo.html`: cópia do app com 4 meses de treinos inventados, pra testar sem mexer nos dados reais (nada é salvo)
+- `brand/`: ícone (SVG mestre, versões quadrada e maskable), conceitos de logo descartados
+- `design/`: propostas de tela inicial e paletas avaliadas
 - `sw.js`: deixa o app funcionando sem internet (suba a `VERSAO` a cada mudança)
 
 ## Publicar no GitHub Pages
