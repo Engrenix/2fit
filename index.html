@@ -80,6 +80,8 @@ html:has(#v-login:not([hidden])),body:has(#v-login:not([hidden])){background:#FF
 .login.typing .lg-tag{font-size:13px;padding:6px 12px}
 .login.typing .lg-note{display:none}
 .login.typing .lg-top,.login.typing .lg-card{animation:none}
+.lg-top,.lg-card,.lg-mark{will-change:transform}
+.lg-pk{transition:clip-path .42s cubic-bezier(.2,.8,.2,1)}
 .acct{position:absolute;z-index:6;top:max(14px, calc(env(safe-area-inset-top, 0px) + 10px));right:max(16px, env(safe-area-inset-right, 0px));border:0;border-radius:99px;padding:8px 14px;font:800 13px var(--f-body);background:rgba(255,255,255,.85);color:#5A1E39;box-shadow:0 4px 14px rgba(0,0,0,.12);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .acct.on::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#1F9D6B;margin-right:6px;vertical-align:1px}
 .acct.warn::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#D9822B;margin-right:6px;vertical-align:1px}
@@ -1463,14 +1465,36 @@ function fitLogin(){
   placeLoginSplit();
 }
 if(window.visualViewport){ visualViewport.addEventListener('resize',fitLogin); visualViewport.addEventListener('scroll',fitLogin); }
+/* Troca suave entre o login normal e o compacto: guarda onde logo e cartão estavam,
+   muda o layout e anima cada um do lugar antigo pro novo (FLIP) */
+function loginMode(compacto){
+  const el=$('#v-login'); if(el.classList.contains('typing')===compacto) return;
+  const parts=[$('.lg-top'),$('.lg-card'),$('.lg-mark')];
+  const antes=parts.map(p=>p.getBoundingClientRect());
+  el.classList.toggle('typing',compacto);
+  if(!compacto){ el.style.height=''; el.style.top=''; el.style.bottom=''; }
+  placeLoginSplit();
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const topoDepois=parts[0].getBoundingClientRect();
+  parts.forEach((p,i)=>{
+    const depois=p.getBoundingClientRect(), a=antes[i];
+    let dx=a.left-depois.left, dy=a.top-depois.top;
+    if(i===2){ /* o logo está dentro do bloco do topo: só o deslocamento relativo a ele */
+      dx=(a.left-antes[0].left)-(depois.left-topoDepois.left); dy=(a.top-antes[0].top)-(depois.top-topoDepois.top); }
+    const s=i===2 && depois.width ? a.width/depois.width : 1;
+    p.animate([{transform:`translate(${dx}px,${dy}px) scale(${s})`,transformOrigin:'top left'},{transform:'none',transformOrigin:'top left'}],
+      {duration:420,easing:'cubic-bezier(.2,.8,.2,1)'});
+  });
+  $('#lgPk').animate([{opacity:.6},{opacity:1}],{duration:420,easing:'ease-out'});
+}
 document.addEventListener('focusin',ev=>{
   const el=$('#v-login'); if(el.hidden || !el.contains(ev.target) || ev.target.tagName!=='INPUT') return;
-  el.classList.add('typing'); requestAnimationFrame(placeLoginSplit);
-  setTimeout(()=>{ fitLogin(); $('#gateForm').scrollIntoView({block:'end',behavior:'smooth'}); },320);
+  loginMode(true);
+  setTimeout(()=>{ fitLogin(); const b=$('#gateBtn').getBoundingClientRect(), h=(window.visualViewport||window).height;
+    if(b.bottom>h) $('#gateForm').scrollIntoView({block:'end',behavior:'smooth'}); },450);
 });
 document.addEventListener('focusout',()=>{
-  setTimeout(()=>{ const el=$('#v-login'); if(el.hidden || el.contains(document.activeElement)) return;
-    el.classList.remove('typing'); el.style.height=''; el.style.top=''; el.style.bottom=''; placeLoginSplit(); },150);
+  setTimeout(()=>{ const el=$('#v-login'); if(el.hidden || el.contains(document.activeElement)) return; loginMode(false); },200);
 });
 window.addEventListener('resize',()=>{ if(!$('#v-login').hidden) placeLoginSplit(); });
 document.addEventListener('submit',async ev=>{
