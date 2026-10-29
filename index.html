@@ -1303,11 +1303,24 @@ async function sbAuthCall(grant, body){
   sbAuth={access:j.access_token,refresh:j.refresh_token,exp:Date.now()+((j.expires_in||3600)-60)*1000,email:(j.user&&j.user.email)||(sbAuth&&sbAuth.email)||''};
   sbSaveAuth(); return sbAuth;
 }
+/* Renova o login sem derrubar a pessoa: uma renovação por vez, e só sai da conta se o
+   Supabase disser com certeza que o login acabou (nunca por falta de internet ou erro passageiro). */
+let sbRefreshing=null;
 async function sbToken(){
+  if(!sbAuth){ try{ sbAuth=JSON.parse(localStorage.getItem(SB_AUTH_KEY)||'null'); }catch(e){} }
   if(!sbAuth) return null;
   if(Date.now()<sbAuth.exp) return sbAuth.access;
-  try{ await sbAuthCall('refresh_token',{refresh_token:sbAuth.refresh}); return sbAuth.access; }
-  catch(e){ if(e.status>=400 && e.status<500){ sbAuth=null; sbSaveAuth(); } return null; }
+  if(!navigator.onLine) return null;
+  if(!sbRefreshing){
+    const usado=sbAuth.refresh;
+    sbRefreshing=sbAuthCall('refresh_token',{refresh_token:usado}).catch(e=>{
+      let salvo=null; try{ salvo=JSON.parse(localStorage.getItem(SB_AUTH_KEY)||'null'); }catch(_){}
+      if(salvo && salvo.refresh!==usado){ sbAuth=salvo; return; }      // outra aba já renovou
+      if(e.status===400 && /refresh token/i.test(e.message) && !/already used/i.test(e.message)){ sbAuth=null; sbSaveAuth(); }
+    }).finally(()=>{ sbRefreshing=null; });
+  }
+  await sbRefreshing;
+  return sbAuth && Date.now()<sbAuth.exp ? sbAuth.access : null;
 }
 async function sbFetch(path,opt={}){
   const t=await sbToken(); if(!t) throw new Error('Entre de novo pra sincronizar');
@@ -1374,7 +1387,7 @@ function fillSheet(){
     $('#acctStatus').textContent = sbErr ? `Não deu pra sincronizar: ${sbErr}` : L.t+when;
   }
 }
-function openSheet(){ fillSheet(); $('#acctSheet').hidden=false; if(!sbAuth) setTimeout(()=>{ try{ $('#loginEmail').focus(); }catch(e){} },250); }
+function openSheet(){ fillSheet(); try{ const em=localStorage.getItem('2fit-email'); if(em && !$('#loginEmail').value) $('#loginEmail').value=em; }catch(e){} $('#acctSheet').hidden=false; if(!sbAuth) setTimeout(()=>{ try{ $('#loginEmail').focus(); }catch(e){} },250); }
 function closeSheet(){ $('#acctSheet').hidden=true; }
 function sbInit(){
   if(!SB_ON) return;
@@ -1399,7 +1412,7 @@ document.addEventListener('submit',async ev=>{
   if(!email||!pass){ err.textContent='Preencha o e-mail e a senha.'; err.hidden=false; return; }
   if(!navigator.onLine){ err.textContent='Sem internet agora. Tente de novo quando conectar.'; err.hidden=false; return; }
   btn.disabled=true; btn.textContent='Entrando…';
-  try{ await sbAuthCall('password',{email,password:pass}); $('#loginPass').value=''; await sbPull(); closeSheet(); toast('Pronto, sincronizado'); }
+  try{ await sbAuthCall('password',{email,password:pass}); $('#loginPass').value=''; try{ localStorage.setItem('2fit-email',email); }catch(e){} await sbPull(); closeSheet(); toast('Pronto, sincronizado'); }
   catch(e){ err.textContent = /invalid/i.test(e.message) ? 'E-mail ou senha incorretos.' : `Não deu pra entrar: ${e.message}`; err.hidden=false; }
   btn.disabled=false; btn.textContent='Entrar';
 });
