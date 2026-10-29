@@ -73,6 +73,13 @@ html:has(#v-login:not([hidden])),body:has(#v-login:not([hidden])){background:#FF
 .lg-note{margin:0;font-size:12.5px;color:#8C8178;text-align:center}
 @media (prefers-reduced-motion: no-preference){ .lg-top{animation:popIn2 .6s cubic-bezier(.2,.8,.2,1.2) both} .lg-card{animation:sheetUp .6s .1s cubic-bezier(.2,.8,.2,1) both} }
 @keyframes popIn2{from{transform:scale(.85);opacity:0}}
+/* Teclado aberto: o logo encolhe e o cartão sobe pra ficar acima do teclado */
+.login.typing .lg-in{justify-content:flex-start;gap:16px;padding-top:max(20px, calc(env(safe-area-inset-top, 0px) + 8px))}
+.login.typing .lg-top{margin-top:0;flex-direction:row;gap:12px}
+.login.typing .lg-mark{font-size:52px}
+.login.typing .lg-tag{font-size:13px;padding:6px 12px}
+.login.typing .lg-note{display:none}
+.login.typing .lg-top,.login.typing .lg-card{animation:none}
 .acct{position:absolute;z-index:6;top:max(14px, calc(env(safe-area-inset-top, 0px) + 10px));right:max(16px, env(safe-area-inset-right, 0px));border:0;border-radius:99px;padding:8px 14px;font:800 13px var(--f-body);background:rgba(255,255,255,.85);color:#5A1E39;box-shadow:0 4px 14px rgba(0,0,0,.12);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .acct.on::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#1F9D6B;margin-right:6px;vertical-align:1px}
 .acct.warn::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#D9822B;margin-right:6px;vertical-align:1px}
@@ -1448,7 +1455,23 @@ function showLogin(){
   try{ const em=localStorage.getItem('2fit-email'); if(em) $('#gateEmail').value=em; }catch(e){}
   requestAnimationFrame(placeLoginSplit);
 }
-function hideLogin(){ const el=$('#v-login'); if(el.hidden) return; el.hidden=true; }
+function hideLogin(){ const el=$('#v-login'); if(el.hidden) return; el.hidden=true; el.classList.remove('typing'); el.style.height=''; el.style.top=''; }
+/* No iPhone o teclado não encolhe a tela: a tela de login passa a ter a altura da parte visível */
+function fitLogin(){
+  const vv=window.visualViewport, el=$('#v-login'); if(!vv||el.hidden) return;
+  el.style.top=vv.offsetTop+'px'; el.style.bottom='auto'; el.style.height=vv.height+'px';
+  placeLoginSplit();
+}
+if(window.visualViewport){ visualViewport.addEventListener('resize',fitLogin); visualViewport.addEventListener('scroll',fitLogin); }
+document.addEventListener('focusin',ev=>{
+  const el=$('#v-login'); if(el.hidden || !el.contains(ev.target) || ev.target.tagName!=='INPUT') return;
+  el.classList.add('typing'); requestAnimationFrame(placeLoginSplit);
+  setTimeout(()=>{ fitLogin(); $('#gateForm').scrollIntoView({block:'end',behavior:'smooth'}); },320);
+});
+document.addEventListener('focusout',()=>{
+  setTimeout(()=>{ const el=$('#v-login'); if(el.hidden || el.contains(document.activeElement)) return;
+    el.classList.remove('typing'); el.style.height=''; el.style.top=''; el.style.bottom=''; placeLoginSplit(); },150);
+});
 window.addEventListener('resize',()=>{ if(!$('#v-login').hidden) placeLoginSplit(); });
 document.addEventListener('submit',async ev=>{
   if(ev.target.id!=='gateForm') return;
