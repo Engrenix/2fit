@@ -448,10 +448,10 @@ details.guide .in b{color:var(--ink)}
     </div>
     <div class="demo-note" id="demoNote" hidden><span>Dados de exemplo: 4 meses inventados pra mostrar o painel. Nada disso foi salvo.</span><button type="button" id="demoOff">Ver dados reais</button></div>
     <div class="periods" role="group" aria-label="Período">
-      <button type="button" data-period="semana" aria-pressed="false">Semana</button>
       <button type="button" data-period="mes" aria-pressed="true">Mês</button>
       <button type="button" data-period="d60" aria-pressed="false">60 dias</button>
       <button type="button" data-period="d120" aria-pressed="false">120 dias</button>
+      <button type="button" data-period="d365" aria-pressed="false">1 ano</button>
     </div>
   </header>
   <div class="kpis" id="kpis"></div>
@@ -1014,13 +1014,13 @@ function daysSet(){ const set=new Set(); for(const s of SRC()){ if(!hasWork(s)) 
 const fmtKg=v=>v>=10000?(v/1000).toLocaleString('pt-BR',{maximumFractionDigits:1})+' t':Math.round(v).toLocaleString('pt-BR')+' kg';
 
 /* Filtro de período do painel */
-const PERIODS={semana:'Esta semana',mes:'Este mês',d60:'Últimos 60 dias',d120:'Últimos 120 dias'};
+const PERIODS={mes:'Este mês',d60:'Últimos 60 dias',d120:'Últimos 120 dias',d365:'Último ano'};
 let period='mes';
 const daysBetween=(a,b)=>{ const [y1,m1,d1]=a.split('-').map(Number), [y2,m2,d2]=b.split('-').map(Number); return Math.round((new Date(y2,m2-1,d2)-new Date(y1,m1-1,d1))/864e5); };
 function periodRange(){
   if(period==='semana') return [WEEK,TODAY];
   if(period==='mes') return [TODAY.slice(0,8)+'01',TODAY];
-  return [addDays(TODAY,-(period==='d60'?59:119)),TODAY];
+  return [addDays(TODAY,-({d60:59,d120:119,d365:364}[period])),TODAY];
 }
 function prevRange(R){
   if(period==='semana') return [addDays(R[0],-7),addDays(R[1],-7)];
@@ -1034,7 +1034,7 @@ function weeksIn(R,min=1){
 }
 const inR=(d,R)=>d>=R[0]&&d<=R[1];
 const liftWeeks=()=>weeksIn(periodRange(),4);
-const every=n=>Math.max(1,Math.ceil(n/8));
+const every=n=>n<=12?1:Math.ceil(n/8);
 
 function renderPanel(){
   $('#demoBtn').hidden=!!demo; $('#demoNote').hidden=!demo;
@@ -1053,7 +1053,7 @@ function renderPanel(){
   const wk=Math.max(1,(daysBetween(R[0],R[1])+1)/7);
   const recent=Array.from({length:26},(_,i)=>addDays(WEEK,-7*(25-i)));
   let streak=0; for(let i=recent.length-1;i>=0;i--){ const n=[...allDays].filter(d=>mondayOf(d)===recent[i]).length; if(n>=3) streak++; else if(i===recent.length-1) continue; else break; }
-  const prevName={semana:'semana passada',mes:'mês passado',d60:'60 dias anteriores',d120:'120 dias anteriores'}[period];
+  const prevName={mes:'mês passado',d60:'60 dias anteriores',d120:'120 dias anteriores',d365:'ano anterior'}[period];
   const K=(l,v,s,cls='')=>`<div class="kpi"><span class="l">${l}</span><span class="v">${v}</span><span class="s ${cls}">${s}</span></div>`;
   $('#kpis').innerHTML =
     K('Dias de treino', nDays, PERIODS[period].toLowerCase()) +
@@ -1070,9 +1070,10 @@ function renderPanel(){
     ['#chVol','#chMus','#chLift','#chFreq'].forEach(id=>$(id).innerHTML='<p class="empty-p">Os gráficos aparecem quando ela marcar as primeiras séries na ficha. Pra ver como fica, toque em “Ver com dados de exemplo”.</p>');
     return;
   }
-  if(period==='semana'){
-    const ds=Array.from({length:7},(_,i)=>addDays(WEEK,i)), WD=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
-    drawVol(ds.map((d,i)=>WD[i]), ds.map(d=>S.filter(s=>s.date===d).reduce((a,s)=>a+volOf(s),0)), ds.map((d,i)=>`${WD[i]} ${fmtDate(d)}`), ds.indexOf(TODAY));
+  if(period==='d365'){
+    /* 1 ano: barras por mês */
+    const ms=Array.from({length:12},(_,i)=>{ const [y,m]=TODAY.split('-').map(Number); return isoOf(new Date(y,m-1-(11-i),1)).slice(0,7); });
+    drawVol(ms.map(m=>MONTHS[+m.slice(5)-1].slice(0,3)), ms.map(m=>S.filter(s=>s.date&&s.date.startsWith(m)).reduce((a,s)=>a+volOf(s),0)), ms.map(m=>`${MONTHS[+m.slice(5)-1]} de ${m.slice(0,4)}`), 11);
   } else {
     const ws=weeksIn(R);
     drawVol(ws.map(fmtDate), ws.map(w=>S.filter(s=>weekOf(s)===w&&inR(s.date,R)).reduce((a,s)=>a+volOf(s),0)), ws.map(w=>`Semana de ${fmtDate(w)}`), ws.length-1);
