@@ -232,6 +232,12 @@ body.neutral{
 @keyframes slideD{from{transform:translateY(-12%);opacity:.6}}
 @keyframes slideU{from{transform:translateY(12%);opacity:.6}}
 @keyframes popIn{from{transform:translate(-50%,-50%) scale(.6);opacity:0}}
+/* Troca de tela com recarga (site): esmaece na cor do destino e reaparece sem repetir a animação do início */
+html.nav-in .h-thai, html.nav-in .h-jr, html.nav-in .hdate{animation:none!important}
+html.nav-in::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;background:var(--veil,#FFF3F7);animation:veilOut .22s ease-out forwards}
+@keyframes veilOut{to{opacity:0}}
+.veil{position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:0;transition:opacity .14s ease-in}
+.veil.on{opacity:1}
 
 /* Início */
 .home{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:22px;padding-top:28px}
@@ -413,9 +419,7 @@ details.guide .in b{color:var(--ink)}
 }
 </style>
 <script src="config.js"></script>
-</head>
-<body>
-
+<script>try{var c=sessionStorage.getItem('2fit-nav');if(c){sessionStorage.removeItem('2fit-nav');var r=document.documentElement;r.classList.add('nav-in');r.style.setProperty('--veil',c);}}catch(e){}</script>
 
 <main class="split" id="v-home">
   <button type="button" class="acct" id="acctBtn" hidden>Entrar</button>
@@ -1041,7 +1045,10 @@ let loadedColor=null;
 function show(v){
   if(IS_SITE && loadedColor && TOP_COLOR[v]!==loadedColor){
     try{ history.replaceState(null,'','#'+v); }catch(e){}
-    location.reload(); return;
+    try{ sessionStorage.setItem('2fit-nav', TOP_COLOR[v]); }catch(e){}
+    const vl=document.createElement('div'); vl.className='veil'; vl.style.background=TOP_COLOR[v];
+    document.body.appendChild(vl); vl.offsetWidth; vl.classList.add('on');
+    setTimeout(()=>location.reload(),150); return;
   }
   if(!loadedColor) loadedColor=TOP_COLOR[v];
   $('#v-home').hidden=v!=='home'; $('#v-junior').hidden=v!=='junior'; $('#v-thai').hidden=v!=='thai'; $('#v-painel').hidden=v!=='painel';
