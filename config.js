@@ -6,6 +6,6 @@
    e as regras de segurança do supabase/setup.sql. Nunca coloque a "service_role" aqui.
    Deixando vazio, o app funciona normal, salvando só no celular. */
 window.TWOFIT_SUPABASE = {
-  url: '',
-  anonKey: ''
+  url: 'https://jrqtaayphmtorkeuyhir.supabase.co',
+  anonKey: 'sb_publishable_uGsZmwX3BiuZVvJW5vDzTg_grjWb4L5'
 };
