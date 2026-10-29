@@ -51,6 +51,29 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 .top{display:flex;flex-direction:column;gap:12px;padding-top:4px}
 
 /* Conta e sincronização */
+/* Tela de login (só no site com sincronização): identidade do banner, rosa e verde em diagonal */
+.login{position:fixed;inset:0;z-index:60;background:#16201C;overflow:hidden}
+.login[hidden]{display:none!important}
+html:has(#v-login:not([hidden])),body:has(#v-login:not([hidden])){background:#FFD9E6}
+.lg-pk,.lg-gr{position:absolute;inset:0}
+.lg-pk{background:linear-gradient(180deg,#FFD9E6 0%,#FFD9E6 12%,#F7A9C5 100%);z-index:1}
+.lg-gr{background:linear-gradient(160deg,#2B3A34,#16201C)}
+.lg-big{position:absolute;z-index:2;font-family:var(--f-display);font-stretch:125%;font-weight:900;line-height:1;letter-spacing:-.05em;pointer-events:none}
+.lg-big2{left:-.08em;top:-.12em;font-size:clamp(220px,70vw,420px);color:#5A1E39;opacity:.07}
+.lg-bigF{right:-.06em;bottom:-.18em;font-size:clamp(160px,46vw,300px);color:#B8F2C9;opacity:.07}
+.lg-in{position:relative;z-index:3;height:100%;overflow-y:auto;display:flex;flex-direction:column;justify-content:space-between;gap:28px;
+  padding:max(64px, calc(env(safe-area-inset-top, 0px) + 40px)) max(22px, env(safe-area-inset-right, 0px)) max(26px, calc(env(safe-area-inset-bottom, 0px) + 16px)) max(22px, env(safe-area-inset-left, 0px))}
+.lg-top{display:flex;flex-direction:column;align-items:center;gap:16px;margin-top:6vh}
+.lg-mark{margin:0;display:flex;align-items:baseline;font-family:var(--f-display);font-stretch:118%;font-weight:900;font-size:clamp(96px,30vw,150px);line-height:.85;letter-spacing:-.04em}
+#lg2{color:#5A1E39}
+#lgF{color:#B8F2C9;margin-left:.06em}
+.lg-tag{background:#FFFFFF;color:#1C1A1F;border-radius:99px;padding:8px 18px;font-size:15px;font-weight:800;box-shadow:0 10px 24px rgba(0,0,0,.18)}
+.lg-card{width:100%;max-width:440px;margin:0 auto;background:#FFFFFF;color:#2B2420;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 50px rgba(0,0,0,.28)}
+.lg-btn{height:50px;border:0;border-radius:14px;background:#5A1E39;color:#FFFFFF;font:800 16px var(--f-body);margin-top:4px}
+.lg-btn:disabled{opacity:.6}
+.lg-note{margin:0;font-size:12.5px;color:#8C8178;text-align:center}
+@media (prefers-reduced-motion: no-preference){ .lg-top{animation:popIn2 .6s cubic-bezier(.2,.8,.2,1.2) both} .lg-card{animation:sheetUp .6s .1s cubic-bezier(.2,.8,.2,1) both} }
+@keyframes popIn2{from{transform:scale(.85);opacity:0}}
 .acct{position:absolute;z-index:6;top:max(14px, calc(env(safe-area-inset-top, 0px) + 10px));right:max(16px, env(safe-area-inset-right, 0px));border:0;border-radius:99px;padding:8px 14px;font:800 13px var(--f-body);background:rgba(255,255,255,.85);color:#5A1E39;box-shadow:0 4px 14px rgba(0,0,0,.12);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .acct.on::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#1F9D6B;margin-right:6px;vertical-align:1px}
 .acct.warn::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#D9822B;margin-right:6px;vertical-align:1px}
@@ -529,6 +552,23 @@ details.guide .in b{color:var(--ink)}
     <div class="txt"><b id="tname">Descanso</b><span id="tsub">Próxima série</span></div>
     <button id="tplus" type="button">+15 s</button>
     <button id="tskip" type="button">Pular</button>
+  </div>
+</div>
+<div class="login" id="v-login" hidden>
+  <div class="lg-pk" id="lgPk"></div><div class="lg-gr" id="lgGr"></div>
+  <div class="lg-big lg-big2" aria-hidden="true">2</div><div class="lg-big lg-bigF" aria-hidden="true">FIT</div>
+  <div class="lg-in">
+    <div class="lg-top">
+      <h1 class="lg-mark" aria-label="2Fit"><span id="lg2">2</span><span id="lgF">Fit</span></h1>
+      <span class="lg-tag">Treino a dois</span>
+    </div>
+    <form class="lg-card" id="gateForm" novalidate>
+      <label class="inp"><span>E-mail</span><input id="gateEmail" type="email" autocomplete="username" inputmode="email" autocapitalize="none" enterkeyhint="next" required></label>
+      <label class="inp"><span>Senha</span><input id="gatePass" type="password" autocomplete="current-password" enterkeyhint="go" required></label>
+      <p class="sheet-err" id="gateErr" hidden></p>
+      <button type="submit" class="lg-btn" id="gateBtn">Entrar</button>
+      <p class="lg-note">Você só entra uma vez em cada celular. Depois o 2Fit abre direto, até sem internet.</p>
+    </form>
   </div>
 </div>
 <div class="sheet-bg" id="acctSheet" hidden>
@@ -1378,7 +1418,9 @@ function syncLabel(){
 function updSyncUI(){
   if(!SB_ON) return;
   const L=syncLabel();
-  const b=$('#acctBtn'); b.hidden=false; b.textContent=sbAuth?L.t:'Entrar'; b.className='acct '+(sbAuth?L.c:'');
+  const b=$('#acctBtn');
+  if(!sbAuth){ b.hidden=true; showLogin(); }
+  else { hideLogin(); b.hidden=false; b.textContent=L.t; b.className='acct '+L.c; }
   const s=$('#sync'); if(s){ s.classList.add('clickable'); s.classList.toggle('on',L.c==='on'); s.classList.toggle('warn',L.c==='warn'); s.querySelector('span').textContent=L.t; s.setAttribute('role','button'); s.tabIndex=0; }
   if(!$('#acctSheet').hidden) fillSheet();
 }
@@ -1390,7 +1432,45 @@ function fillSheet(){
     $('#acctStatus').textContent = sbErr ? `Não deu pra sincronizar: ${sbErr}` : L.t+when;
   }
 }
-function openSheet(){ fillSheet(); try{ const em=localStorage.getItem('2fit-email'); if(em && !$('#loginEmail').value) $('#loginEmail').value=em; }catch(e){} $('#acctSheet').hidden=false; if(!sbAuth) setTimeout(()=>{ try{ $('#loginEmail').focus(); }catch(e){} },250); }
+/* Tela de login */
+function placeLoginSplit(){
+  const a=$('#lg2').getBoundingClientRect(), f=$('#lgF').getBoundingClientRect(), H=innerHeight, W=innerWidth;
+  if(!a.width) return;
+  /* A diagonal passa entre o 2 e o Fit. Acima do logo ela vira pra direita e encosta na borda,
+     assim o topo fica todo rosa (a barra de status do iPhone tem uma cor só). */
+  const mx=(a.right+f.left)/2, my=(a.top+a.bottom)/2, k=0.16;
+  const xb=mx-(H-my)*k;
+  const topo=Math.max(parseFloat(getComputedStyle($('.lg-in')).paddingTop)*0.55, 34);
+  const xk=mx+(my-a.top)*k;                /* ponto da diagonal na altura do topo do logo */
+  $('#lgPk').style.clipPath=`polygon(0 0,${W}px 0,${W}px ${topo}px,${xk}px ${a.top}px,${xb}px ${H}px,0 ${H}px)`;
+}
+function showLogin(){
+  const el=$('#v-login'); if(!el.hidden) return;
+  el.hidden=false; closeSheet();
+  try{ const m=document.querySelector('meta[name="theme-color"]'); if(m) m.content='#FFD9E6'; }catch(e){}
+  try{ const em=localStorage.getItem('2fit-email'); if(em) $('#gateEmail').value=em; }catch(e){}
+  requestAnimationFrame(placeLoginSplit);
+}
+function hideLogin(){ const el=$('#v-login'); if(el.hidden) return; el.hidden=true; }
+window.addEventListener('resize',()=>{ if(!$('#v-login').hidden) placeLoginSplit(); });
+document.addEventListener('submit',async ev=>{
+  if(ev.target.id!=='gateForm') return;
+  ev.preventDefault();
+  const email=$('#gateEmail').value.trim(), pass=$('#gatePass').value, err=$('#gateErr'), btn=$('#gateBtn');
+  err.hidden=true;
+  if(!email||!pass){ err.textContent='Preencha o e-mail e a senha.'; err.hidden=false; return; }
+  if(!navigator.onLine){ err.textContent='Sem internet agora. Na primeira vez precisa de conexão pra entrar.'; err.hidden=false; return; }
+  btn.disabled=true; btn.textContent='Entrando…';
+  try{
+    await sbAuthCall('password',{email,password:pass}); $('#gatePass').value=''; try{ localStorage.setItem('2fit-email',email); }catch(e){}
+    document.activeElement && document.activeElement.blur();
+    try{ history.replaceState(null,'','#home'); }catch(e){}
+    hideLogin(); show('home'); updSyncUI(); sbPull(); toast('Bem-vindo ao 2Fit');
+  }catch(e){ err.textContent = /invalid/i.test(e.message) ? 'E-mail ou senha incorretos.' : `Não deu pra entrar: ${e.message}`; err.hidden=false; }
+  btn.disabled=false; btn.textContent='Entrar';
+});
+
+function openSheet(){ if(!sbAuth){ showLogin(); return; } fillSheet(); try{ const em=localStorage.getItem('2fit-email'); if(em && !$('#loginEmail').value) $('#loginEmail').value=em; }catch(e){} $('#acctSheet').hidden=false; if(!sbAuth) setTimeout(()=>{ try{ $('#loginEmail').focus(); }catch(e){} },250); }
 function closeSheet(){ $('#acctSheet').hidden=true; }
 function sbInit(){
   if(!SB_ON) return;
@@ -1405,7 +1485,12 @@ document.addEventListener('click',ev=>{
   if(ev.target.closest('#acctBtn') || ev.target.closest('#sync.clickable')){ openSheet(); return; }
   if(ev.target.closest('#acctClose') || ev.target.id==='acctSheet'){ closeSheet(); return; }
   if(ev.target.closest('#syncNow')){ sbPull().then(()=>toast(sbErr?'Não deu pra sincronizar':'Sincronizado')); return; }
-  if(ev.target.closest('#logoutBtn')){ sbAuth=null; sbSaveAuth(); updSyncUI(); fillSheet(); toast('Você saiu. Os treinos continuam neste celular'); return; }
+  if(ev.target.closest('#logoutBtn')){
+    sbAuth=null; sbSaveAuth(); closeSheet();
+    try{ history.replaceState(null,'','#home'); }catch(e){}
+    if(IS_SITE){ location.reload(); return; }   /* recarrega pra barra de status pegar o rosa do login */
+    updSyncUI(); return;
+  }
 });
 document.addEventListener('submit',async ev=>{
   if(ev.target.id!=='loginForm') return;

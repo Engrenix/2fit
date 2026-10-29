@@ -41,6 +41,6 @@ Com a sincronização ligada, os treinos ficam na nuvem: backup automático e os
 3. Em **Authentication > Sign In / Providers**, desligue "Allow new users to sign up".
 4. Em **Authentication > Users > Add user**, crie as duas contas (e-mail e senha), com "Auto Confirm User" marcado.
 5. Em **Project Settings > API**, copie a "Project URL" e a chave "anon public" para o `config.js`.
-6. No app, toque em **Entrar** (canto de cima da tela inicial) e entre com a conta.
+6. Abra o app: na primeira vez aparece a tela de login. Depois de entrar, o app abre direto, até sem internet.
 
 A chave "anon" pode ficar pública: quem protege os dados é o login e as regras do `setup.sql`. Nunca coloque a chave "service_role" no repositório.
