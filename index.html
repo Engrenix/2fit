@@ -265,6 +265,13 @@ h1 em{font-style:normal;color:var(--accent)}
 .ex-body{padding:0 14px 14px;display:flex;flex-direction:column;gap:10px}
 .obs{font-size:13.5px;color:var(--muted);margin:0;max-width:62ch}
 .obs strong{color:var(--ink);font-weight:600}
+/* Anotação fixa do exercício (vale pra todas as semanas) */
+.note-btn{display:flex;gap:6px;align-items:flex-start;width:100%;text-align:left;border:1px dashed var(--line);background:transparent;border-radius:10px;padding:9px 11px;font-size:13px;line-height:1.35;color:var(--muted)}
+.note-btn svg{width:15px;height:15px;flex:none;margin-top:1px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.note.has .note-btn{border-style:solid;border-color:var(--accent-soft);background:var(--chip);color:var(--ink)}
+.note-btn b{font-weight:700}
+.note-in{display:block;width:100%;font:16px/1.35 var(--f-body);border:1.5px solid var(--accent);border-radius:10px;padding:9px 11px;background:var(--surface);color:var(--ink);resize:none}
+.note-foot{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-top:4px}
 .last{font-size:12.5px;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .last b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
 
@@ -739,6 +746,7 @@ function exCard(d,e,i,s){
         <div class="legend"><span><i style="background:var(--accent)"></i>Principal</span><span><i style="background:var(--accent-soft)"></i>Auxiliar</span></div>
         <div class="last">Foco: <b>${esc(musc)}</b></div></div>
       <p class="obs">${e.o}</p>
+      ${noteHtml(e.id)}
       ${lastTxt}
       <div class="sets">${setsHtml}</div>
       <div class="ex-foot">
@@ -770,9 +778,41 @@ function renderEvo(){
   evo.innerHTML = list.map(x=>`<div class="bar"><span>${fmtDate(x.date)}${x.date===TODAY?' · hoje':''}</span><div class="t"><i style="width:${Math.max(4,x.vol/max*100)}%"></i></div><span class="v">${Math.round(x.vol).toLocaleString('pt-BR')} kg</span></div>`).join('');
 }
 
+/* ---------- Anotação por exercício ---------- */
+const PEN='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M14 6l4 4"/></svg>';
+const getNote=id=>((state.config.notes||{})[id]||'');
+function noteHtml(id){
+  const n=getNote(id);
+  return `<div class="note${n?' has':''}" data-note="${id}">
+    <button type="button" class="note-btn" data-note-open="${id}">${PEN}<span>${n?`<b>Anotação:</b> ${esc(n)}`:'Adicionar anotação (ajuste da máquina, pegada...)'}</span></button>
+    <div hidden><textarea id="note-${id}" class="note-in" rows="2" maxlength="120" enterkeyhint="done" autocapitalize="sentences" placeholder="Ex.: banco na altura 4, pegada fechada" aria-label="Anotação do exercício">${esc(n)}</textarea>
+    <div class="note-foot"><span>Fica salva pra todas as semanas</span><span class="cnt">${n.length}/120</span></div></div>
+  </div>`;
+}
+function closeNote(id){
+  const box=document.querySelector(`[data-note="${id}"]`); if(!box) return;
+  box.outerHTML=noteHtml(id);
+}
+document.addEventListener('click',ev=>{
+  const b=ev.target.closest('[data-note-open]'); if(!b) return;
+  const box=b.closest('.note'); b.hidden=true; box.querySelector('div[hidden]').hidden=false;
+  const ta=box.querySelector('textarea'); ta.focus(); ta.setSelectionRange(ta.value.length,ta.value.length);
+});
+document.addEventListener('input',ev=>{
+  if(!ev.target.classList || !ev.target.classList.contains('note-in')) return;
+  const ta=ev.target, id=ta.id.slice(5);
+  if(ta.value.includes('\n')) ta.value=ta.value.replace(/\n/g,' ');
+  const notes=Object.assign({}, state.config.notes||{});
+  const v=ta.value.trim(); if(v) notes[id]=v; else delete notes[id];
+  state.config.notes=notes; touch('config');
+  const c=ta.parentElement.querySelector('.cnt'); if(c) c.textContent=`${ta.value.length}/120`;
+});
+document.addEventListener('keydown',ev=>{ if(ev.target.classList && ev.target.classList.contains('note-in') && ev.key==='Enter'){ ev.preventDefault(); ev.target.blur(); } });
+document.addEventListener('focusout',ev=>{ if(ev.target.classList && ev.target.classList.contains('note-in')){ const id=ev.target.id.slice(5); setTimeout(()=>closeNote(id),0); } });
+
 function softRender(){
   const a=document.activeElement;
-  if(a && a.tagName==='INPUT'){ setTimeout(softRender,1500); return; }
+  if(a && (a.tagName==='INPUT'||a.tagName==='TEXTAREA')){ setTimeout(softRender,1500); return; }
   renderTabs(); renderDay(); renderCal();
 }
 

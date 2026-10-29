@@ -22,6 +22,7 @@ App de treino do casal (Júnior e Thai). Tudo roda num arquivo só: `index.html`
 - A carga é guardada com ponto e exibida com vírgula (`kgNorm` e `kgShow`).
 - A semana vai de segunda a domingo e zera sozinha. O histórico nunca é apagado.
 - Tela inicial: metade de cima rosa (Thai), metade de baixo verde-escuro (Júnior). A ficha da Thai é rosa; a do Júnior será em tons neutros.
+- Anotações por exercício ficam em `state.config.notes[idDoExercicio]` (até 120 caracteres) e valem pra todas as semanas. Ao trocar um exercício na ficha, a anotação do id antigo deixa de aparecer.
 - Backup: o botão do painel exporta um JSON `{app:'2fit', formato:1, exportadoEm, sessions, config}`. A importação junta os dados por `updatedAt` e nunca apaga nada. Pra revisar uma ficha, peça esse arquivo.
 - Offline: `sw.js` guarda o app no celular. **Sempre que mudar algum arquivo do app, suba a `VERSAO` no `sw.js`**, senão o iPhone pode continuar mostrando a versão antiga.
 - O repositório pode ser público: não coloque aqui detalhes pessoais além do necessário pro treino.
