@@ -769,14 +769,14 @@ let DAYS=PLANS[WHO];
 /* ---------- Corpo (mapa muscular) ---------- */
 /* Boneco anatômico: cada músculo é uma forma; os trabalhados ganham cor. Lado esquerdo desenhado, direito espelhado. */
 const FIG={
- f:{sx:34,ax:37.4,wx:39.6,hx:30.4,ua:7.2,fa:6.2,th:1, neck:4.2},
+ f:{sx:33.6,ax:37.2,wx:39.4,hx:32.6,ua:7.2,fa:6.2,th:1, neck:4.2},
  m:{sx:28.5,ax:34.5,wx:36.6,hx:34,ua:9.2,fa:7.6,th:0, neck:5.2}
 };
 function figParts(sex, view){
   const P=FIG[sex], S=P.sx, A=P.ax, W=P.wx, H=P.hx, U=P.ua, Fa=P.fa, fem=sex==='f';
   const base=[], mus={};
   // silhueta (preenche juntas e contorno)
-  base.push(`M50 ${fem?27:28} L${50-P.neck} ${fem?27:28} Q${50-P.neck} 31 ${S+7} 33 Q${S-1} 33.5 ${S-3.5} 42 L${S-6} 64 L${S-8.5} 90 Q${S-8} 97 ${S-5} 97 L${S-3} 90 L${S-1} 66 L${A-1} 47 Q${W-1} 62 ${W} 74 Q${fem?H-1:H} ${fem?84:86} ${H} 96 Q${H+2} 122 ${H+3.4} 140 Q${H+1.6} 154 ${H+6.6} 181 Q${H+3.2} 186 ${H+4} 190 L${H+11.6} 190 L${H+11.4} 181 Q${H+13.6} 156 ${H+12.6} 141 Q${H+13.4} 120 48.5 104 L50 104 Z`);
+  base.push(`M50 ${fem?27:28} L${50-P.neck} ${fem?27:28} Q${50-P.neck} 31 ${S+7} 33 Q${S-1} 33.5 ${S-3.5} 42 L${S-6} 64 L${S-8.5} 90 Q${S-8} 97 ${S-5} 97 L${S-3} 90 L${S-1} 66 L${A-1} 47 Q${W-1} 62 ${W} 74 Q${H} 86 ${H} 96 Q${H+2} 122 ${H+3.4} 140 Q${H+1.6} 154 ${H+6.6} 181 Q${H+3.2} 186 ${H+4} 190 L${H+11.6} 190 L${H+11.4} 181 Q${H+13.6} 156 ${H+12.6} 141 Q${H+13.4} 120 48.5 104 L50 104 Z`);
   // cabeça
   const head = `<ellipse cx="50" cy="15" rx="${fem?8.2:8.6}" ry="10" />`;
   if(view==='front'){
@@ -801,7 +801,7 @@ function figParts(sex, view){
     mus.lombar=[`M44.5 77 Q47 72 49.4 70 L49.4 87 L44 87 Q43.8 81 44.5 77 Z`];
     mus.gluteomed=[`M${W+0.4} 80 Q${W-1} 86 ${H+0.4} 93 Q${H+5} 92 ${H+9} 89.5 Q43 86 43.4 82 Q41 79.5 ${W+0.4} 80 Z`];
     mus.gluteomax=fem
-      ?[`M${H+1} 95 Q${H+6} 90.5 43.6 89.6 L49.4 89 L49.4 108 Q46 113.5 40 112.5 Q${H+0.6} 109.5 ${H+0.4} 101 Z`]
+      ?[`M${H+1} 95 Q${H+6} 90.5 43.6 89.6 L49.4 89 L49.4 106.5 Q46 110.5 40.6 109.8 Q${H+0.8} 107.5 ${H+0.6} 100.5 Z`]
       :[`M${H+1} 95 Q${H+6} 91 43.6 90 L49.4 89.5 L49.4 106 Q46 110 40.5 109.4 Q${H+1} 107 ${H+0.6} 100 Z`];
     mus.posterior=[`M${H+1.2} 114 Q${H+4} 113 46 115 Q47.6 125 46.4 136 Q44 141 ${H+6.5} 140 Q${H+2.4} 130 ${H+1.2} 114 Z`];
     mus.panturrilha=[`M${H+5.8} 146 Q${H+3.6} 156 ${H+6.4} 168 Q${H+8.6} 171 ${H+11.4} 168 Q${H+13} 156 ${H+11.6} 146 Q${H+8.6} 143.5 ${H+5.8} 146 Z`];
