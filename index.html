@@ -31,7 +31,7 @@
 /* Layout: caderno de treino em coluna única; abas dos dias no topo, cartões de exercício empilhados, cronômetro fixo embaixo */
 :root{
   --bg:#FFF3F7; --surface:#FFFFFF; --ink:#4E2D3D; --muted:#9C7A89; --line:#F5DCE6;
-  --accent:#E8689A; --accent-soft:#FBD6E4; --accent-ink:#FFFFFF; --body:#F6E2EA; --chip:#FDEAF1;
+  --accent:#E8689A; --accent-soft:#FBD6E4; --accent-ink:#FFFFFF; --body:#EBCFDB; --body-line:#D6AFC0; --aux:#F4A8C6; --chip:#FDEAF1;
   --ok:#5BBA93; --ok-soft:#DDF3E9; color-scheme:light;
   --f-display:"Archivo", "Arial Narrow", system-ui, sans-serif;
   --f-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -206,7 +206,7 @@ body.neutral{
 }
 body.jr{
   --bg:#F7F4EF; --surface:#FFFFFF; --ink:#26302B; --muted:#7D8079; --line:#E5E1D8;
-  --accent:#2F4A3E; --accent-soft:#DCE6DF; --accent-ink:#FFFFFF; --body:#ECE7DF; --chip:#EFEBE4;
+  --accent:#2F4A3E; --accent-soft:#DCE6DF; --accent-ink:#FFFFFF; --body:#DDD5C9; --body-line:#C2B8A8; --aux:#8DB09F; --chip:#EFEBE4;
 }
 body.jr .to-panel{box-shadow:0 6px 16px rgba(47,74,62,.25)}
 body.jr .inp input:focus{outline-color:#2F4A3E}
@@ -297,6 +297,7 @@ h1 em{font-style:normal;color:var(--accent)}
 .tab[aria-selected="true"] span{color:inherit;opacity:.75}
 .tab .today{position:absolute;top:5px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--accent)}
 .tab.full{background:var(--ok-soft);border-color:var(--ok)}
+.tab.full[aria-selected="true"]{background:var(--ok);border-color:var(--ok);color:#FFFFFF}
 .tab.part{border-color:var(--accent);border-style:dashed}
 .tab .tdone{position:absolute;top:3px;left:6px;font-style:normal;font-size:11px;font-weight:800;color:var(--ok)}
 .tab[aria-selected="true"] .tdone{color:var(--surface)}
@@ -375,7 +376,7 @@ h1 em{font-style:normal;color:var(--accent)}
 .rest-card ul{margin:0;padding-left:18px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
 
 /* Mapa grande */
-.mapsheet{background:var(--chip);border-radius:12px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.mapsheet{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px}
 .mapsheet svg{width:100%;max-width:300px;height:auto}
 .legend{display:flex;gap:14px;font-size:12px;color:var(--muted)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
@@ -710,7 +711,7 @@ const REG = {
 };
 REG.back.gluteomed.push([8.5,86,6.5,4]);
 function silhouette(cx){
-  return `<g fill="var(--body)">
+  return `<g fill="var(--body)" stroke="var(--body-line)" stroke-width=".8">
   <circle cx="${cx}" cy="13" r="9"/><rect x="${cx-4}" y="20" width="8" height="8" rx="3"/>
   <path d="M${cx-19} 29 Q${cx} 24 ${cx+19} 29 L${cx+15} 80 L${cx+17} 97 L${cx-17} 97 L${cx-15} 80 Z"/>
   <rect x="${cx-26}" y="30" width="9.5" height="35" rx="4.7"/><rect x="${cx+16.5}" y="30" width="9.5" height="35" rx="4.7"/>
@@ -722,7 +723,7 @@ function silhouette(cx){
 function regions(side, cx, prim, sec){
   let out='';
   for(const [k,arr] of Object.entries(REG[side])){
-    const st = prim.includes(k)?'var(--accent)':sec.includes(k)?'var(--accent-soft)':'transparent';
+    const st = prim.includes(k)?'var(--accent)':sec.includes(k)?'var(--aux)':'transparent';
     if(st==='transparent') continue;
     for(const [dx,y,rx,ry] of arr) out+=`<ellipse class="m" cx="${cx+dx}" cy="${y}" rx="${rx}" ry="${ry}" fill="${st}"/>`;
   }
@@ -898,7 +899,7 @@ function exCard(d,e,i,s){
     </div>
     <div class="ex-body">
       <div class="mapsheet" id="map-${e.id}" hidden>${bodySVG(e.p,e.q,true)}
-        <div class="legend"><span><i style="background:var(--accent)"></i>Principal</span><span><i style="background:var(--accent-soft)"></i>Auxiliar</span></div>
+        <div class="legend"><span><i style="background:var(--accent)"></i>Principal</span><span><i style="background:var(--aux)"></i>Auxiliar</span></div>
         <div class="last">Foco: <b>${esc(musc)}</b></div></div>
       <p class="obs">${e.o}</p>
       ${noteHtml(e.id)}
