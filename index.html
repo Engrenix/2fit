@@ -126,6 +126,8 @@ html:has(#v-login:not([hidden])),body:has(#v-login:not([hidden])){background:#FF
 .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:2px;min-width:0}
 .kpi .l{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
 .kpi .v{font-family:var(--f-display);font-stretch:112%;font-weight:900;font-size:30px;line-height:1.05;font-variant-numeric:tabular-nums;color:var(--ink)}
+.kpi .v{white-space:nowrap}
+.kpi .v.n8{font-size:25px}.kpi .v.n10{font-size:21px}
 .kpi .v small{font-family:var(--f-body);font-size:14px;font-weight:600;color:var(--muted);margin-left:2px}
 .kpi .s{font-size:12.5px;color:var(--muted)}
 .kpi .s.up{color:var(--ok);font-weight:700}
@@ -1628,11 +1630,11 @@ function renderPanel(){
   const recent=Array.from({length:26},(_,i)=>addDays(WEEK,-7*(25-i)));
   let streak=0; for(let i=recent.length-1;i>=0;i--){ const n=[...allDays].filter(d=>mondayOf(d)===recent[i]).length; if(n>=3) streak++; else if(i===recent.length-1) continue; else break; }
   const prevName={mes:'mês passado',d60:'60 dias anteriores',d120:'120 dias anteriores',d365:'ano anterior'}[period];
-  const K=(l,v,s,cls='')=>`<div class="kpi"><span class="l">${l}</span><span class="v">${v}</span><span class="s ${cls}">${s}</span></div>`;
+  const K=(l,v,s,cls='')=>{ const n=String(v).replace(/<small>.*?<\/small>/g,'').length; return `<div class="kpi"><span class="l">${l}</span><span class="v${n>=10?' n10':n>=8?' n8':''}">${v}</span><span class="s ${cls}">${s}</span></div>`; };
   $('#kpis').innerHTML =
     K('Dias de treino', nDays, PERIODS[period].toLowerCase()) +
     K('Treinos fechados', period==='semana'?`${closed}<small>/4</small>`:closed, 'fichas completas') +
-    K('Peso total', S.length?fmtKg(vol):'—', delta===null?(pvol?'período anterior incompleto':'sem dados do período anterior'):(delta>=0?`▲ ${delta}% vs ${prevName}`:`${prevName}: ${fmtKg(pvol)}`), delta!==null&&delta>=0?'up':'') +
+    K('Peso total', S.length?`${Math.round(vol).toLocaleString('pt-BR')}<small>kg</small>`:'—', delta===null?(pvol?'período anterior incompleto':'sem dados do período anterior'):(delta>=0?`▲ ${delta}% vs ${prevName}`:`${prevName}: ${fmtKg(pvol)}`), delta!==null&&delta>=0?'up':'') +
     (period==='semana'
       ? K('Sequência', `${streak}<small>${streak===1?'semana':'semanas'}</small>`, '3+ treinos por semana')
       : K('Média semanal', (nDays/wk).toLocaleString('pt-BR',{maximumFractionDigits:1}), 'dias de treino por semana'));
