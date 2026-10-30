@@ -636,7 +636,7 @@ details.guide .in b{color:var(--ink)}
   </header>
   <div class="kpis" id="kpis"></div>
   <section class="panel">
-    <div class="panel-h"><h4>Volume por semana</h4><span class="hint">carga × repetições das séries feitas</span></div>
+    <div class="panel-h"><h4>Peso total por semana</h4><span class="hint">carga × repetições das séries feitas</span></div>
     <div class="chart" id="chVol"></div>
   </section>
   <section class="panel">
@@ -1087,7 +1087,7 @@ function renderEvo(){
     .map(s=>({date:s.date, vol:Object.values(s.sets||{}).flat().filter(x=>x&&x.done).reduce((a,x)=>a+(+x.kg||0)*(+x.reps||0),0)}))
     .filter(x=>x.vol>0);
   const evo=$('#evo');
-  if(!list.length){ evo.innerHTML=`<p class="empty">Quando vocês marcarem as séries com carga e repetições, o volume total de cada sessão de ${esc(d.title)} aparece aqui (carga × repetições somadas).</p>`; return; }
+  if(!list.length){ evo.innerHTML=`<p class="empty">Quando vocês marcarem as séries com carga e repetições, o peso total de cada sessão de ${esc(d.title)} aparece aqui (carga × repetições somadas).</p>`; return; }
   const max=Math.max(...list.map(x=>x.vol));
   evo.innerHTML = list.map(x=>`<div class="bar"><span>${fmtDate(x.date)}${x.date===TODAY?' · hoje':''}</span><div class="t"><i style="width:${Math.max(4,x.vol/max*100)}%"></i></div><span class="v">${Math.round(x.vol).toLocaleString('pt-BR')} kg</span></div>`).join('');
 }
@@ -1585,7 +1585,7 @@ const MARKS=()=>demo?{}:(state.config.marks||{});
 const doneSets=s=>Object.entries(s.sets||{}).flatMap(([id,a])=>(Array.isArray(a)?a:[]).filter(x=>x&&x.done).map(x=>({id,kg:+x.kg||0,reps:+x.reps||0})));
 const volOf=s=>doneSets(s).reduce((a,x)=>a+x.kg*x.reps,0);
 function daysSet(){ const set=new Set(); for(const s of SRC()){ if(!hasWork(s)) continue; (s.days&&s.days.length?s.days:[s.date]).forEach(d=>set.add(d)); } return set; }
-const fmtKg=v=>v>=10000?(v/1000).toLocaleString('pt-BR',{maximumFractionDigits:1})+' t':Math.round(v).toLocaleString('pt-BR')+' kg';
+const fmtKg=v=>Math.round(v).toLocaleString('pt-BR')+' kg';
 
 /* Filtro de período do painel */
 const PERIODS={mes:'Este mês',d60:'Últimos 60 dias',d120:'Últimos 120 dias',d365:'Último ano'};
@@ -1632,11 +1632,11 @@ function renderPanel(){
   $('#kpis').innerHTML =
     K('Dias de treino', nDays, PERIODS[period].toLowerCase()) +
     K('Treinos fechados', period==='semana'?`${closed}<small>/4</small>`:closed, 'fichas completas') +
-    K('Volume', S.length?fmtKg(vol):'—', delta===null?(pvol?'período anterior incompleto':'sem dados do período anterior'):(delta>=0?`▲ ${delta}% vs ${prevName}`:`${prevName}: ${fmtKg(pvol)}`), delta!==null&&delta>=0?'up':'') +
+    K('Peso total', S.length?fmtKg(vol):'—', delta===null?(pvol?'período anterior incompleto':'sem dados do período anterior'):(delta>=0?`▲ ${delta}% vs ${prevName}`:`${prevName}: ${fmtKg(pvol)}`), delta!==null&&delta>=0?'up':'') +
     (period==='semana'
       ? K('Sequência', `${streak}<small>${streak===1?'semana':'semanas'}</small>`, '3+ treinos por semana')
       : K('Média semanal', (nDays/wk).toLocaleString('pt-BR',{maximumFractionDigits:1}), 'dias de treino por semana'));
-  $('#chVol').closest('.panel').querySelector('h4').textContent = period==='semana' ? 'Volume por dia' : 'Volume por semana';
+  $('#chVol').closest('.panel').querySelector('h4').textContent = period==='semana' ? 'Peso total por dia' : period==='d365' ? 'Peso total por mês' : 'Peso total por semana';
   $('#chMus').closest('.panel').querySelector('h4').textContent = period==='semana' ? 'Séries por músculo nesta semana' : 'Séries por músculo por semana';
   $('#chMus').closest('.panel').querySelector('.hint').textContent = period==='semana' ? 'faixa clara = meta semanal' : 'média do período · faixa clara = meta';
   pickLift(S); fillLiftSelect();
@@ -1664,7 +1664,7 @@ function drawVol(labels,vals,tips,hl){
     if(i%k===0||i===vals.length-1) g+=`<text x="${x+w/2}" y="${H-6}" text-anchor="middle" font-size="10.5" fill="var(--muted)">${labels[i]}</text>`;
     if(v>0&&(mark||v===top)) g+=`<text x="${x+w/2}" y="${y-6}" text-anchor="middle" font-size="11" font-weight="700" fill="var(--ink)">${fmtKg(v)}</text>`;
   });
-  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Volume"><line x1="0" x2="${W}" y1="${H-pb}" y2="${H-pb}" stroke="var(--line)"/><g class="bar-g">${g}</g></svg>`;
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Peso total"><line x1="0" x2="${W}" y1="${H-pb}" y2="${H-pb}" stroke="var(--line)"/><g class="bar-g">${g}</g></svg>`;
 }
 function drawMus(SR,wk){
   const cnt={}; GROUPS.forEach(g=>cnt[g.k]=0);
