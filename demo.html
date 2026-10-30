@@ -416,6 +416,50 @@ details.guide .in b{color:var(--ink)}
 .timer.end .clock{color:var(--accent)}
 
 
+
+/* Disputa na home: cabo de guerra */
+.split{--sh:.5}
+.split .half{transition:flex-grow .9s cubic-bezier(.3,1.35,.4,1),filter .2s}
+.h-thai{flex:var(--sh) 1 0}.h-jr{flex:calc(1 - var(--sh)) 1 0}
+.h-thai .hgo{bottom:46px}
+.rope{position:absolute;left:0;right:0;top:calc(var(--sh) * 100%);height:10px;transform:translateY(-50%);z-index:3;pointer-events:none;
+  background:repeating-linear-gradient(-55deg,#E9D3A8 0 5px,#C9A86E 5px 8px,#E9D3A8 8px 10px);box-shadow:0 2px 6px rgba(0,0,0,.25),inset 0 -2px 0 rgba(0,0,0,.12),inset 0 2px 0 rgba(255,255,255,.35);transition:top .9s cubic-bezier(.3,1.35,.4,1)}
+.score{position:absolute;left:50%;top:calc(var(--sh) * 100%);z-index:4;transform:translate(-50%,-50%);border:0;background:#fff;border-radius:99px;padding:6px 8px;display:flex;align-items:center;gap:8px;box-shadow:0 10px 26px rgba(0,0,0,.22);transition:top .9s cubic-bezier(.3,1.35,.4,1),transform .2s;white-space:nowrap;font:inherit}
+.score:active{transform:translate(-50%,-50%) scale(.96)}
+.score .p{font-family:var(--f-display);font-stretch:118%;font-weight:900;font-size:22px;line-height:1;padding:6px 10px;border-radius:99px;font-variant-numeric:tabular-nums;min-width:46px;text-align:center}
+.score .p.t{background:#FFD9E6;color:#5A1E39}.score .p.j{background:#16201C;color:#B8F2C9}
+.score .x{font-weight:900;color:#9C8F86;font-size:13px}
+.score .wk{position:absolute;top:-17px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:rgba(0,0,0,.38);padding:2px 8px;border-radius:99px}
+.hpts{position:relative;margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.hpts span{font-size:12.5px;font-weight:700;padding:4px 10px;border-radius:99px}
+.h-thai .hpts span{background:rgba(255,255,255,.6);color:#5A1E39}
+.h-jr .hpts span{background:rgba(184,242,201,.12);color:#B8F2C9}
+.h-thai .hpts span.lead{background:#5A1E39;color:#FFD9E6}.h-jr .hpts span.lead{background:#B8F2C9;color:#16201C}
+.crown{display:inline-block;font-size:.55em;vertical-align:.45em;margin-left:.15em;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25))}
+@media (max-height:560px){ .hpts span:not(.lead){display:none} }
+/* Folha da disputa */
+.duel-tb{width:100%;border-collapse:collapse;font-size:14px}
+.duel-tb th,.duel-tb td{padding:7px 4px;border-bottom:1px solid #EFE9E3;text-align:center}
+.duel-tb th:first-child,.duel-tb td:first-child{text-align:left;color:#6B5F57}
+.duel-tb thead th{font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.duel-tb thead th.t{color:#B23A6E}.duel-tb thead th.j{color:#2F4A3E}
+.duel-tb tr.tot td{font-family:var(--f-display);font-stretch:112%;font-weight:900;font-size:20px;color:#2B2420;border-bottom:0}
+.duel-row{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#F7F4EF;border-radius:14px;padding:10px 12px;font-size:14px}
+.duel-row b{white-space:nowrap;font-family:var(--f-display);font-stretch:112%;font-weight:900;font-size:18px}
+.duel-prize{width:100%;font:500 16px var(--f-body);border:1px solid #E8E1D7;border-radius:12px;padding:10px 12px;resize:none;color:#2B2420;background:#fff}
+/* Disputa na tela de resumo */
+.dn-duel{border-radius:18px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;background:var(--surface);border:1px solid var(--line)}
+.dn-duel.win{background:linear-gradient(135deg,#1E2B25,#2F4A3E);border:0;color:#E3EFE8}
+.dn-duel.win.t{background:linear-gradient(135deg,#F7A9C5,#E8689A);color:#fff}
+.dn-duel .kk{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;opacity:.75}
+.dn-duel h3{margin:0;font-family:var(--f-display);font-stretch:118%;font-weight:900;font-size:22px;line-height:1.1}
+.dn-duel .sc{display:flex;align-items:center;gap:8px}
+.dn-duel .sc .p{font-family:var(--f-display);font-stretch:118%;font-weight:900;font-size:22px;padding:5px 12px;border-radius:99px;font-variant-numeric:tabular-nums}
+.dn-duel .sc .p.t{background:#FFD9E6;color:#5A1E39}.dn-duel .sc .p.j{background:#16201C;color:#B8F2C9}
+.dn-duel p{margin:0;font-size:13.5px;opacity:.85}
+@media (prefers-reduced-motion: no-preference){ .dn-duel.win{animation:virada .7s .2s cubic-bezier(.2,1.6,.4,1) both} }
+@keyframes virada{from{transform:scale(.85) rotate(-2deg);opacity:0}}
+
 /* Boneco anatômico */
 .fb{fill:var(--body);stroke:var(--body-line);stroke-width:.7;stroke-linejoin:round}
 .fm{stroke:var(--body-line);stroke-width:.45;stroke-linejoin:round}
@@ -499,16 +543,20 @@ details.guide .in b{color:var(--ink)}
   <a class="half h-thai" href="#thai" data-go="thai" aria-label="Abrir o treino da Thai">
     <span class="bigword" aria-hidden="true">THAI</span>
     <span class="hwho">Treino da</span>
-    <span class="hname">Thai</span>
+    <span class="hname" id="nmT">Thai</span>
     <span class="hinfo" id="thaiToday">Hoje: Inferior A</span>
+    <span class="hpts" id="ptT"></span>
     <span class="hgo" aria-hidden="true">→</span>
   </a>
-  <span class="hdate" id="homeDate">Hoje</span>
+  <span class="hdate" id="homeDate" hidden>Hoje</span>
+  <div class="rope" aria-hidden="true"></div>
+  <button type="button" class="score" id="scoreBtn" aria-label="Ver a disputa da semana"><span class="wk">Semana</span><span class="p t" id="scT">0</span><span class="x">×</span><span class="p j" id="scJ">0</span></button>
   <a class="half h-jr" href="#junior" data-go="junior" aria-label="Abrir o treino do Júnior">
     <span class="bigword" aria-hidden="true">JR</span>
     <span class="hwho">Treino do</span>
-    <span class="hname">Júnior</span>
+    <span class="hname" id="nmJ">Júnior</span>
     <span class="hinfo" id="jrToday">Hoje</span>
+    <span class="hpts" id="ptJ"></span>
     <span class="hgo" aria-hidden="true">→</span>
   </a>
 </main>
@@ -642,6 +690,12 @@ details.guide .in b{color:var(--ink)}
       <button type="submit" class="lg-btn" id="gateBtn">Entrar</button>
       <p class="lg-note">Você só entra uma vez em cada celular. Depois o 2Fit abre direto, até sem internet.</p>
     </form>
+  </div>
+</div>
+<div class="sheet-bg" id="duelSheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="duelTitle">
+    <div class="sheet-h"><h3 id="duelTitle">Disputa da semana</h3><button type="button" class="sheet-x" data-duel-close aria-label="Fechar">✕</button></div>
+    <div id="duelBody"></div>
   </div>
 </div>
 <div class="sheet-bg" id="acctSheet" hidden>
@@ -1211,6 +1265,7 @@ function openDone(key){
       ${R.next.filter(x=>x.k!=='keep').map(x=>`<div class="nx ${x.k}"><span class="ic">${x.k==='up'?'↑':x.k==='down'?'↓':'='}</span><b>${esc(x.n)}</b><span class="kg"><span class="to">${kgTxt(x.to)}</span>${x.from!==undefined?`<span class="from">${kgTxt(x.from)}</span>`:''}</span><span class="why">${esc(x.why)}</span></div>`).join('')}
       ${keep.length?`<div class="nx-keep"><div class="kh"><span class="ic">=</span><div><b>Mantém a carga</b><span>Dentro da faixa: tenta 1 repetição a mais em cada série</span></div></div>
         ${keep.map(x=>`<div class="kr"><span>${esc(x.n)}</span><b>${kgTxt(x.to)}</b></div>`).join('')}</div>`:''}</section>`:''}
+    ${duelCard(key)}
     <div class="dn-stats">${st.join('')}</div>
     <div class="dn-btns"><button type="button" data-done-close>Fechar</button><button type="button" class="pri" data-done-panel>Ver painel</button></div>`;
   clearInterval(tInt); $('#timer').classList.remove('show');
@@ -1258,6 +1313,97 @@ function confetti(){
     requestAnimationFrame(f); })(t0);
 }
 
+
+/* ---------- Disputa: cabo de guerra entre os dois ---------- */
+const PTS={treino:10, coringa:5, recorde:3, sobe:2};
+function maxBefore(exId, date){
+  let m=0; for(const o of Object.values(state.sessions)){ if(!(o.date<date)) continue; for(const x of ((o.sets||{})[exId]||[])) if(x&&x.done&&+x.kg>m) m=+x.kg; } return m;
+}
+function sessPoints(d, s){
+  const r={treinos:0, coringa:0, recs:0, ups:0};
+  if(!d||d.rest||!s) return r;
+  if(d.ex.every(e=>s.done[e.id])){ if(d.optional) r.coringa++; else r.treinos++; }
+  for(const e of d.ex){
+    if(e.warm) continue;
+    const rows=((s.sets||{})[e.id]||[]).filter(x=>x&&x.done); if(!rows.length) continue;
+    const work=Math.max(0,...rows.map(x=>+x.kg||0)); if(!work) continue;
+    const before=maxBefore(e.id, s.date||TODAY); if(before>0 && work>before) r.recs++;
+    const top=topRep(e.r); if(rows.length>=e.s && rows.every(x=>(+x.reps||0)>=top)) r.ups++;
+  }
+  return r;
+}
+function weekScore(plan, wk, skipId){
+  const t={treinos:0, coringa:0, recs:0, ups:0, pts:0};
+  for(const [id,s] of Object.entries(state.sessions)){
+    if(id===skipId || weekOf(s)!==wk) continue;
+    const d=plan.find(x=>x.key===s.day); if(!d) continue;
+    const r=sessPoints(d,s); for(const k in r) t[k]+=r[k];
+  }
+  t.pts=t.treinos*PTS.treino+t.coringa*PTS.coringa+t.recs*PTS.recorde+t.ups*PTS.sobe;
+  return t;
+}
+function weekComplete(plan, wk){
+  return plan.filter(d=>!d.rest&&!d.optional).every(d=>Object.values(state.sessions).some(s=>s.day===d.key&&weekOf(s)===wk&&d.ex.every(e=>s.done[e.id])));
+}
+function streak(plan){
+  let n=0; for(let i=0;i<104;i++){ const wk=addDays(WEEK,-7*i); if(weekComplete(plan,wk)) n++; else if(i===0) continue; else break; } return n;
+}
+function duelData(){
+  const T=weekScore(DAYS_THAI,WEEK), J=weekScore(DAYS_JR,WEEK);
+  const lastWk=addDays(WEEK,-7), lT=weekScore(DAYS_THAI,lastWk).pts, lJ=weekScore(DAYS_JR,lastWk).pts;
+  const crown = lT>lJ?'t':lJ>lT?'j':'';
+  const mon=TODAY.slice(0,7); let mT=0, mJ=0;
+  for(let wk=mondayOf(mon+'-01'); wk<WEEK; wk=addDays(wk,7)){ if(wk.slice(0,7)!==mon) continue; const a=weekScore(DAYS_THAI,wk).pts, b=weekScore(DAYS_JR,wk).pts; if(a>b) mT++; else if(b>a) mJ++; }
+  return {T, J, crown, mT, mJ, sT:streak(DAYS_THAI), sJ:streak(DAYS_JR)};
+}
+let duelFirst=true;
+function renderDuel(){
+  const D=duelData(), sp=$('#v-home');
+  $('#scT').textContent=D.T.pts; $('#scJ').textContent=D.J.pts;
+  const sh=Math.max(.36,Math.min(.64,.5+(D.T.pts-D.J.pts)/(D.T.pts+D.J.pts+30)*.9));
+  const go=()=>sp.style.setProperty('--sh',sh.toFixed(3));
+  if(duelFirst && !document.documentElement.classList.contains('nav-in') && !matchMedia('(prefers-reduced-motion: reduce)').matches){ sp.style.setProperty('--sh','.5'); setTimeout(go,750); } else go();
+  duelFirst=false;
+  const chips=(x,st,lead)=>[lead?'<span class="lead">Puxando a corda</span>':'', x.treinos?`<span>${x.treinos} ${x.treinos===1?'treino':'treinos'}</span>`:'', x.recs?`<span>${x.recs} ${x.recs===1?'recorde':'recordes'} ★</span>`:'', x.ups?`<span>${x.ups} ${x.ups===1?'carga':'cargas'} ↑</span>`:'', st>1?`<span>🔥 ${st} semanas</span>`:''].join('');
+  $('#ptT').innerHTML=chips(D.T,D.sT,D.T.pts>D.J.pts); $('#ptJ').innerHTML=chips(D.J,D.sJ,D.J.pts>D.T.pts);
+  $('#nmT').innerHTML='Thai'+(D.crown==='t'?'<span class="crown" title="Venceu a semana passada">👑</span>':'');
+  $('#nmJ').innerHTML='Júnior'+(D.crown==='j'?'<span class="crown" title="Venceu a semana passada">👑</span>':'');
+}
+function openDuel(){
+  const D=duelData(); const mName=MONTHS[+TODAY.slice(5,7)-1];
+  const row=(l,k,mult)=>`<tr><td>${l} <small>×${mult}</small></td><td>${D.T[k]}</td><td>${D.J[k]}</td></tr>`;
+  $('#duelBody').innerHTML=`
+    <table class="duel-tb"><thead><tr><th></th><th class="t">Thai</th><th class="j">Júnior</th></tr></thead><tbody>
+      ${row('Treinos fechados','treinos',PTS.treino)}${row('Coringa','coringa',PTS.coringa)}${row('Recordes de carga','recs',PTS.recorde)}${row('Cargas pra subir','ups',PTS.sobe)}
+      <tr class="tot"><td>Total</td><td>${D.T.pts}</td><td>${D.J.pts}</td></tr></tbody></table>
+    <div class="duel-row" style="margin-top:12px"><span>Semanas vencidas em ${mName}</span><b>${D.mT} × ${D.mJ}</b></div>
+    <div class="duel-row" style="margin-top:8px"><span>🔥 Semanas seguidas com a ficha completa</span><b>${D.sT} × ${D.sJ}</b></div>
+    <label style="display:flex;flex-direction:column;gap:6px;margin-top:12px"><span class="sheet-txt"><b>Prêmio de ${mName}</b> · vale pra quem vencer mais semanas</span>
+      <textarea class="duel-prize" id="duelPrize" rows="2" maxlength="80" placeholder="Ex.: quem perder paga o açaí">${esc(((state.config.premios||{})[TODAY.slice(0,7)])||'')}</textarea></label>
+    <p class="sheet-txt small" style="margin-top:10px">A semana vai de segunda a domingo. Quem fizer mais pontos ganha a 👑 na semana seguinte. Recorde é levantar mais carga do que já levantou naquele exercício; "carga pra subir" é bater o topo da faixa em todas as séries.</p>`;
+  $('#duelSheet').hidden=false;
+}
+document.addEventListener('click',ev=>{
+  if(ev.target.closest('#scoreBtn')){ openDuel(); return; }
+  if(ev.target.closest('[data-duel-close]') || ev.target.id==='duelSheet'){ $('#duelSheet').hidden=true; }
+});
+document.addEventListener('input',ev=>{
+  if(ev.target.id!=='duelPrize') return;
+  const pr=Object.assign({}, state.config.premios||{}); const v=ev.target.value.replace(/\n/g,' ').trim(); const k=TODAY.slice(0,7);
+  if(v) pr[k]=v; else delete pr[k]; state.config.premios=pr; touch('config');
+});
+function duelCard(key){
+  const id=sid(key), mine=WHO, plan=PLANS[mine], other=mine==='jr'?'thai':'jr';
+  const me=weekScore(plan,WEEK).pts, them=weekScore(PLANS[other],WEEK).pts, before=weekScore(plan,WEEK,id).pts;
+  const nm={thai:'Thai',jr:'Júnior'};
+  const sc=`<div class="sc"><span class="p t">${mine==='thai'?me:them}</span><span>×</span><span class="p j">${mine==='jr'?me:them}</span></div>`;
+  const gained=me-before;
+  if(before<=them && me>them) return `<section class="dn-duel win ${mine==='thai'?'t':''}"><div class="kk">Disputa da semana</div><h3>Virou! ${nm[mine]} passou na frente</h3>${sc}<p>+${gained} pontos com esse treino</p></section>`;
+  if(me>them) return `<section class="dn-duel"><div class="kk">Disputa da semana</div><h3>Segue puxando a corda</h3>${sc}<p>+${gained} pontos com esse treino</p></section>`;
+  if(me===them) return `<section class="dn-duel"><div class="kk">Disputa da semana</div><h3>Empatou!</h3>${sc}<p>+${gained} pontos com esse treino</p></section>`;
+  return `<section class="dn-duel"><div class="kk">Disputa da semana</div><h3>Faltam ${them-me} pontos pra virar</h3>${sc}<p>+${gained} pontos com esse treino</p></section>`;
+}
+
 /* ---------- Início ---------- */
 function todayTxt(plan){
   const d=plan.find(x=>x.dow===dow);
@@ -1269,6 +1415,7 @@ function todayTxt(plan){
 function renderHome(){
   $('#thaiToday').textContent=todayTxt(DAYS_THAI);
   $('#jrToday').textContent=todayTxt(DAYS_JR);
+  renderDuel();
   try{ const n=new Date(); $('#homeDate').textContent=`${['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][n.getDay()]} · ${n.getDate()} ${MONTHS[n.getMonth()].slice(0,3)}`; }catch(e){}
 }
 function route(){
