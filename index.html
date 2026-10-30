@@ -1143,7 +1143,7 @@ let celebrated={};
 function checkDay(){
   const d=DAYS.find(x=>x.key===current); const s=session(current,false); if(!s) return;
   const all=d.ex.every(e=>s.done[e.id]);
-  if(all && !celebrated[sid(current)]){ celebrated[sid(current)]=true; confetti(); toast(d.optional?'Coringa fechado. Sábado valeu!':'Treino fechado. Mandou bem!'); setTimeout(()=>openDone(current),1300); }
+  if(all && !celebrated[sid(current)]){ celebrated[sid(current)]=true; confetti(); setTimeout(()=>openDone(current),900); }
 }
 
 
