@@ -3,7 +3,7 @@
    e uma cópia nova é buscada em segundo plano pra próxima abertura.
    Ao publicar uma versão, suba o número abaixo: o celular baixa tudo de novo,
    troca pra versão nova e o app recarrega sozinho uma vez. */
-const VERSAO = '2fit-v25';
+const VERSAO = '2fit-v26';
 const ARQUIVOS = [
   './',
   './index.html',
