@@ -729,7 +729,10 @@ const DAYS_THAI = [
   {id:'a4', n:'Abdução na máquina', per:'tronco à frente', s:3, r:'12–15', rest:90, rir:'0–1', p:['gluteomed'], q:['gluteomax'], o:'<strong>Incline o tronco à frente</strong> segurando na borda do banco: pega a parte de cima do glúteo. <strong>Drop set</strong> na última série.', yt:'cadeira abdutora tronco inclinado glúteo'},
   {id:'a5', n:'Cadeira extensora', s:2, r:'12–15', rest:75, rir:'0–1', p:['quad'], q:[], o:'Só manutenção, o quadríceps dela já é forte. Desce em 2 s. Nas duas primeiras semanas, a última série vai até a falha real.', yt:'cadeira extensora execução'}
  ]},
- {key:'supA', dow:2, short:'Ter', title:'Superior A', sub:'Costas e bíceps', ex:[
+ {key:'bt', dow:2, short:'Ter', title:'Beach tennis', sub:'Sem musculação hoje', rest:true,
+  restTitle:'Dia de beach tennis', restText:'Hoje não tem musculação. O jogo já cansa perna e ombro, e fica entre os dois treinos de perna pra não atrapalhar o glúteo.',
+  restTips:['Amanhã é Superior A: se o ombro estiver cansado do jogo, tira 1 série do desenvolvimento.','Quinta é Inferior B, 48 h depois do jogo: a perna já chega recuperada.']},
+ {key:'supA', dow:3, short:'Qua', title:'Superior A', sub:'Costas e bíceps', ex:[
   {id:'b1', n:'Puxada alta supinada', s:3, r:'8–10', rest:120, rir:'1–2', p:['dorsal'], q:['biceps'], al:true, o:'Pegada na largura dos ombros, palmas para você. Em cima, deixa a dorsal esticar antes de puxar de novo.', yt:'puxada alta pegada supinada'},
   {id:'b2', n:'Remada serrote com halter', per:'cada lado', s:3, r:'8–10', rest:90, rir:'1–2', p:['dorsal','trap'], q:['deltpost','biceps'], al:true, o:'Deixa o braço descer bem esticado lá embaixo. Puxa o cotovelo em direção ao quadril.', yt:'remada serrote halter'},
   {id:'b3', n:'Desenvolvimento com halteres', per:'sentada', s:3, r:'8–10', rest:120, rir:'1–2', p:['delt'], q:['triceps'], o:'Desce até os halteres ficarem na altura da orelha. Sem arquear as costas no banco.', yt:'desenvolvimento com halteres sentado'},
@@ -739,7 +742,6 @@ const DAYS_THAI = [
   {id:'b7', n:'Tríceps francês no cabo', s:2, r:'10–12', rest:75, rir:'0–1', p:['triceps'], q:[], al:true, o:'Com o braço acima da cabeça, a parte longa do tríceps fica alongada. Cotovelos apontando para a frente.', yt:'tríceps francês na polia'},
   {id:'b8', n:'Abdução sentada', per:'extra de glúteo', s:2, r:'15–20', rest:60, rir:'0–1', p:['gluteomed'], q:[], o:'Finalizador rápido para a parte de cima do glúteo. Glúteo leva estímulo 4 vezes na semana assim.', yt:'cadeira abdutora execução'}
  ]},
- {key:'bt', dow:3, short:'Qua', title:'Beach tennis', sub:'Sem musculação hoje', rest:true},
  {key:'infB', dow:4, short:'Qui', title:'Inferior B', sub:'Glúteo e posterior', ex:[
   {id:'c1', n:'Levantamento terra romeno', per:'barra', s:4, r:'6–8', rest:150, rir:'2', p:['posterior','gluteomax'], q:['lombar'], al:true, o:'<strong>Nunca até a falha.</strong> Barra desliza rente à coxa e desce até o quadril não ir mais para trás. Coluna neutra.', yt:'levantamento terra romeno execução'},
   {id:'c2', n:'Mesa flexora sentada', s:3, r:'10–12', rest:90, rir:'0–1', p:['posterior'], q:[], al:true, o:'<strong>A flexora que mais faz crescer:</strong> com o quadril dobrado, o posterior trabalha alongado. Incline o tronco à frente.', yt:'cadeira flexora sentada execução'},
@@ -773,15 +775,7 @@ const DAYS_THAI = [
 const OMBRO='<strong>Ombro esquerdo:</strong> se doer mais que 3 de 10, ou continuar doendo no dia seguinte, corta 1 série de ombro na semana.';
 const LAT='Sobe com o braço <strong>um pouco à frente do corpo</strong> (uns 30°), polegar pra cima, só até a altura do ombro. Nunca com o polegar pra baixo.';
 const DAYS_JR = [
- {key:'jA', dow:1, short:'Seg', title:'Treino A', sub:'Costas em largura e bíceps', ex:[
-  {id:'ja1', n:'Puxada alta pegada neutra', s:3, r:'6–10', rest:150, rir:'1–2', p:['dorsal'], q:['biceps','trap'], al:true, o:'Em cima, deixa a dorsal esticar antes de puxar. Leva os cotovelos em direção ao quadril, peito pra cima.', yt:'puxada alta pegada neutra'},
-  {id:'ja2', n:'Remada baixa sentada', s:3, r:'8–12', rest:120, rir:'1–2', p:['dorsal','trap'], q:['deltpost','biceps'], al:true, o:'Deixa os ombros irem à frente pra esticar as costas e puxa até a barriga, sem jogar o tronco pra trás.', yt:'remada baixa sentada triângulo'},
-  {id:'ja3', n:'Pullover no cabo', s:2, r:'10–15', rest:75, rir:'0–1', p:['dorsal'], q:[], al:true, o:'Braços quase esticados, começa bem acima da cabeça e leva a barra até a coxa. É o que mais abre a dorsal sem cansar o braço.', yt:'pullover no cabo dorsal'},
-  {id:'ja4', n:'Crucifixo inverso na máquina', s:3, r:'12–20', rest:60, rir:'0–1', p:['deltpost'], q:['trap'], o:'Braços quase esticados, abre até a linha do corpo. Ajuda a postura e dá contorno ao ombro visto de costas.', yt:'crucifixo inverso máquina'},
-  {id:'ja5', n:'Elevação lateral no cabo', per:'um braço de cada vez', s:3, r:'12–20', rest:60, rir:'0–1', p:['delt'], q:[], al:true, o:LAT, yt:'elevação lateral no cabo unilateral'},
-  {id:'ja6', n:'Rosca inclinada com halteres', s:3, r:'8–12', rest:75, rir:'0–1', p:['biceps'], q:[], al:true, o:'Banco a 45° e braço pendurado atrás do corpo: o bíceps trabalha esticado, a posição que mais faz crescer.', yt:'rosca inclinada halteres banco'}
- ]},
- {key:'jB', dow:2, short:'Ter', title:'Treino B', sub:'Peito superior, ombro e tríceps', ex:[
+ {key:'jB', dow:1, short:'Seg', title:'Treino A', sub:'Peito superior, ombro e tríceps', ex:[
   {id:'jb0', n:'Rotação externa no cabo', per:'aquecimento', warm:true, s:2, r:'15', rest:45, rir:'leve', p:['deltpost'], q:[], o:'<strong>Leve, só pra aquecer o manguito.</strong> Cotovelo colado no corpo a 90°, gira o antebraço pra fora devagar. Protege o ombro esquerdo.', yt:'rotação externa no cabo manguito rotador'},
   {id:'jb1', n:'Supino inclinado com halteres', per:'pegada neutra, 30°', s:3, r:'6–10', rest:150, rir:'1–2', p:['peito'], q:['delt','triceps'], al:true, o:'Banco a 30° e palmas viradas uma pra outra: mais seguro pro ombro. Desce até sentir o peito esticar. '+OMBRO, yt:'supino inclinado halteres pegada neutra'},
   {id:'jb2', n:'Crossover de baixo pra cima', s:3, r:'10–15', rest:75, rir:'0–1', p:['peito'], q:['delt'], o:'Polias embaixo, leva as mãos até a altura do queixo. Pega a parte de cima do peito.', yt:'crossover de baixo para cima peitoral superior'},
@@ -789,10 +783,26 @@ const DAYS_JR = [
   {id:'jb4', n:'Tríceps acima da cabeça no cabo', s:3, r:'10–15', rest:75, rir:'0–1', p:['triceps'], q:[], al:true, o:'Cotovelos apontando pra frente, desce até o tríceps esticar. <strong>Se incomodar o ombro</strong>, troca pela corda no pulley.', yt:'tríceps francês na polia'},
   {id:'jb5', n:'Panturrilha em pé', s:4, r:'8–15', rest:60, rir:'0–1', p:['panturrilha'], q:[], al:true, o:'<strong>Pausa de 2 s lá embaixo</strong>, com a panturrilha esticada. Sobe até a ponta do pé, sem quicar.', yt:'panturrilha em pé máquina'}
  ]},
- {key:'jbt', dow:3, short:'Qua', title:'Cross e beach tennis', sub:'Sem academia hoje', rest:true,
-  restTitle:'Cross e beach tennis', restText:'Hoje não tem academia. O cross do almoço e o beach tennis já são carga suficiente, e a quarta fica no meio da semana pra recuperar.',
-  restTips:['Quinta é costas e ombro posterior: chega com o ombro descansado.','Se o ombro esquerdo reclamou no beach tennis, corta 1 série de ombro na quinta.']},
- {key:'jC', dow:4, short:'Qui', title:'Treino C', sub:'Costas, ombro posterior e bíceps', ex:[
+ {key:'jbt', dow:2, short:'Ter', title:'Cross e beach tennis', sub:'Sem academia hoje', rest:true,
+  restTitle:'Cross e beach tennis', restText:'Hoje não tem academia. Cross no almoço e beach à noite: é o dia mais pesado da semana, então capricha no sono.',
+  restTips:['Amanhã é costas e bíceps: o ombro só trabalha a parte de trás e descansa do jogo.','Se o ombro esquerdo reclamou no beach, corta 1 série de elevação lateral na quinta.']},
+ {key:'jA', dow:3, short:'Qua', title:'Treino B', sub:'Costas em largura e bíceps', ex:[
+  {id:'ja1', n:'Puxada alta pegada neutra', s:3, r:'6–10', rest:150, rir:'1–2', p:['dorsal'], q:['biceps','trap'], al:true, o:'Em cima, deixa a dorsal esticar antes de puxar. Leva os cotovelos em direção ao quadril, peito pra cima.', yt:'puxada alta pegada neutra'},
+  {id:'ja2', n:'Remada baixa sentada', s:3, r:'8–12', rest:120, rir:'1–2', p:['dorsal','trap'], q:['deltpost','biceps'], al:true, o:'Deixa os ombros irem à frente pra esticar as costas e puxa até a barriga, sem jogar o tronco pra trás.', yt:'remada baixa sentada triângulo'},
+  {id:'ja3', n:'Pullover no cabo', s:2, r:'10–15', rest:75, rir:'0–1', p:['dorsal'], q:[], al:true, o:'Braços quase esticados, começa bem acima da cabeça e leva a barra até a coxa. É o que mais abre a dorsal sem cansar o braço.', yt:'pullover no cabo dorsal'},
+  {id:'ja4', n:'Crucifixo inverso na máquina', s:3, r:'12–20', rest:60, rir:'0–1', p:['deltpost'], q:['trap'], o:'Braços quase esticados, abre até a linha do corpo. Ajuda a postura e dá contorno ao ombro visto de costas.', yt:'crucifixo inverso máquina'},
+  {id:'ja6', n:'Rosca inclinada com halteres', s:3, r:'8–12', rest:75, rir:'0–1', p:['biceps'], q:[], al:true, o:'Banco a 45° e braço pendurado atrás do corpo: o bíceps trabalha esticado, a posição que mais faz crescer.', yt:'rosca inclinada halteres banco'}
+ ]},
+ {key:'jD', dow:4, short:'Qui', title:'Treino C', sub:'Peito, ombro e braços', ex:[
+  {id:'jd0', n:'Rotação externa no cabo', per:'aquecimento', warm:true, s:2, r:'15', rest:45, rir:'leve', p:['deltpost'], q:[], o:'<strong>Leve, só pra aquecer o manguito.</strong> Cotovelo colado no corpo a 90°, gira o antebraço pra fora devagar.', yt:'rotação externa no cabo manguito rotador'},
+  {id:'jd1', n:'Supino inclinado na máquina', per:'pegada neutra se tiver', s:3, r:'6–10', rest:150, rir:'1–2', p:['peito'], q:['delt','triceps'], o:'Desce controlando até o peito esticar, sem deixar o ombro ir pra frente. <strong>Se o cross do dia acabou com o ombro, tira 1 série.</strong>', yt:'supino inclinado máquina'},
+  {id:'jd2', n:'Voador (peck deck)', s:2, r:'12–15', rest:75, rir:'0–1', p:['peito'], q:[], al:true, o:'Abre até o peito esticar, sem deixar o ombro passar da linha do corpo. Junta as mãos apertando o peito.', yt:'voador peck deck execução'},
+  {id:'jd3', n:'Elevação lateral no cabo', per:'um braço de cada vez', s:4, r:'12–20', rest:60, rir:'0–1', p:['delt'], q:[], al:true, o:LAT+' <strong>Última série:</strong> meias repetições no final.', yt:'elevação lateral no cabo unilateral'},
+  {id:'jd4', n:'Tríceps no pulley', s:3, r:'10–15', rest:60, rir:'0–1', p:['triceps'], q:[], o:'Cotovelos colados no corpo, estica o braço todo lá embaixo.', yt:'tríceps pulley barra'},
+  {id:'jd5', n:'Rosca martelo', s:2, r:'10–12', rest:60, rir:'0–1', p:['biceps','antebraco'], q:[], o:'Palmas viradas uma pra outra. Engrossa o braço visto de frente.', yt:'rosca martelo halteres'},
+  {id:'jd6', n:'Panturrilha sentado', s:4, r:'10–20', rest:60, rir:'0–1', p:['panturrilha'], q:[], al:true, o:'Pausa de 2 s lá embaixo. Sentado pega a parte de dentro da panturrilha (sóleo).', yt:'panturrilha sentado máquina'}
+ ]},
+ {key:'jC', dow:5, short:'Sex', title:'Treino D', sub:'Costas, ombro posterior e bíceps', ex:[
   {id:'jc1', n:'Puxada unilateral no cabo', per:'cada lado', s:3, r:'8–12', rest:90, rir:'1–2', p:['dorsal'], q:['biceps'], al:true, o:'Sentado ou ajoelhado, deixa o braço subir bem esticado e puxa o cotovelo em direção ao quadril.', yt:'puxada unilateral no cabo dorsal'},
   {id:'jc2', n:'Remada com peito apoiado', per:'cotovelo aberto', s:3, r:'8–12', rest:120, rir:'1–2', p:['dorsal','trap'], q:['deltpost','biceps'], o:'Peito colado no apoio, sem roubar com a lombar. Cotovelos abertos pegam a parte de cima das costas.', yt:'remada peito apoiado máquina'},
   {id:'jc3', n:'Face pull', s:3, r:'15–20', rest:60, rir:'1–2', p:['deltpost'], q:['trap'], o:'Corda na altura do rosto, puxa abrindo as mãos e girando pra fora no final. Ótimo pro manguito do ombro esquerdo.', yt:'face pull corda execução'},
@@ -800,21 +810,11 @@ const DAYS_JR = [
   {id:'jc5', n:'Rosca no cabo com braço atrás', per:'Bayesian', s:3, r:'10–15', rest:75, rir:'0–1', p:['biceps'], q:[], al:true, o:'De costas pra polia, braço atrás da linha do corpo: o bíceps trabalha esticado o tempo todo.', yt:'rosca bayesian cabo'},
   {id:'jc6', n:'Mesa flexora', s:3, r:'8–12', rest:90, rir:'0–1', p:['posterior'], q:[], al:true, o:'O cross quase não trabalha a flexão do joelho. Se tiver a sentada, prefira: o posterior trabalha mais esticado.', yt:'mesa flexora execução'}
  ]},
- {key:'jD', dow:5, short:'Sex', title:'Treino D', sub:'Peito, ombro e braços', ex:[
-  {id:'jd0', n:'Rotação externa no cabo', per:'aquecimento', warm:true, s:2, r:'15', rest:45, rir:'leve', p:['deltpost'], q:[], o:'<strong>Leve, só pra aquecer o manguito.</strong> Cotovelo colado no corpo a 90°, gira o antebraço pra fora devagar.', yt:'rotação externa no cabo manguito rotador'},
-  {id:'jd1', n:'Supino inclinado na máquina', per:'pegada neutra se tiver', s:3, r:'6–10', rest:150, rir:'1–2', p:['peito'], q:['delt','triceps'], o:'Desce controlando até o peito esticar, sem deixar o ombro ir pra frente. <strong>Se o cross do dia acabou com o ombro, tira 1 série.</strong>', yt:'supino inclinado máquina'},
-  {id:'jd2', n:'Voador (peck deck)', s:2, r:'12–15', rest:75, rir:'0–1', p:['peito'], q:[], al:true, o:'Abre até o peito esticar, sem deixar o ombro passar da linha do corpo. Junta as mãos apertando o peito.', yt:'voador peck deck execução'},
-  {id:'jd3', n:'Elevação lateral no cabo', per:'um braço de cada vez', s:3, r:'12–20', rest:60, rir:'0–1', p:['delt'], q:[], al:true, o:LAT+' <strong>Última série:</strong> meias repetições no final.', yt:'elevação lateral no cabo unilateral'},
-  {id:'jd4', n:'Tríceps no pulley', s:3, r:'10–15', rest:60, rir:'0–1', p:['triceps'], q:[], o:'Cotovelos colados no corpo, estica o braço todo lá embaixo.', yt:'tríceps pulley barra'},
-  {id:'jd5', n:'Rosca martelo', s:2, r:'10–12', rest:60, rir:'0–1', p:['biceps','antebraco'], q:[], o:'Palmas viradas uma pra outra. Engrossa o braço visto de frente.', yt:'rosca martelo halteres'},
-  {id:'jd6', n:'Panturrilha sentado', s:4, r:'10–20', rest:60, rir:'0–1', p:['panturrilha'], q:[], al:true, o:'Pausa de 2 s lá embaixo. Sentado pega a parte de dentro da panturrilha (sóleo).', yt:'panturrilha sentado máquina'}
- ]},
- {key:'jcor', dow:6, short:'Sáb', title:'Coringa', sub:'Costas e panturrilha', optional:true, note:'Só se a semana foi bem dormida e o ombro está tranquilo.', ex:[
-  {id:'je1', n:'Puxada alta', s:3, r:'8–12', rest:90, rir:'1–2', p:['dorsal'], q:['biceps'], al:true, o:'Pegada aberta ou neutra, puxa até o queixo com o peito pra cima.', yt:'puxada alta pegada aberta'},
-  {id:'je2', n:'Pullover no cabo', s:2, r:'12–15', rest:75, rir:'0–1', p:['dorsal'], q:[], al:true, o:'Segura 1 s com os braços lá em cima, alongando a dorsal.', yt:'pullover no cabo dorsal'},
+ {key:'jcor', dow:6, short:'Sáb', title:'Coringa', sub:'Braços, panturrilha e abdômen', optional:true, note:'Só se a semana foi bem dormida e o ombro está tranquilo.', ex:[
   {id:'je3', n:'Panturrilha em pé', s:3, r:'10–15', rest:60, rir:'0–1', p:['panturrilha'], q:[], al:true, o:'Pausa de 2 s lá embaixo.', yt:'panturrilha em pé máquina'},
   {id:'je4', n:'Rosca inclinada com halteres', s:2, r:'10–12', rest:75, rir:'0–1', p:['biceps'], q:[], al:true, o:'Banco a 45°, braço pendurado atrás do corpo.', yt:'rosca inclinada halteres banco'},
-  {id:'je5', n:'Abdominal na polia', s:3, r:'10–15', rest:60, rir:'1–2', p:['abdomen'], q:[], o:'Enrola a coluna puxando as costelas em direção ao quadril. O quadril fica parado.', yt:'abdominal na polia ajoelhado'}
+  {id:'je5', n:'Abdominal na polia', s:3, r:'10–15', rest:60, rir:'1–2', p:['abdomen'], q:[], o:'Enrola a coluna puxando as costelas em direção ao quadril. O quadril fica parado.', yt:'abdominal na polia ajoelhado'},
+  {id:'je6', n:'Tríceps na polia com corda', s:3, r:'10–15', rest:60, rir:'0–1', p:['triceps'], q:[], o:'Cotovelos colados no corpo, abre a corda no final do movimento.', yt:'tríceps corda polia'}
  ]}
 ];
 const PLANS={thai:DAYS_THAI, jr:DAYS_JR};
@@ -999,7 +999,7 @@ function renderDay(){
   const d = DAYS.find(x=>x.key===current);
   const el = $('#day');
   if(d.rest && d.restText){
-    el.innerHTML = `<div class="rest-card"><div class="kicker">Quarta-feira</div><h3>${esc(d.restTitle)}</h3><p>${esc(d.restText)}</p>
+    el.innerHTML = `<div class="rest-card"><div class="kicker">${['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'][d.dow]}</div><h3>${esc(d.restTitle)}</h3><p>${esc(d.restText)}</p>
       <ul>${d.restTips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>`;
     $('#evoSec').hidden=true; return;
   }
@@ -1521,7 +1521,7 @@ document.addEventListener('click',ev=>{
 const addDays=(iso,n)=>{ const [y,m,d]=iso.split('-').map(Number); const dt=new Date(y,m-1,d); dt.setDate(dt.getDate()+n); return isoOf(dt); };
 const EXMAP={}; [...DAYS_THAI,...DAYS_JR].forEach(d=>(d.ex||[]).forEach(e=>EXMAP[e.id]={...e,day:d.key}));
 const GROUPS_BY={jr:[
-  {k:'Ombro lateral', m:['delt'], lo:12, hi:16},
+  {k:'Ombro lateral', m:['delt'], lo:10, hi:14},
   {k:'Ombro posterior', m:['deltpost'], lo:6, hi:10},
   {k:'Costas', m:['dorsal','trap'], lo:12, hi:16},
   {k:'Peito', m:['peito'], lo:10, hi:14},
