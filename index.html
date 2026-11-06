@@ -1202,6 +1202,7 @@ function toggleSet(row){
   const allDone = Array.from({length:n},(_,k)=>s.sets[ex][k]&&s.sets[ex][k].done).every(Boolean);
   if(allDone !== !!s.done[ex]){ s.done[ex]=allDone; refreshCard(ex); }
   touch(sid(current));
+  updateProgress(); renderTabs();
   if(r.done){
     const isLast = allDone;
     startTimer(e.rest, isLast ? `${e.n} fechado` : e.n, isLast ? 'Próximo exercício' : `Série ${i+2} de ${n}`);
@@ -1337,14 +1338,15 @@ function confetti(){
 
 
 /* ---------- Disputa: cabo de guerra entre os dois ---------- */
-const PTS={treino:10, coringa:5, recorde:3, sobe:2};
+const PTS={treino:10, coringa:5, parcial:5, coringaParcial:2, recorde:3, sobe:2};
 function maxBefore(exId, date){
   let m=0; for(const o of Object.values(state.sessions)){ if(!(o.date<date)) continue; for(const x of ((o.sets||{})[exId]||[])) if(x&&x.done&&+x.kg>m) m=+x.kg; } return m;
 }
 function sessPoints(d, s){
-  const r={treinos:0, coringa:0, recs:0, ups:0};
+  const r={treinos:0, coringa:0, parc:0, parcCor:0, recs:0, ups:0};
   if(!d||d.rest||!s) return r;
   if(d.ex.every(e=>s.done[e.id])){ if(d.optional) r.coringa++; else r.treinos++; }
+  else if(s.fin){ if(d.optional) r.parcCor++; else r.parc++; }
   for(const e of d.ex){
     if(e.warm) continue;
     const rows=((s.sets||{})[e.id]||[]).filter(x=>x&&x.done); if(!rows.length) continue;
@@ -1355,13 +1357,13 @@ function sessPoints(d, s){
   return r;
 }
 function weekScore(plan, wk, skipId){
-  const t={treinos:0, coringa:0, recs:0, ups:0, pts:0};
+  const t={treinos:0, coringa:0, parc:0, parcCor:0, recs:0, ups:0, pts:0};
   for(const [id,s] of Object.entries(state.sessions)){
     if(id===skipId || weekOf(s)!==wk) continue;
     const d=plan.find(x=>x.key===s.day); if(!d) continue;
     const r=sessPoints(d,s); for(const k in r) t[k]+=r[k];
   }
-  t.pts=t.treinos*PTS.treino+t.coringa*PTS.coringa+t.recs*PTS.recorde+t.ups*PTS.sobe;
+  t.pts=t.treinos*PTS.treino+t.coringa*PTS.coringa+t.parc*PTS.parcial+t.parcCor*PTS.coringaParcial+t.recs*PTS.recorde+t.ups*PTS.sobe;
   return t;
 }
 function weekComplete(plan, wk){
@@ -1386,7 +1388,7 @@ function renderDuel(){
   const go=()=>sp.style.setProperty('--sh',sh.toFixed(3));
   if(duelFirst && !document.documentElement.classList.contains('nav-in') && !matchMedia('(prefers-reduced-motion: reduce)').matches){ sp.style.setProperty('--sh','.5'); setTimeout(go,750); } else go();
   duelFirst=false;
-  const chips=(x,st,lead)=>[lead?'<span class="lead">Puxando a corda</span>':'', x.treinos?`<span>${x.treinos} ${x.treinos===1?'treino':'treinos'}</span>`:'', x.recs?`<span>${x.recs} ${x.recs===1?'recorde':'recordes'} ★</span>`:'', x.ups?`<span>${x.ups} ${x.ups===1?'carga':'cargas'} ↑</span>`:'', st>1?`<span>🔥 ${st} semanas</span>`:''].join('');
+  const chips=(x,st,lead)=>[lead?'<span class="lead">Puxando a corda</span>':'', x.treinos?`<span>${x.treinos} ${x.treinos===1?'treino':'treinos'}</span>`:'', x.parc?`<span>${x.parc} ${x.parc===1?'parcial':'parciais'}</span>`:'', x.recs?`<span>${x.recs} ${x.recs===1?'recorde':'recordes'} ★</span>`:'', x.ups?`<span>${x.ups} ${x.ups===1?'carga':'cargas'} ↑</span>`:'', st>1?`<span>🔥 ${st} semanas</span>`:''].join('');
   $('#ptT').innerHTML=chips(D.T,D.sT,D.T.pts>D.J.pts); $('#ptJ').innerHTML=chips(D.J,D.sJ,D.J.pts>D.T.pts);
   $('#nmT').innerHTML='Thai'+(D.crown==='t'?'<span class="crown" title="Venceu a semana passada">👑</span>':'');
   $('#nmJ').innerHTML='Júnior'+(D.crown==='j'?'<span class="crown" title="Venceu a semana passada">👑</span>':'');
@@ -1396,13 +1398,13 @@ function openDuel(){
   const row=(l,k,mult)=>`<tr><td>${l} <small>×${mult}</small></td><td>${D.T[k]}</td><td>${D.J[k]}</td></tr>`;
   $('#duelBody').innerHTML=`
     <table class="duel-tb"><thead><tr><th></th><th class="t">Thai</th><th class="j">Júnior</th></tr></thead><tbody>
-      ${row('Treinos fechados','treinos',PTS.treino)}${row('Coringa','coringa',PTS.coringa)}${row('Recordes de carga','recs',PTS.recorde)}${row('Cargas pra subir','ups',PTS.sobe)}
+      ${row('Treinos fechados','treinos',PTS.treino)}${row('Finalizados antes','parc',PTS.parcial)}${row('Coringa','coringa',PTS.coringa)}${row('Coringa finalizado antes','parcCor',PTS.coringaParcial)}${row('Recordes de carga','recs',PTS.recorde)}${row('Cargas pra subir','ups',PTS.sobe)}
       <tr class="tot"><td>Total</td><td>${D.T.pts}</td><td>${D.J.pts}</td></tr></tbody></table>
     <div class="duel-row" style="margin-top:12px"><span>Semanas vencidas em ${mName}</span><b>${D.mT} × ${D.mJ}</b></div>
     <div class="duel-row" style="margin-top:8px"><span>🔥 Semanas seguidas com a ficha completa</span><b>${D.sT} × ${D.sJ}</b></div>
     <label style="display:flex;flex-direction:column;gap:6px;margin-top:12px"><span class="sheet-txt"><b>Prêmio de ${mName}</b> · vale pra quem vencer mais semanas</span>
       <textarea class="duel-prize" id="duelPrize" rows="2" maxlength="80" placeholder="Ex.: quem perder paga o açaí">${esc(((state.config.premios||{})[TODAY.slice(0,7)])||'')}</textarea></label>
-    <p class="sheet-txt small" style="margin-top:10px">A semana vai de segunda a domingo. Quem fizer mais pontos ganha a 👑 na semana seguinte. Recorde é levantar mais carga do que já levantou naquele exercício; "carga pra subir" é bater o topo da faixa em todas as séries.</p>`;
+    <p class="sheet-txt small" style="margin-top:10px">A semana vai de segunda a domingo. Quem fizer mais pontos ganha a 👑 na semana seguinte. Treino finalizado antes de marcar tudo vale metade. Recorde é levantar mais carga do que já levantou naquele exercício; "carga pra subir" é bater o topo da faixa em todas as séries.</p>`;
   $('#duelSheet').hidden=false;
 }
 document.addEventListener('click',ev=>{
