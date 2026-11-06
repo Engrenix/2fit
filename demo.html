@@ -523,6 +523,9 @@ details.guide .in b{color:var(--ink)}
 .dn-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .dn-btns button{height:50px;border-radius:14px;font:800 16px var(--f-body);border:1px solid var(--accent);background:var(--surface);color:var(--accent)}
 .dn-btns button.pri{background:var(--accent);color:var(--accent-ink)}
+.hero .fin-btn{margin-top:10px;border:1px solid var(--accent);background:var(--surface);color:var(--accent);font:800 13px var(--f-body);padding:7px 12px;border-radius:99px;transition:background .2s,color .2s}
+.hero .fin-btn.armed{background:var(--accent);color:var(--accent-ink)}
+html.dn-open #v-thai, html.dn-open #v-painel, html.dn-open #v-home{visibility:hidden}
 .hero .resumo{margin-top:10px;border:0;background:var(--ok);color:#fff;font:800 13px var(--f-body);padding:7px 12px;border-radius:99px}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:30;width:100%;height:100%}
 .toast{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top, 0px));transform:translate(-50%,-150%);background:var(--ok);color:var(--surface);padding:10px 16px;border-radius:99px;font-weight:700;font-size:14px;z-index:31;transition:transform .4s cubic-bezier(.2,.8,.2,1);white-space:nowrap}
@@ -930,7 +933,7 @@ function dayState(key){
   const d=DAYS.find(x=>x.key===key); const s=session(key,false);
   if(!d||d.rest||!s) return 'none';
   const n=d.ex.filter(e=>s.done[e.id]).length;
-  return n===d.ex.length ? 'full' : (n||hasWork(s)) ? 'part' : 'none';
+  return (n===d.ex.length || s.fin) ? 'full' : (n||hasWork(s)) ? 'part' : 'none';
 }
 const setsFor = ex => ex.s;
 const rirFor = ex => ex.rir;
@@ -1022,7 +1025,7 @@ function renderDay(){
        <h2>${esc(d.title)}</h2>
        <p>${esc(d.sub)}${d.optional?`. ${d.note?esc(d.note)+' ':''}Se for, ótimo; se não for, a semana já está completa.`:''}</p>
        <div class="meta"><span class="chip">${d.ex.length} exercícios</span><span class="chip">${totalSets} séries</span></div>
-       ${d.ex.every(e=>s.done[e.id])?'<button type="button" class="resumo" data-resumo>Ver resumo do treino</button>':''}
+       <div class="hero-act">${heroAct(d,s)}</div>
      </div>
      <div class="ring"><svg viewBox="0 0 84 84"><circle class="bg" cx="42" cy="42" r="36"/><circle class="fg" id="ringfg" cx="42" cy="42" r="36" stroke-dasharray="226.2" stroke-dashoffset="226.2"/></svg>
        <div class="num"><span id="ringnum">0</span><small>de ${d.ex.length}</small></div></div>
@@ -1073,6 +1076,25 @@ function exCard(d,e,i,s){
   </article>`;
 }
 
+/* Botões do topo da ficha: finalizar antes de fechar tudo, ou ver o resumo */
+function heroAct(d,s){
+  if(!s) return '';
+  if(d.ex.every(e=>s.done[e.id]) || s.fin) return '<button type="button" class="resumo" data-resumo>Ver resumo do treino</button>';
+  if(d.ex.some(e=>s.done[e.id]) || hasWork(s)) return '<button type="button" class="fin-btn" data-finish>Finalizar treino</button>';
+  return '';
+}
+let finArm=0;
+function finishDay(btn){
+  if(!btn.classList.contains('armed')){
+    btn.classList.add('armed'); btn.textContent='Toque de novo pra finalizar';
+    clearTimeout(finArm); finArm=setTimeout(()=>{ btn.classList.remove('armed'); btn.textContent='Finalizar treino'; },3000);
+    return;
+  }
+  clearTimeout(finArm);
+  const s=session(current,true); s.fin=Date.now(); touch(sid(current));
+  celebrated[sid(current)]=true;
+  renderTabs(); updateProgress(); confetti(); setTimeout(()=>openDone(current),700);
+}
 function updateProgress(){
   const d = DAYS.find(x=>x.key===current); if(!d||d.rest) return;
   const s = session(d.key,false)||{done:{}};
@@ -1081,9 +1103,8 @@ function updateProgress(){
   fg.setAttribute('stroke-dashoffset', 226.2*(1-n/d.ex.length));
   $('#ringnum').textContent=n;
   $('#hero').classList.toggle('full', n===d.ex.length);
-  const rb=$('#hero [data-resumo]');
-  if(n===d.ex.length && !rb) $('#hero .meta').insertAdjacentHTML('afterend','<button type="button" class="resumo" data-resumo>Ver resumo do treino</button>');
-  else if(n<d.ex.length && rb) rb.remove();
+  const ha=$('#hero .hero-act'), html=heroAct(d,s);
+  if(ha && ha.dataset.k!==html){ ha.innerHTML=html; ha.dataset.k=html; }
 }
 
 function renderEvo(){
@@ -1222,7 +1243,7 @@ function doneSummary(key){
     const rows=(s.sets[e.id]||[]).filter(x=>x&&x.done);
     rows.forEach(x=>{ sets++; vol+=(+x.kg||0)*(+x.reps||0); if(x.t) ts.push(x.t); });
     if(e.warm) continue;
-    e.p.forEach(m=>prim.add(m)); e.q.forEach(m=>sec.add(m));
+    if(rows.length || s.done[e.id]){ e.p.forEach(m=>prim.add(m)); e.q.forEach(m=>sec.add(m)); }
     const kgs=rows.map(x=>+x.kg||0), work=Math.max(0,...kgs);
     // recorde: maior carga de hoje acima de tudo que já fez nesse exercício
     const before=Math.max(0,...Object.entries(state.sessions).filter(([k])=>k!==id).flatMap(([,o])=>((o.sets||{})[e.id]||[]).filter(x=>x&&x.done).map(x=>+x.kg||0)));
@@ -1239,7 +1260,8 @@ function doneSummary(key){
   prim.forEach(m=>sec.delete(m));
   const ord={up:0,down:1,keep:2}; next.sort((a,b)=>ord[a.k]-ord[b.k]);
   const prev=others[0]; const pvol=prev?volOf(prev):0;
-  return {d, s, next, prs, prim:[...prim], sec:[...sec], sets, plan, vol, pvol, t0:ts.length>1?Math.min(...ts):0, t1:ts.length>1?Math.max(...ts):0};
+  const nEx=d.ex.filter(e=>!e.warm).length, nDone=d.ex.filter(e=>!e.warm&&s.done[e.id]).length;
+  return {d, s, part:nDone<nEx, nEx, nDone, next, prs, prim:[...prim], sec:[...sec], sets, plan, vol, pvol, t0:ts.length>1?Math.min(...ts):0, t1:ts.length>1?Math.max(...ts):0};
 }
 function openDone(key){
   const R=doneSummary(key); if(!R) return;
@@ -1258,7 +1280,7 @@ function openDone(key){
   $('#doneIn').innerHTML = `
     <button class="dn-x" type="button" data-done-close aria-label="Fechar">✕</button>
     <div class="dn-hd"><div class="dn-badge"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-      <div><div class="kicker">${DOWN[new Date(y,m-1,dd).getDay()]} · ${dd} ${MONTHS[m-1].slice(0,3)}</div><h2 id="dnTitle">${d.optional?'Coringa fechado!':'Treino fechado!'}</h2><p>${esc(d.title)} · ${esc(d.sub)}</p></div></div>
+      <div><div class="kicker">${DOWN[new Date(y,m-1,dd).getDay()]} · ${dd} ${MONTHS[m-1].slice(0,3)}</div><h2 id="dnTitle">${R.part?'Treino finalizado!':d.optional?'Coringa fechado!':'Treino fechado!'}</h2><p>${esc(d.title)} · ${R.part?`${R.nDone} de ${R.nEx} exercícios`:esc(d.sub)}</p></div></div>
     <section class="dn-card"><h4>Músculos trabalhados</h4><div class="dn-body">${bodySVG(R.prim,R.sec,true)}</div>
       <div class="dn-leg"><span><i style="background:var(--accent)"></i>Principal</span><span><i style="background:var(--aux)"></i>Auxiliar</span></div></section>
     ${R.prs.length?`<section class="dn-pr"><div class="pk">Mandou muito</div><h3>${R.prs.length===1?'Novo recorde!':`${R.prs.length} recordes novos!`}</h3>
@@ -1271,11 +1293,12 @@ function openDone(key){
     <div class="dn-stats">${st.join('')}</div>
     <div class="dn-btns"><button type="button" data-done-close>Fechar</button><button type="button" class="pri" data-done-panel>Ver painel</button></div>`;
   clearInterval(tInt); $('#timer').classList.remove('show');
-  const v=$('#doneView'); v.hidden=false; v.scrollTop=0;
+  const v=$('#doneView'); v.hidden=false; v.scrollTop=0; document.documentElement.classList.add('dn-open');
 }
-function closeDone(){ $('#doneView').hidden=true; }
+function closeDone(){ $('#doneView').hidden=true; document.documentElement.classList.remove('dn-open'); }
 document.addEventListener('click',ev=>{
   if(ev.target.closest('[data-resumo]')){ openDone(current); return; }
+  const fb=ev.target.closest('[data-finish]'); if(fb){ finishDay(fb); return; }
   if(ev.target.closest('[data-done-close]')){ closeDone(); return; }
   if(ev.target.closest('[data-done-panel]')){ closeDone(); const g=WHO==='jr'?'painel-jr':'painel'; try{ history.replaceState(null,'','#'+g); }catch(e){} show(g); }
 });
