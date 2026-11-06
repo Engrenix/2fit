@@ -525,6 +525,14 @@ html{touch-action:manipulation}
 .dn-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .dn-btns button{height:50px;border-radius:14px;font:800 16px var(--f-body);border:1px solid var(--accent);background:var(--surface);color:var(--accent)}
 .dn-btns button.pri{background:var(--accent);color:var(--accent-ink)}
+.day-end{margin:18px 0 8px}
+.end-btn{width:100%;min-height:68px;border:0;border-radius:18px;background:var(--accent);color:var(--accent-ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:12px 16px;box-shadow:0 12px 28px color-mix(in srgb,var(--accent) 32%,transparent);transition:transform .15s,background .2s,box-shadow .2s;font-family:var(--f-body)}
+.end-btn b{font-family:var(--f-display);font-stretch:118%;font-weight:900;font-size:21px;line-height:1.1}
+.end-btn span{font-size:13px;font-weight:600;opacity:.85}
+.end-btn:active{transform:scale(.98)}
+.end-btn:disabled{background:var(--chip);color:var(--muted);box-shadow:none}
+.end-btn.armed{background:var(--ink);box-shadow:0 12px 28px rgba(0,0,0,.25)}
+.end-btn.done{background:var(--ok);box-shadow:0 12px 28px color-mix(in srgb,var(--ok) 32%,transparent)}
 .hero .fin-btn{margin-top:10px;border:1px solid var(--accent);background:var(--surface);color:var(--accent);font:800 13px var(--f-body);padding:7px 12px;border-radius:99px;transition:background .2s,color .2s}
 .hero .fin-btn.armed{background:var(--accent);color:var(--accent-ink)}
 html.dn-open #v-thai, html.dn-open #v-painel, html.dn-open #v-home{visibility:hidden}
@@ -1035,7 +1043,8 @@ function renderDay(){
      <div class="ring"><svg viewBox="0 0 84 84"><circle class="bg" cx="42" cy="42" r="36"/><circle class="fg" id="ringfg" cx="42" cy="42" r="36" stroke-dasharray="226.2" stroke-dashoffset="226.2"/></svg>
        <div class="num"><span id="ringnum">0</span><small>de ${d.ex.length}</small></div></div>
    </div>
-   <div class="list" style="margin-top:12px">${d.ex.map((e,i)=>exCard(d,e,i,s)).join('')}</div>`;
+   <div class="list" style="margin-top:12px">${d.ex.map((e,i)=>exCard(d,e,i,s)).join('')}</div>
+   <div class="day-end" id="dayEnd">${endAct(d,s)}</div>`;
   updateProgress();
   renderEvo();
 }
@@ -1085,17 +1094,22 @@ function exCard(d,e,i,s){
 function heroAct(d,s){
   if(!s) return '';
   if(d.ex.every(e=>s.done[e.id]) || s.fin) return '<button type="button" class="resumo" data-resumo>Ver resumo do treino</button>';
-  if(d.ex.some(e=>s.done[e.id]) || hasWork(s)) return '<button type="button" class="fin-btn" data-finish>Finalizar treino</button>';
   return '';
+}
+function endAct(d,s){
+  const n=d.ex.filter(e=>s&&s.done[e.id]).length;
+  if(s && (n===d.ex.length || s.fin)) return '<button type="button" class="end-btn done" data-resumo><b>Ver resumo do treino</b><span>Treino encerrado ✓</span></button>';
+  const started = s && (n || hasWork(s));
+  return `<button type="button" class="end-btn" data-finish ${started?'':'disabled'}><b>Finalizar treino</b><span>${started?`${n} de ${d.ex.length} exercícios feitos`:'Marque a primeira série pra começar'}</span></button>`;
 }
 let finArm=0;
 function finishDay(btn){
   if(!btn.classList.contains('armed')){
-    btn.classList.add('armed'); btn.textContent='Toque de novo pra finalizar';
-    clearTimeout(finArm); finArm=setTimeout(()=>{ btn.classList.remove('armed'); btn.textContent='Finalizar treino'; },3000);
+    const old=btn.innerHTML; btn.classList.add('armed'); btn.innerHTML='<b>Toque de novo pra finalizar</b><span>O que faltou fica pra próxima</span>';
+    clearTimeout(finArm); finArm=setTimeout(()=>{ btn.classList.remove('armed'); btn.innerHTML=old; },3000);
     return;
   }
-  clearTimeout(finArm);
+  clearTimeout(finArm); btn.classList.remove('armed');
   const s=session(current,true); s.fin=Date.now(); touch(sid(current));
   celebrated[sid(current)]=true;
   renderTabs(); updateProgress(); confetti(); setTimeout(()=>openDone(current),700);
@@ -1110,6 +1124,8 @@ function updateProgress(){
   $('#hero').classList.toggle('full', n===d.ex.length);
   const ha=$('#hero .hero-act'), html=heroAct(d,s);
   if(ha && ha.dataset.k!==html){ ha.innerHTML=html; ha.dataset.k=html; }
+  const de=$('#dayEnd'), eh=endAct(d,s);
+  if(de && de.dataset.k!==eh && !de.querySelector('.armed')){ de.innerHTML=eh; de.dataset.k=eh; }
 }
 
 function renderEvo(){
