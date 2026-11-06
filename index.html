@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>2Fit</title>
 <meta name="description" content="2Fit: treino a dois, com fichas, cargas, descanso e painel de evolução.">
 <meta property="og:type" content="website">
@@ -462,6 +462,8 @@ details.guide .in b{color:var(--ink)}
 @media (prefers-reduced-motion: no-preference){ .dn-duel.win{animation:virada .7s .2s cubic-bezier(.2,1.6,.4,1) both} }
 @keyframes virada{from{transform:scale(.85) rotate(-2deg);opacity:0}}
 
+/* App de celular: sem zoom com dois toques (o pinça é travado pelo viewport do site) */
+html{touch-action:manipulation}
 /* Boneco anatômico */
 .fb{fill:var(--body);stroke:var(--body-line);stroke-width:.7;stroke-linejoin:round}
 .fm{stroke:var(--body-line);stroke-width:.45;stroke-linejoin:round}
