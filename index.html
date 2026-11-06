@@ -87,6 +87,9 @@ html:has(#v-login:not([hidden])),body:has(#v-login:not([hidden])){background:#FF
 .acct.warn::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#D9822B;margin-right:6px;vertical-align:1px}
 .sync.clickable{cursor:pointer;border:0;font:inherit}
 .sync.warn i{background:#D9822B}
+.push-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#F7F4EF;border-radius:14px;padding:12px;margin:10px 0}
+.push-row span{display:flex;flex-direction:column;gap:2px;font-size:14px}.push-row small{font-size:12.5px;color:#857B71;line-height:1.3}
+.push-row .bk-btn{flex:0 0 auto;width:auto;padding:0 16px}
 .sheet-bg{position:fixed;inset:0;z-index:50;background:rgba(20,16,18,.45);display:flex;align-items:flex-end;justify-content:center}
 .sheet{width:100%;max-width:520px;background:#FFFFFF;color:#2B2420;border-radius:22px 22px 0 0;padding:18px max(18px, env(safe-area-inset-right, 0px)) calc(22px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px));display:flex;flex-direction:column;gap:12px;animation:sheetUp .3s cubic-bezier(.2,.8,.2,1)}
 @keyframes sheetUp{from{transform:translateY(40%);opacity:.4}}
@@ -405,10 +408,11 @@ details.guide .in b{color:var(--ink)}
   background:var(--accent-soft);color:var(--ink);border-top:1px solid var(--line);transform:translateY(110%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
 .timer.show{transform:none}
 .timer:not(.show){visibility:hidden;transition:transform .35s cubic-bezier(.2,.8,.2,1),visibility 0s .35s}
-.timer .in{max-width:680px;margin:0 auto;display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center}
+.timer .in{max-width:680px;margin:0 auto;display:grid;grid-template-columns:auto 1fr auto auto auto;gap:12px;align-items:center}
 .timer .clock{font-family:var(--f-display);font-weight:800;font-size:30px;font-variant-numeric:tabular-nums;line-height:1}
 .timer .txt{font-size:12.5px;opacity:.75;min-width:0}
 .timer .txt b{display:block;opacity:1;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.timer button[hidden]{display:none}
 .timer button{border:1px solid rgba(127,127,127,.45);background:transparent;color:inherit;border-radius:99px;padding:8px 12px;font-size:13px;font-weight:600}
 .timer .prog{position:absolute;left:0;top:0;height:3px;background:var(--accent);transition:width .25s linear}
 .timer.end .clock{color:var(--accent)}
@@ -673,6 +677,7 @@ html.dn-open #v-thai, html.dn-open #v-painel, html.dn-open #v-home{visibility:hi
   <div class="in">
     <div class="clock" id="tclock">0:00</div>
     <div class="txt"><b id="tname">Descanso</b><span id="tsub">Próxima série</span></div>
+    <button id="tbell" type="button" hidden aria-label="Avisar quando o descanso acabar">🔔 Avisar</button>
     <button id="tplus" type="button">+15 s</button>
     <button id="tskip" type="button">Pular</button>
   </div>
@@ -713,6 +718,7 @@ html.dn-open #v-thai, html.dn-open #v-painel, html.dn-open #v-home{visibility:hi
     <div id="acctOn" hidden>
       <p class="sheet-txt">Conectado como <b id="acctEmail"></b></p>
       <p class="sheet-txt" id="acctStatus"></p>
+      <div class="push-row" id="pushRow" hidden><span><b>Aviso do descanso</b><small id="pushTxt">Notificação quando o descanso acabar, mesmo com o celular bloqueado.</small></span><button type="button" class="bk-btn" id="pushBtn">Ativar</button></div>
       <div class="bk-row"><button type="button" class="bk-btn" id="syncNow">Sincronizar agora</button><button type="button" class="bk-btn ghost" id="logoutBtn">Sair</button></div>
       <p class="sheet-txt small">Ao sair, os treinos continuam salvos neste celular.</p>
     </div>
@@ -1313,6 +1319,7 @@ function startTimer(sec, name, sub){
   const t=$('#timer'); t.classList.add('show'); t.classList.remove('end');
   clearInterval(tInt); tick(); tInt=setInterval(tick,250);
   try{ navigator.wakeLock && navigator.wakeLock.request('screen').catch(()=>{}); }catch(e){}
+  pushRest(sec, name);
 }
 function tick(){
   const left=Math.max(0,Math.ceil((tEnd-Date.now())/1000));
@@ -1320,8 +1327,9 @@ function tick(){
   $('#tprog').style.width = (100*(1-left/tTotal))+'%';
   if(left<=0){ clearInterval(tInt); $('#timer').classList.add('end'); $('#tsub').textContent='Bora para a próxima'; beep(); try{navigator.vibrate&&navigator.vibrate([200,100,200]);}catch(e){} setTimeout(()=>{ if(Date.now()>=tEnd) $('#timer').classList.remove('show'); },6000); }
 }
-$('#tplus').onclick=()=>{ tEnd+=15000; tTotal+=15; $('#timer').classList.remove('end'); clearInterval(tInt); tInt=setInterval(tick,250); tick(); };
-$('#tskip').onclick=()=>{ clearInterval(tInt); $('#timer').classList.remove('show'); };
+$('#tplus').onclick=()=>{ tEnd+=15000; tTotal+=15; $('#timer').classList.remove('end'); clearInterval(tInt); tInt=setInterval(tick,250); tick(); pushRest(Math.round((tEnd-Date.now())/1000), $('#tname').textContent); };
+$('#tskip').onclick=()=>{ clearInterval(tInt); $('#timer').classList.remove('show'); pushRest(0); };
+$('#tbell').onclick=()=>pushEnable();
 
 /* ---------- Comemoração ---------- */
 function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2800); }
@@ -1830,6 +1838,48 @@ async function sbFetch(path,opt={}){
   if(!r.ok){ const j=await r.json().catch(()=>({})); throw new Error(j.message||('Erro '+r.status)); }
   return r.status===204||r.status===201 ? null : r.json().catch(()=>null);
 }
+
+/* ---------- Aviso do fim do descanso (notificação, mesmo com o celular bloqueado) ----------
+   O iPhone pausa o app quando a tela bloqueia; quem manda o aviso é a função "descanso" do Supabase.
+   Só no app instalado na tela de início (iOS 16.4+), com config.js preenchido (vapid). */
+const PUSH_OK = SB_ON && !!SBC.vapid && 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+let pushSub=null;
+const b64u = s => { const p='='.repeat((4-s.length%4)%4), b=atob((s+p).replace(/-/g,'+').replace(/_/g,'/')); return Uint8Array.from(b,c=>c.charCodeAt(0)); };
+const pushOn = () => PUSH_OK && Notification.permission==='granted' && !!localStorage.getItem('2fit-push');
+function updPushUI(){
+  const on=pushOn();
+  $('#tbell').hidden = !PUSH_OK || on || (window.Notification && Notification.permission==='denied');
+  const row=$('#pushRow'); if(!row) return; row.hidden=!PUSH_OK;
+  $('#pushBtn').textContent = on ? 'Desligar' : 'Ativar';
+  $('#pushTxt').textContent = Notification.permission==='denied' ? 'Bloqueado no iPhone: libere em Ajustes › Notificações › 2Fit.' : on ? 'Ligado neste celular.' : 'Notificação quando o descanso acabar, mesmo com o celular bloqueado.';
+}
+async function pushEnable(){
+  if(!PUSH_OK) return;
+  try{
+    const perm = await Notification.requestPermission();
+    if(perm!=='granted'){ toast('Notificações bloqueadas'); updPushUI(); return; }
+    const reg = await navigator.serviceWorker.ready;
+    pushSub = await reg.pushManager.getSubscription() || await reg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:b64u(SBC.vapid)});
+    localStorage.setItem('2fit-push','1'); toast('Aviso do descanso ligado');
+    if(tEnd>Date.now()) pushRest(Math.round((tEnd-Date.now())/1000), $('#tname').textContent);
+  }catch(e){ toast('Não deu pra ligar o aviso'); }
+  updPushUI();
+}
+function pushDisable(){ pushRest(0); localStorage.removeItem('2fit-push'); updPushUI(); }
+async function pushRest(seconds, name){
+  if(!pushOn()) return;
+  try{
+    if(!pushSub){ const reg=await navigator.serviceWorker.ready; pushSub=await reg.pushManager.getSubscription(); }
+    if(!pushSub) return;
+    const t=await sbToken(); if(!t) return;
+    fetch(`${SBC.url}/functions/v1/descanso`,{method:'POST',keepalive:true,
+      headers:{apikey:SBC.anonKey,Authorization:`Bearer ${t}`,'Content-Type':'application/json'},
+      body:JSON.stringify({sub:pushSub.toJSON(), seconds:Math.max(0,seconds|0), cancel:!seconds, title:'Descanso acabou', body:name?`${name} · bora pra próxima série`:'Bora pra próxima série'})}).catch(()=>{});
+  }catch(e){}
+}
+document.addEventListener('click',ev=>{ if(ev.target.id==='pushBtn'){ pushOn()?pushDisable():pushEnable(); } });
+updPushUI();
+
 function sbMark(id){ sbDirty.add(id); sbSaveDirty(); updSyncUI(); clearTimeout(sbTimer); sbTimer=setTimeout(sbFlush,900); }
 async function sbFlush(){
   if(!SB_ON||!sbAuth||sbBusy||!sbDirty.size||!navigator.onLine) return;

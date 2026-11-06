@@ -7,5 +7,7 @@
    Deixando vazio, o app funciona normal, salvando só no celular. */
 window.TWOFIT_SUPABASE = {
   url: 'https://jrqtaayphmtorkeuyhir.supabase.co',
-  anonKey: 'sb_publishable_uGsZmwX3BiuZVvJW5vDzTg_grjWb4L5'
+  anonKey: 'sb_publishable_uGsZmwX3BiuZVvJW5vDzTg_grjWb4L5',
+  // chave pública do aviso de descanso (a privada fica só nos segredos do Supabase)
+  vapid: 'BMg5EhgXhPmuxEP7ngrQnIrPuKVO79DRn66xU-x6e0sZYcGSlXXoIH8rdV88QOadYTftrARMOOsm1uN-h20z1SA'
 };

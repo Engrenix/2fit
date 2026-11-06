@@ -44,3 +44,10 @@ Com a sincronização ligada, os treinos ficam na nuvem: backup automático e os
 6. Abra o app: na primeira vez aparece a tela de login. Depois de entrar, o app abre direto, até sem internet.
 
 A chave "anon" pode ficar pública: quem protege os dados é o login e as regras do `setup.sql`. Nunca coloque a chave "service_role" no repositório.
+
+## Aviso do fim do descanso (notificação)
+
+1. **SQL:** rode `supabase/push.sql` em Supabase > SQL Editor.
+2. **Segredos:** em Edge Functions > Secrets, crie `VAPID_PUBLIC` (o mesmo valor de `vapid` no `config.js`) e `VAPID_PRIVATE` (a chave privada, que nunca vai pro repositório).
+3. **Função:** em Edge Functions > Deploy a new function > Via Editor, dê o nome `descanso`, cole o conteúdo de `supabase/functions/descanso/index.ts` e publique (deixe "Verify JWT" ligado).
+4. **No iPhone:** abra o app pela tela de início, marque uma série e toque em "🔔 Avisar" no cronômetro (ou em Sincronização > Aviso do descanso > Ativar).

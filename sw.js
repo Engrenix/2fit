@@ -3,7 +3,7 @@
    e uma cópia nova é buscada em segundo plano pra próxima abertura.
    Ao publicar uma versão, suba o número abaixo: o celular baixa tudo de novo,
    troca pra versão nova e o app recarrega sozinho uma vez. */
-const VERSAO = '2fit-v32';
+const VERSAO = '2fit-v33';
 const ARQUIVOS = [
   './',
   './index.html',
@@ -69,4 +69,25 @@ self.addEventListener('fetch', ev => {
       return salvo || rede;
     })
   );
+});
+
+/* Aviso do fim do descanso: chega da função "descanso" do Supabase, mesmo com o app fechado */
+self.addEventListener('push', ev => {
+  let d = {};
+  try { d = ev.data ? ev.data.json() : {}; } catch (e) {}
+  ev.waitUntil(self.registration.showNotification(d.title || 'Descanso acabou', {
+    body: d.body || 'Bora pra próxima série',
+    tag: d.tag || 'descanso',
+    renotify: true,
+    icon: './icon-192.png',
+    badge: './icon-192.png',
+    vibrate: [200, 100, 200]
+  }));
+});
+self.addEventListener('notificationclick', ev => {
+  ev.notification.close();
+  ev.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(cs => {
+    for (const c of cs) { if ('focus' in c) return c.focus(); }
+    return self.clients.openWindow('./');
+  }));
 });
