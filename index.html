@@ -330,6 +330,17 @@ h1 em{font-style:normal;color:var(--accent)}
 .list{display:flex;flex-direction:column;gap:12px}
 .ex{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:border-color .3s}
 .ex.done{border-color:var(--ok)}
+/* Exercício feito fecha: só o título e o resumo; toque pra abrir de novo */
+.ex-sum{display:none;width:100%;border:0;background:var(--ok-soft);color:var(--ink);font:600 14px var(--f-body);text-align:left;padding:10px 16px;align-items:center;justify-content:space-between;gap:10px}
+.ex-sum .st{font-variant-numeric:tabular-nums;line-height:1.3}
+.ex-sum .ed{flex:0 0 auto;font-size:12.5px;font-weight:800;color:var(--ok)}
+.ex.done:not(.open):not(.closing) .ex-body{display:none}
+.ex.done:not(.open):not(.closing) .ex-sum{display:flex}
+.ex.done:not(.open):not(.closing) .chips,.ex.done:not(.open):not(.closing) .mapbtn{display:none}
+.ex.done:not(.open):not(.closing) .ex-head{padding-bottom:12px;cursor:pointer}
+.ex.done.open .ex-sum{display:flex}
+.ex.done.open .ex-sum .ed::before{content:'Fechar'}
+.ex.done.open .ex-sum .ed{font-size:0}.ex.done.open .ex-sum .ed::before{font-size:12.5px}
 .ex-head{display:grid;grid-template-columns:auto 1fr auto;gap:12px;padding:14px 14px 10px;align-items:start}
 .idx{width:30px;height:30px;border-radius:9px;background:var(--chip);display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-weight:800;font-size:14px;font-variant-numeric:tabular-nums;transition:background .3s,color .3s}
 .ex.done .idx{background:var(--ok);color:var(--surface)}
@@ -1075,6 +1086,7 @@ function exCard(d,e,i,s){
       </div>
       <button class="mapbtn" type="button" data-map="${e.id}" aria-label="Ver músculos trabalhados">${bodySVG(e.p,e.q,false)}</button>
     </div>
+    <button class="ex-sum" type="button" data-open="${e.id}" aria-label="Abrir ${esc(e.n)}"><span class="st">${sumTxt(rows)}</span><span class="ed">Editar</span></button>
     <div class="ex-body">
       <div class="mapsheet" id="map-${e.id}" hidden>${bodySVG(e.p,e.q,true)}
         <div class="legend"><span><i style="background:var(--accent)"></i>Principal</span><span><i style="background:var(--aux)"></i>Auxiliar</span></div>
@@ -1234,10 +1246,23 @@ function toggleSet(row){
   }
   checkDay(); renderTabs(); renderCal();
 }
+/* Resumo do exercício feito (o cartão fecha e mostra só isso) */
+function sumTxt(rows){
+  const ok=(rows||[]).filter(x=>x&&x.done);
+  if(!ok.length) return 'Feito';
+  const kgs=ok.map(x=>x.kg?kgShow(x.kg):''), same=kgs.every(k=>k===kgs[0]);
+  if(same && kgs[0]) return `${ok.length} séries · ${kgs[0]} kg · ${ok.map(x=>x.reps||'–').join(', ')} reps`;
+  return ok.map(x=>`${x.kg?kgShow(x.kg)+' kg':'–'} × ${x.reps||'–'}`).join(' · ');
+}
 function refreshCard(id){
   const s=session(current,false)||{done:{}}; const card=$('#ex-'+id); if(!card) return;
   const d=DAYS.find(x=>x.key===current); const i=d.ex.findIndex(x=>x.id===id);
+  const was=card.classList.contains('done');
   card.classList.toggle('done', !!s.done[id]);
+  card.querySelector('.ex-sum .st').textContent = sumTxt((s.sets||{})[id]);
+  if(s.done[id] && !was){ card.classList.remove('open'); card.classList.add('closing');
+    setTimeout(()=>{ card.classList.remove('closing'); const y=card.getBoundingClientRect().top; if(y<70||y>innerHeight*.6) window.scrollTo({top:scrollY+y-70,behavior:'smooth'}); },450); }
+  if(!s.done[id]) card.classList.remove('open');
   card.querySelector('.idx').textContent = s.done[id]?'✓':i+1;
   card.querySelector('[data-mark]').textContent = s.done[id]?'Exercício feito':'Marcar como feito';
   updateProgress(); renderEvo(); renderTabs(); renderCal();
@@ -1320,6 +1345,8 @@ function openDone(key){
 }
 function closeDone(){ $('#doneView').hidden=true; document.documentElement.classList.remove('dn-open'); }
 document.addEventListener('click',ev=>{
+  const op=ev.target.closest('[data-open]'); if(op){ const c=$('#ex-'+op.dataset.open); c.classList.toggle('open'); return; }
+  const hd=ev.target.closest('.ex.done:not(.open) .ex-head'); if(hd && !ev.target.closest('.mapbtn')){ hd.closest('.ex').classList.add('open'); return; }
   if(ev.target.closest('[data-resumo]')){ openDone(current); return; }
   const fb=ev.target.closest('[data-finish]'); if(fb){ finishDay(fb); return; }
   if(ev.target.closest('[data-done-close]')){ closeDone(); return; }
