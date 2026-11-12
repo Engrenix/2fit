@@ -6,7 +6,10 @@
 // "Verify JWT" pode ficar DESLIGADO: a função confere o login sozinha.
 
 const SB_URL = Deno.env.get("SUPABASE_URL");
-const ANON = Deno.env.get("SUPABASE_ANON_KEY");
+// chave pública: a que o app manda no cabeçalho "apikey", ou a do próprio projeto
+const pubKeyEnv = () => { const a = Deno.env.get("SUPABASE_ANON_KEY"); if (a) return a;
+  try { const d = JSON.parse(Deno.env.get("SUPABASE_PUBLISHABLE_KEYS") || "{}"); return Object.values(d)[0] || ""; } catch { return ""; } };
+let ANON = "";
 const VAPID_PUBLIC = (Deno.env.get("VAPID_PUBLIC") || "").trim();
 const VAPID_PRIVATE = (Deno.env.get("VAPID_PRIVATE") || "").trim();
 const SUBJECT = "https://engrenix.github.io/2fit/";
@@ -69,6 +72,7 @@ const rest = (token, path, opt = {}) => fetch(`${SB_URL}/rest/v1/${path}`, { ...
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   try {
+    ANON = req.headers.get("apikey") || pubKeyEnv();
     if (!VAPID_PUBLIC || !VAPID_PRIVATE) return json({ erro: "faltam os segredos VAPID_PUBLIC e VAPID_PRIVATE" }, 500);
     const token = (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
     const u = await fetch(`${SB_URL}/auth/v1/user`, { headers: { apikey: ANON, Authorization: `Bearer ${token}` } });
