@@ -14,6 +14,7 @@ App de treino do casal (Júnior e Thai). Tudo roda num arquivo só: `index.html`
 - Crie `docs/fichas/<pessoa>-v<N>.md` no mesmo formato da anterior, com uma seção "O que mudou desde a vN-1 e por quê".
 - Mantenha os ids dos exercícios que continuam (`a1`, `c2`…), pra não quebrar o histórico de carga e o gráfico de evolução. Exercício novo ganha um id novo, nunca reaproveita um id antigo.
 - Atualize a constante da ficha no `index.html` (`DAYS_THAI` ou `DAYS_JR`) e os grupos e metas do painel (`GROUPS_BY`), se mudarem. Os ids e as chaves de dia nunca se repetem entre as duas fichas (os do Júnior começam com `j`).
+- Descanso (`rest`) pode passar de 140 s se o treino pedir. O aviso de fim de descanso chega no máximo aos 140 s (limite do plano grátis do Supabase), e isso está combinado: não encurte o descanso por causa do aviso.
 - Registre a mudança em `docs/HISTORICO.md`.
 
 ## Regras do app
