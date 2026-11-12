@@ -49,5 +49,5 @@ A chave "anon" pode ficar pública: quem protege os dados é o login e as regras
 
 1. **SQL:** rode `supabase/push.sql` em Supabase > SQL Editor.
 2. **Segredos:** em Edge Functions > Secrets, crie `VAPID_PUBLIC` (o mesmo valor de `vapid` no `config.js`) e `VAPID_PRIVATE` (a chave privada, que nunca vai pro repositório).
-3. **Função:** em Edge Functions > Deploy a new function > Via Editor, dê o nome `descanso`, cole o conteúdo de `supabase/functions/descanso/index.ts` e publique (deixe "Verify JWT" ligado).
-4. **No iPhone:** abra o app pela tela de início, marque uma série e toque em "🔔 Avisar" no cronômetro (ou em Sincronização > Aviso do descanso > Ativar).
+3. **Função:** em Edge Functions > Deploy a new function > Via Editor, dê o nome `descanso`, cole o conteúdo de `supabase/functions/descanso/index.ts` e publique. Em Details, deixe "Verify JWT with legacy secret" **desligado** (a função confere o login sozinha).
+4. **No iPhone:** abra o app pela tela de início, marque uma série e toque em "🔔 Avisar" no cronômetro (ou em Sincronização > Aviso do descanso > Ativar). O botão "Testar" ao lado manda um aviso em 8 s e mostra o erro, se houver.

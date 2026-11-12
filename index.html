@@ -89,7 +89,8 @@ html:has(#v-login:not([hidden])),body:has(#v-login:not([hidden])){background:#FF
 .sync.warn i{background:#D9822B}
 .push-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#F7F4EF;border-radius:14px;padding:12px;margin:10px 0}
 .push-row span{display:flex;flex-direction:column;gap:2px;font-size:14px}.push-row small{font-size:12.5px;color:#857B71;line-height:1.3}
-.push-row .bk-btn{flex:0 0 auto;width:auto;padding:0 16px}
+.push-row .bk-btn{flex:0 0 auto;width:auto;padding:0 14px}
+.push-btns{display:flex;gap:6px;flex:0 0 auto}
 .sheet-bg{position:fixed;inset:0;z-index:50;background:rgba(20,16,18,.45);display:flex;align-items:flex-end;justify-content:center}
 .sheet{width:100%;max-width:520px;background:#FFFFFF;color:#2B2420;border-radius:22px 22px 0 0;padding:18px max(18px, env(safe-area-inset-right, 0px)) calc(22px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px));display:flex;flex-direction:column;gap:12px;animation:sheetUp .3s cubic-bezier(.2,.8,.2,1)}
 @keyframes sheetUp{from{transform:translateY(40%);opacity:.4}}
@@ -728,7 +729,7 @@ html.dn-open #v-thai, html.dn-open #v-painel, html.dn-open #v-home{visibility:hi
     <div id="acctOn" hidden>
       <p class="sheet-txt">Conectado como <b id="acctEmail"></b></p>
       <p class="sheet-txt" id="acctStatus"></p>
-      <div class="push-row" id="pushRow" hidden><span><b>Aviso do descanso</b><small id="pushTxt">Notificação quando o descanso acabar, mesmo com o celular bloqueado.</small></span><button type="button" class="bk-btn" id="pushBtn">Ativar</button></div>
+      <div class="push-row" id="pushRow" hidden><span><b>Aviso do descanso</b><small id="pushTxt">Notificação quando o descanso acabar, mesmo com o celular bloqueado.</small></span><span class="push-btns"><button type="button" class="bk-btn ghost" id="pushTest" hidden>Testar</button><button type="button" class="bk-btn" id="pushBtn">Ativar</button></span></div>
       <div class="bk-row"><button type="button" class="bk-btn" id="syncNow">Sincronizar agora</button><button type="button" class="bk-btn ghost" id="logoutBtn">Sair</button></div>
       <p class="sheet-txt small">Ao sair, os treinos continuam salvos neste celular.</p>
     </div>
@@ -1869,7 +1870,8 @@ function updPushUI(){
   $('#tbell').hidden = !PUSH_OK || on || (window.Notification && Notification.permission==='denied');
   const row=$('#pushRow'); if(!row) return; row.hidden=!PUSH_OK;
   $('#pushBtn').textContent = on ? 'Desligar' : 'Ativar';
-  $('#pushTxt').textContent = Notification.permission==='denied' ? 'Bloqueado no iPhone: libere em Ajustes › Notificações › 2Fit.' : on ? 'Ligado neste celular.' : 'Notificação quando o descanso acabar, mesmo com o celular bloqueado.';
+  $('#pushTest').hidden = !on;
+  $('#pushTxt').textContent = Notification.permission==='denied' ? 'Bloqueado no iPhone: libere em Ajustes › Notificações › 2Fit.' : on ? (pushErr ? 'Último aviso falhou: '+pushErr : 'Ligado neste celular.') : 'Notificação quando o descanso acabar, mesmo com o celular bloqueado.';
 }
 async function pushEnable(){
   if(!PUSH_OK) return;
@@ -1877,25 +1879,50 @@ async function pushEnable(){
     const perm = await Notification.requestPermission();
     if(perm!=='granted'){ toast('Notificações bloqueadas'); updPushUI(); return; }
     const reg = await navigator.serviceWorker.ready;
-    pushSub = await reg.pushManager.getSubscription() || await reg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:b64u(SBC.vapid)});
+    await pushGetSub();
     localStorage.setItem('2fit-push','1'); toast('Aviso do descanso ligado');
     if(tEnd>Date.now()) pushRest(Math.round((tEnd-Date.now())/1000), $('#tname').textContent);
   }catch(e){ toast('Não deu pra ligar o aviso'); }
   updPushUI();
 }
 function pushDisable(){ pushRest(0); localStorage.removeItem('2fit-push'); updPushUI(); }
+let pushErr='';
+async function pushGetSub(){
+  if(pushSub) return pushSub;
+  const reg=await navigator.serviceWorker.ready;
+  pushSub = await reg.pushManager.getSubscription() || await reg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:b64u(SBC.vapid)});
+  return pushSub;
+}
+async function pushCall(payload){
+  const sub=await pushGetSub(); const t=await sbToken();
+  if(!t) throw new Error('entre na conta de novo');
+  const r=await fetch(`${SBC.url}/functions/v1/descanso`,{method:'POST',
+    headers:{apikey:SBC.anonKey,Authorization:`Bearer ${t}`,'Content-Type':'application/json'},
+    body:JSON.stringify({sub:sub.toJSON(), ...payload})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(r.status===404?'função "descanso" não encontrada no Supabase':(j.erro||j.message||j.msg||('erro '+r.status))+(j.detalhe?` (${j.detalhe})`:''));
+  return j;
+}
 async function pushRest(seconds, name){
   if(!pushOn()) return;
   try{
-    if(!pushSub){ const reg=await navigator.serviceWorker.ready; pushSub=await reg.pushManager.getSubscription(); }
-    if(!pushSub) return;
-    const t=await sbToken(); if(!t) return;
-    fetch(`${SBC.url}/functions/v1/descanso`,{method:'POST',keepalive:true,
-      headers:{apikey:SBC.anonKey,Authorization:`Bearer ${t}`,'Content-Type':'application/json'},
-      body:JSON.stringify({sub:pushSub.toJSON(), seconds:Math.max(0,seconds|0), cancel:!seconds, title:'Descanso acabou', body:name?`${name} · bora pra próxima série`:'Bora pra próxima série'})}).catch(()=>{});
-  }catch(e){}
+    await pushCall({seconds:Math.max(0,seconds|0), cancel:!seconds, title:'Descanso acabou', body:name?`${name} · bora pra próxima série`:'Bora pra próxima série'});
+    if(pushErr){ pushErr=''; updPushUI(); }
+  }catch(e){ pushErr=e.message; updPushUI(); }
 }
-document.addEventListener('click',ev=>{ if(ev.target.id==='pushBtn'){ pushOn()?pushDisable():pushEnable(); } });
+async function pushTest(){
+  const b=$('#pushTest'); b.disabled=true; b.textContent='Aguarde…';
+  $('#pushTxt').textContent='Bloqueie a tela agora: o teste chega em 8 segundos.';
+  try{
+    const j=await pushCall({test:true, seconds:8});
+    pushErr = j.ok ? '' : `serviço de notificação respondeu ${j.push&&j.push.status}: ${(j.push&&j.push.body)||''}`;
+    $('#pushTxt').textContent = j.ok ? 'Enviado ✓ Se não chegou, confira Ajustes › Notificações › 2Fit.' : 'Falhou: '+pushErr;
+  }catch(e){ pushErr=e.message; $('#pushTxt').textContent='Falhou: '+e.message; }
+  b.disabled=false; b.textContent='Testar';
+}
+document.addEventListener('click',ev=>{ if(ev.target.id==='pushBtn'){ pushOn()?pushDisable():pushEnable(); } if(ev.target.id==='pushTest') pushTest(); });
+// permissão já dada no iPhone mas aviso nunca ligado aqui: liga sozinho
+if(PUSH_OK && Notification.permission==='granted' && !localStorage.getItem('2fit-push')){ pushGetSub().then(()=>{ localStorage.setItem('2fit-push','1'); updPushUI(); }).catch(()=>{}); }
 updPushUI();
 
 function sbMark(id){ sbDirty.add(id); sbSaveDirty(); updSyncUI(); clearTimeout(sbTimer); sbTimer=setTimeout(sbFlush,900); }
