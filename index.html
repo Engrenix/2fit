@@ -544,6 +544,10 @@ html{touch-action:manipulation}
 .end-btn:disabled{background:var(--chip);color:var(--muted);box-shadow:none}
 .end-btn.armed{background:var(--ink);box-shadow:0 12px 28px rgba(0,0,0,.25)}
 .end-btn.done{background:var(--ok);box-shadow:0 12px 28px color-mix(in srgb,var(--ok) 32%,transparent)}
+.wclock{position:fixed;z-index:25;top:calc(env(safe-area-inset-top, 0px) + 10px);right:max(12px, env(safe-area-inset-right, 0px));display:flex;align-items:center;gap:7px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:99px;padding:6px 12px 6px 10px;box-shadow:0 6px 18px rgba(0,0,0,.10);font-family:var(--f-display);font-stretch:112%;font-weight:900;font-size:16px;font-variant-numeric:tabular-nums;pointer-events:none}
+.wclock[hidden]{display:none}
+.wclock i{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 60%,transparent);animation:wpulse 1.6s infinite}
+@keyframes wpulse{70%{box-shadow:0 0 0 7px transparent}100%{box-shadow:0 0 0 0 transparent}}
 .cardio-btn{width:100%;border:1px dashed var(--line);background:transparent;border-radius:16px;padding:10px 14px;margin-top:10px;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--ink);font-family:var(--f-body)}
 .cardio-btn b{font-size:15px;font-weight:800}.cardio-btn span{font-size:12.5px;color:var(--muted)}
 .cardio-btn.armed{background:var(--ink);color:var(--surface);border-style:solid}.cardio-btn.armed span{color:inherit;opacity:.8}
@@ -749,6 +753,7 @@ html.dn-open #v-thai, html.dn-open #v-painel, html.dn-open #v-home{visibility:hi
   </div>
 </div>
 <div class="dn" id="doneView" hidden role="dialog" aria-modal="true" aria-labelledby="dnTitle"><div class="dn-in" id="doneIn"></div></div>
+<div class="wclock" id="wclock" hidden role="timer" aria-label="Tempo de treino"><i></i><b>0:00</b></div>
 <canvas id="confetti" aria-hidden="true"></canvas>
 <div class="toast" id="toast" role="status">Treino fechado</div>
 
@@ -1389,6 +1394,27 @@ document.addEventListener('click',ev=>{
   if(ev.target.closest('[data-done-close]')){ closeDone(); return; }
   if(ev.target.closest('[data-done-panel]')){ closeDone(); const g=WHO==='jr'?'painel-jr':'painel'; try{ history.replaceState(null,'','#'+g); }catch(e){} show(g); }
 });
+
+
+/* ---------- Relógio do treino: conta desde a primeira série marcada no dia ---------- */
+function tickWorkout(){
+  const el=$('#wclock'); let show=false;
+  try{
+    const d=DAYS.find(x=>x.key===current), s=session(current,false);
+    const onFicha=!$('#v-thai').hidden && !document.documentElement.classList.contains('dn-open');
+    if(onFicha && d && !d.rest && s && !s.fin && !s.cardio && !d.ex.every(e=>s.done[e.id])){
+      const ts=Object.values(s.sets||{}).flat().filter(x=>x&&x.done&&x.t).map(x=>x.t);
+      const now=Date.now();
+      if(ts.length && now-Math.max(...ts) < 2*3600e3){
+        const sec=Math.floor((now-Math.min(...ts))/1000), h=Math.floor(sec/3600), m=Math.floor(sec%3600/60), ss=sec%60;
+        el.querySelector('b').textContent = h ? `${h}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}` : `${m}:${String(ss).padStart(2,'0')}`;
+        show=true;
+      }
+    }
+  }catch(e){}
+  el.hidden=!show;
+}
+setInterval(tickWorkout,1000);
 
 /* ---------- Cronômetro ---------- */
 let tEnd=0, tTotal=0, tInt=null, ac=null;
