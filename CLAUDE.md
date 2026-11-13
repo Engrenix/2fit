@@ -4,6 +4,7 @@ App de treino do casal (Júnior e Thai). O app inteiro é um arquivo só (HTML, 
 
 ## Como trabalhar (leia primeiro)
 
+0. **Antes de começar: `git pull`.** O projeto é editado de dois lugares (VS Code no Mac e conversas no claude.ai); sem puxar antes, uma mudança apaga a outra.
 1. **Edite só `src/app.html`.** É a fonte de tudo. `index.html` (site) e `demo.html` (demonstração) são gerados por ela: nunca edite esses dois à mão, o build sobrescreve.
 2. **Gere:** `python3 tools/build.py`. Ele monta o `index.html` (com o `<head>` do site e o `config.js`), o `demo.html` (dados inventados, nada salvo) e já sobe a `VERSAO` do `sw.js`.
 3. **Teste:** `python3 tools/teste.py`. Abre as duas fichas no tamanho do iPhone 14, toca em todos os dias, marca uma série, recarrega e abre o painel. Avisa se algum dia passa de 6 exercícios e falha se houver erro de JS. Prints ficam em `.teste/` (fora do git). Instalar uma vez (o Python do Mac não deixa `pip3 install` direto, então vai num `.venv` do projeto, fora do git): `python3 -m venv .venv && .venv/bin/pip install playwright && .venv/bin/python -m playwright install webkit`. Depois o `teste.py` acha o `.venv` sozinho.
