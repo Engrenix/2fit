@@ -1993,7 +1993,7 @@ const pushOn = () => PUSH_OK && Notification.permission==='granted' && !!localSt
 function updPushUI(){
   const on=pushOn();
   $('#tbell').hidden = !PUSH_OK || on || (window.Notification && Notification.permission==='denied');
-  const row=$('#pushRow'); if(!row) return; row.hidden=!PUSH_OK;
+  const row=$('#pushRow'); if(!row) return; row.hidden=!PUSH_OK; if(!PUSH_OK) return;
   $('#pushBtn').textContent = on ? 'Desligar' : 'Ativar';
   $('#pushTest').hidden = !on;
   $('#pushTxt').textContent = Notification.permission==='denied' ? 'Bloqueado no iPhone: libere em Ajustes › Notificações › 2Fit.' : on ? (pushErr ? 'Último aviso falhou: '+pushErr : 'Ligado neste celular.') : 'Notificação quando o descanso acabar, mesmo com o celular bloqueado.';
