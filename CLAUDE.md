@@ -1,6 +1,16 @@
 # 2Fit · instruções para o Claude
 
-App de treino do casal (Júnior e Thai). Tudo roda num arquivo só: `index.html` (HTML, CSS e JS). Também é publicado como artifact no claude.ai; os dois precisam ficar iguais.
+App de treino do casal (Júnior e Thai). O app inteiro é um arquivo só (HTML, CSS e JS).
+
+## Como trabalhar (leia primeiro)
+
+1. **Edite só `src/app.html`.** É a fonte de tudo. `index.html` (site) e `demo.html` (demonstração) são gerados por ela: nunca edite esses dois à mão, o build sobrescreve.
+2. **Gere:** `python3 tools/build.py`. Ele monta o `index.html` (com o `<head>` do site e o `config.js`), o `demo.html` (dados inventados, nada salvo) e já sobe a `VERSAO` do `sw.js`.
+3. **Teste:** `python3 tools/teste.py`. Abre as duas fichas no tamanho do iPhone 14, toca em todos os dias, marca uma série, recarrega e abre o painel. Avisa se algum dia passa de 6 exercícios e falha se houver erro de JS. Prints ficam em `.teste/` (fora do git). Instalar uma vez: `pip3 install playwright && python3 -m playwright install webkit`.
+4. **Publique:** commit e `git push` na `main`. O GitHub Pages atualiza o site em 1 ou 2 minutos; no iPhone, fechar e abrir o app.
+5. **Economize leitura:** o `src/app.html` é grande. Procure o trecho com `grep -n` e leia só as linhas em volta; não leia o arquivo inteiro.
+
+**Artifact no claude.ai:** o app também existe como artifact (2Fit e 2Fit · demonstração) com o mesmo conteúdo do `src/app.html`. Ele só é atualizado de uma conversa no claude.ai, que tem a ferramenta de artifacts; pelo VS Code, não. Se mudar algo por aqui, o artifact fica pra trás até alguém pedir no claude.ai pra atualizar a partir do repositório. Os dois usam o site no iPhone, então o site é o que importa.
 
 ## Antes de mexer numa ficha de treino
 
@@ -14,7 +24,7 @@ App de treino do casal (Júnior e Thai). Tudo roda num arquivo só: `index.html`
 - Crie `docs/fichas/<pessoa>-v<N>.md` no mesmo formato da anterior, com uma seção "O que mudou desde a vN-1 e por quê".
 - Exercício que sai da ficha vai pra `EX_ARCHIVE` (com o `day` antigo): assim o histórico dele continua contando nas séries do painel e aparece no gráfico de evolução, no grupo "Saíram da ficha".
 - Mantenha os ids dos exercícios que continuam (`a1`, `c2`…), pra não quebrar o histórico de carga e o gráfico de evolução. Exercício novo ganha um id novo, nunca reaproveita um id antigo.
-- Atualize a constante da ficha no `index.html` (`DAYS_THAI` ou `DAYS_JR`) e os grupos e metas do painel (`GROUPS_BY`), se mudarem. Os ids e as chaves de dia nunca se repetem entre as duas fichas (os do Júnior começam com `j`).
+- Atualize a constante da ficha no `src/app.html` (`DAYS_THAI` ou `DAYS_JR`) e os grupos e metas do painel (`GROUPS_BY`), se mudarem. Os ids e as chaves de dia nunca se repetem entre as duas fichas (os do Júnior começam com `j`).
 - Descanso (`rest`) pode passar de 140 s se o treino pedir. O aviso de fim de descanso chega no máximo aos 140 s (limite do plano grátis do Supabase), e isso está combinado: não encurte o descanso por causa do aviso.
 - Teto de exercícios: 5 a 6 por dia, 7 só se for muito necessário. Treino com 8 ou 9 desanima e as últimas séries rendem pouco.
 - Registre a mudança em `docs/HISTORICO.md`.
@@ -37,5 +47,5 @@ App de treino do casal (Júnior e Thai). Tudo roda num arquivo só: `index.html`
 - Login: com a sincronização ligada, quem não está logado vê a tela de login cheia (`#v-login`). O login fica guardado no celular e só volta se a pessoa sair da conta ou se o Supabase disser que o login acabou (nunca por falta de internet).
 - Backup: o botão do painel exporta um JSON `{app:'2fit', formato:1, exportadoEm, sessions, config}`. A importação junta os dados por `updatedAt` e nunca apaga nada. Pra revisar uma ficha, peça esse arquivo.
 - Barra de status do iPhone: o Safari escolhe a cor quando a página carrega e não troca depois. Por isso, no site hospedado, ir pra uma tela de outra cor (`TOP_COLOR`) recarrega a página já nessa tela, vindo do cache do service worker (rápido e offline). Ficha e painel têm a mesma cor e trocam sem recarregar.
-- Offline: `sw.js` guarda o app no celular e serve tudo primeiro do cache, atualizando em segundo plano. **Sempre que mudar algum arquivo do app, suba a `VERSAO` no `sw.js`**, senão o iPhone pode continuar mostrando a versão antiga.
+- Offline: `sw.js` guarda o app no celular e serve tudo primeiro do cache, atualizando em segundo plano. A `VERSAO` no `sw.js` precisa subir a cada mudança, senão o iPhone pode continuar mostrando a versão antiga: o `tools/build.py` já faz isso. Se mudar outro arquivo sem rodar o build (ícone, manifest), suba à mão.
 - O repositório pode ser público: não coloque aqui detalhes pessoais além do necessário pro treino.
