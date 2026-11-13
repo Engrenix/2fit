@@ -5,7 +5,7 @@ App de treino do casal (Júnior e Thai). Tudo roda num arquivo só: `index.html`
 ## Antes de mexer numa ficha de treino
 
 1. Leia `docs/HISTORICO.md` pra saber qual é a versão atual de cada ficha.
-2. Leia o arquivo da versão atual em `docs/fichas/` (ex.: `thai-v1.md`). Ele tem o contexto da pessoa, os princípios usados, o motivo de cada exercício, o volume planejado e o checklist da próxima revisão.
+2. Leia o arquivo da versão atual em `docs/fichas/` (ex.: `thai-v3.md`). Ele tem o contexto da pessoa, os princípios usados, o motivo de cada exercício, o volume planejado e o checklist da próxima revisão.
 3. Use os dados reais do painel (frequência, séries por músculo, evolução de carga) pra justificar qualquer mudança. Se não tiver acesso aos dados, peça um print do painel no filtro de 60 dias.
 4. Pesquise se saiu evidência nova sobre o assunto antes de manter ou trocar uma técnica.
 
@@ -15,6 +15,7 @@ App de treino do casal (Júnior e Thai). Tudo roda num arquivo só: `index.html`
 - Mantenha os ids dos exercícios que continuam (`a1`, `c2`…), pra não quebrar o histórico de carga e o gráfico de evolução. Exercício novo ganha um id novo, nunca reaproveita um id antigo.
 - Atualize a constante da ficha no `index.html` (`DAYS_THAI` ou `DAYS_JR`) e os grupos e metas do painel (`GROUPS_BY`), se mudarem. Os ids e as chaves de dia nunca se repetem entre as duas fichas (os do Júnior começam com `j`).
 - Descanso (`rest`) pode passar de 140 s se o treino pedir. O aviso de fim de descanso chega no máximo aos 140 s (limite do plano grátis do Supabase), e isso está combinado: não encurte o descanso por causa do aviso.
+- Teto de exercícios: 5 a 6 por dia, 7 só se for muito necessário. Treino com 8 ou 9 desanima e as últimas séries rendem pouco.
 - Registre a mudança em `docs/HISTORICO.md`.
 
 ## Regras do app

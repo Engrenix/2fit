@@ -772,16 +772,14 @@ const DAYS_THAI = [
  ]},
  {key:'bt', dow:2, short:'Ter', title:'Beach tennis', sub:'Sem musculação hoje', rest:true,
   restTitle:'Dia de beach tennis', restText:'Hoje não tem musculação. O jogo já cansa perna e ombro, e fica entre os dois treinos de perna pra não atrapalhar o glúteo.',
-  restTips:['Amanhã é Superior A: se o ombro estiver cansado do jogo, tira 1 série do desenvolvimento.','Quinta é Inferior B, 48 h depois do jogo: a perna já chega recuperada.']},
+  restTips:['Amanhã é Superior A, que não tem desenvolvimento justamente pra poupar o ombro depois do jogo.','Quinta é Inferior B, 48 h depois do jogo: a perna já chega recuperada.']},
  {key:'supA', dow:3, short:'Qua', title:'Superior A', sub:'Costas e bíceps', ex:[
   {id:'b1', n:'Puxada alta supinada', s:3, r:'8–10', rest:120, rir:'1–2', p:['dorsal'], q:['biceps'], al:true, o:'Pegada na largura dos ombros, palmas para você. Em cima, deixa a dorsal esticar antes de puxar de novo.', yt:'puxada alta pegada supinada'},
   {id:'b2', n:'Remada serrote com halter', per:'cada lado', s:3, r:'8–10', rest:90, rir:'1–2', p:['dorsal','trap'], q:['deltpost','biceps'], al:true, o:'Deixa o braço descer bem esticado lá embaixo. Puxa o cotovelo em direção ao quadril.', yt:'remada serrote halter'},
-  {id:'b3', n:'Desenvolvimento com halteres', per:'sentada', s:3, r:'8–10', rest:120, rir:'1–2', p:['delt'], q:['triceps'], o:'Desce até os halteres ficarem na altura da orelha. Sem arquear as costas no banco.', yt:'desenvolvimento com halteres sentado'},
   {id:'b4', n:'Elevação lateral no cabo', per:'cabo por trás do corpo', s:3, r:'12–15', rest:75, rir:'0–1', p:['delt'], q:[], al:true, o:'Com o cabo passando atrás do corpo, o ombro trabalha com tensão desde a parte de baixo.', yt:'elevação lateral no cabo unilateral'},
   {id:'b5', n:'Rosca direta com barra W', s:3, r:'8–10', rest:90, rir:'1–2', p:['biceps'], q:['antebraco'], o:'Cotovelo parado ao lado do corpo, sem balançar o tronco. Desce controlando.', yt:'rosca direta barra W'},
   {id:'b6', n:'Rosca inclinada com halteres', s:3, r:'10–12', rest:75, rir:'0–1', p:['biceps'], q:[], al:true, o:'<strong>Banco a 45°</strong> e braço pendurado atrás da linha do corpo: o bíceps trabalha esticado, a posição que mais faz crescer.', yt:'rosca inclinada halteres banco'},
   {id:'b7', n:'Tríceps francês no cabo', s:2, r:'10–12', rest:75, rir:'0–1', p:['triceps'], q:[], al:true, o:'Com o braço acima da cabeça, a parte longa do tríceps fica alongada. Cotovelos apontando para a frente.', yt:'tríceps francês na polia'},
-  {id:'b8', n:'Abdução sentada', per:'extra de glúteo', s:2, r:'15–20', rest:60, rir:'0–1', p:['gluteomed'], q:[], o:'Finalizador rápido para a parte de cima do glúteo. Glúteo leva estímulo 4 vezes na semana assim.', yt:'cadeira abdutora execução'}
  ]},
  {key:'infB', dow:4, short:'Qui', title:'Inferior B', sub:'Glúteo e posterior', ex:[
   {id:'c1', n:'Levantamento terra romeno', per:'barra', s:4, r:'6–8', rest:150, rir:'2', p:['posterior','gluteomax'], q:['lombar'], al:true, o:'<strong>Nunca até a falha.</strong> Barra desliza rente à coxa e desce até o quadril não ir mais para trás. Coluna neutra.', yt:'levantamento terra romeno execução'},
@@ -789,18 +787,15 @@ const DAYS_THAI = [
   {id:'c3', n:'Hiperextensão 45° para glúteo', s:3, r:'12–15', rest:90, rir:'1–2', p:['gluteomax'], q:['posterior','lombar'], o:'Pés abertos e virados para fora, costas levemente arredondadas. Sobe apertando o glúteo, não a lombar.', yt:'hiperextensão 45 graus foco glúteo'},
   {id:'c4', n:'Leg press pés altos e afastados', s:3, r:'10–12', rest:120, rir:'1–2', p:['gluteomax'], q:['quad','adutor','posterior'], al:true, o:'Pés no alto da plataforma e afastados. Desce fundo, joelhos na linha dos pés, sem tirar o quadril do banco.', yt:'leg press pés altos glúteo'},
   {id:'c5', n:'Coice no cabo', per:'cada perna', s:3, r:'12–15', rest:60, rir:'0–1', p:['gluteomax','gluteomed'], q:[], o:'Tronco inclinado, leva a perna para trás e um pouco para fora. Segura 1 s no topo.', yt:'coice no cabo glúteo'},
-  {id:'c6', n:'Abdominal na polia', s:3, r:'12–15', rest:60, rir:'1–2', p:['abdomen'], q:[], o:'Enrola a coluna puxando as costelas em direção ao quadril. O quadril fica parado.', yt:'abdominal na polia ajoelhado'}
+  {id:'c6', n:'Abdominal na polia', s:4, r:'12–15', rest:60, rir:'1–2', p:['abdomen'], q:[], o:'Enrola a coluna puxando as costelas em direção ao quadril. O quadril fica parado.', yt:'abdominal na polia ajoelhado'}
  ]},
  {key:'supB', dow:5, short:'Sex', title:'Superior B', sub:'Ombro e braço', ex:[
   {id:'d1', n:'Desenvolvimento na máquina', s:3, r:'8–10', rest:120, rir:'1–2', p:['delt'], q:['triceps'], o:'Desce até a mão na altura do queixo. Cotovelos levemente à frente do corpo.', yt:'desenvolvimento máquina ombro'},
   {id:'d2', n:'Elevação lateral com halteres', s:3, r:'12–15', rest:75, rir:'0–1', p:['delt'], q:[], o:'Sobe até a altura do ombro, cotovelo levemente dobrado. <strong>Drop set</strong> na última série.', yt:'elevação lateral halteres execução'},
   {id:'d3', n:'Crucifixo inverso na máquina', s:3, r:'12–15', rest:75, rir:'0–1', p:['deltpost'], q:['trap'], o:'Braços quase esticados, abre até a linha do corpo. Dá contorno ao ombro visto de costas.', yt:'crucifixo inverso máquina'},
-  {id:'d4', n:'Pulldown com braço estendido', s:2, r:'12–15', rest:75, rir:'0–1', p:['dorsal'], q:[], al:true, o:'Começa com os braços bem acima da cabeça, alongando a dorsal. Leva a barra até a coxa.', yt:'pulldown braço estendido polia'},
   {id:'d5', n:'Rosca Scott na máquina', s:3, r:'10–12', rest:75, rir:'0–1', p:['biceps'], q:[], al:true, o:'A parte de baixo é a que mais faz crescer: desce devagar até quase esticar o braço.', yt:'rosca scott máquina'},
   {id:'d6', n:'Rosca martelo com halteres', s:3, r:'10–12', rest:75, rir:'0–1', p:['biceps','antebraco'], q:[], o:'Palmas viradas uma para a outra. Engrossa o braço visto de frente.', yt:'rosca martelo halteres'},
   {id:'d7', n:'Tríceps na polia com corda', s:2, r:'12–15', rest:60, rir:'0–1', p:['triceps'], q:[], o:'Abre a corda no final do movimento. Cotovelos colados no corpo.', yt:'tríceps corda polia'},
-  {id:'d8', n:'Elevação de pernas na paralela', s:3, r:'10–15', rest:60, rir:'1–2', p:['abdomen'], q:['obliquo'], o:'Sobe as pernas enrolando o quadril para a frente, sem balançar.', yt:'elevação de pernas na paralela abdominal'},
-  {id:'d9', n:'Abdução com tronco inclinado', s:2, r:'15–20', rest:60, rir:'0–1', p:['gluteomed'], q:[], o:'Finalizador de glúteo superior. Tronco à frente, segura a borda do banco.', yt:'cadeira abdutora tronco inclinado'}
  ]},
  {key:'cor', dow:6, short:'Sáb', title:'Coringa', sub:'Costas e bíceps no pump', optional:true, ex:[
   {id:'e1', n:'Puxada alta aberta', s:3, r:'10–12', rest:90, rir:'1–2', p:['dorsal'], q:['biceps'], o:'Pegada aberta, puxa até o queixo. Peito para cima.', yt:'puxada alta pegada aberta'},
