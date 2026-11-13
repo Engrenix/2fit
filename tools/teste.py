@@ -16,7 +16,7 @@ try:
     from playwright.sync_api import sync_playwright
 except ImportError:
     venv = R / '.venv/bin/python'
-    if venv.exists() and Path(sys.executable).resolve() != venv.resolve():
+    if venv.exists() and Path(sys.prefix).resolve() != (R / '.venv').resolve():
         os.execv(str(venv), [str(venv), __file__, *sys.argv[1:]])
     sys.exit('Playwright não instalado. Rode uma vez:\n  python3 -m venv .venv && .venv/bin/pip install playwright && .venv/bin/python -m playwright install webkit')
 tmp = R / '.teste'
