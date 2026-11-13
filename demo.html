@@ -958,7 +958,8 @@ function session(key, create){
 const hasWork = s => Object.values(s.done||{}).some(Boolean) || Object.values(s.sets||{}).some(a=>Array.isArray(a)&&a.some(x=>x&&x.done));
 function dayState(key){
   const d=DAYS.find(x=>x.key===key); const s=session(key,false);
-  if(!d||d.rest||!s) return 'none';
+  if(!d||!s) return 'none';
+  if(d.rest) return s.beach ? 'full' : 'none';
   const n=d.ex.filter(e=>s.done[e.id]).length;
   return (n===d.ex.length || s.fin) ? 'full' : (n||hasWork(s)) ? 'part' : 'none';
 }
@@ -1033,7 +1034,8 @@ function renderDay(){
   const el = $('#day');
   if(d.rest && d.restText){
     el.innerHTML = `<div class="rest-card"><div class="kicker">${['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'][d.dow]}</div><h3>${esc(d.restTitle)}</h3><p>${esc(d.restText)}</p>
-      <ul>${d.restTips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>`;
+      <ul>${d.restTips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>
+      <div class="day-end" id="beachEnd">${beachAct(d)}</div>`;
     $('#evoSec').hidden=true; return;
   }
   if(d.rest){
@@ -1110,6 +1112,20 @@ function heroAct(d,s){
   if(!s) return '';
   if(d.ex.every(e=>s.done[e.id]) || s.fin) return '<button type="button" class="resumo" data-resumo>Ver resumo do treino</button>';
   return '';
+}
+/* Dia de beach: marca o jogo como feito e vale ponto na disputa */
+function beachAct(d){
+  const s=session(d.key,false);
+  return s&&s.beach
+    ? `<button type="button" class="end-btn done" data-beach><b>Beach feito 🎾</b><span>+${PTS.beach} pontos na disputa · toque pra desfazer</span></button>`
+    : `<button type="button" class="end-btn" data-beach><b>Joguei beach hoje</b><span>Marque quando terminar o jogo · vale ${PTS.beach} pontos</span></button>`;
+}
+function toggleBeach(){
+  const d=DAYS.find(x=>x.key===current); if(!d||!d.rest) return;
+  const s=session(current,true);
+  if(s.beach){ delete s.beach; delete s.beachAt; }
+  else { s.beach=true; s.beachAt=Date.now(); confetti(); }
+  touch(sid(current)); $('#beachEnd').innerHTML=beachAct(d); renderTabs(); renderHome();
 }
 function endAct(d,s){
   const n=d.ex.filter(e=>s&&s.done[e.id]).length;
@@ -1349,6 +1365,7 @@ function closeDone(){ $('#doneView').hidden=true; document.documentElement.class
 document.addEventListener('click',ev=>{
   const op=ev.target.closest('[data-open]'); if(op){ const c=$('#ex-'+op.dataset.open); c.classList.toggle('open'); return; }
   const hd=ev.target.closest('.ex.done:not(.open) .ex-head'); if(hd && !ev.target.closest('.mapbtn')){ hd.closest('.ex').classList.add('open'); return; }
+  if(ev.target.closest('[data-beach]')){ toggleBeach(); return; }
   if(ev.target.closest('[data-resumo]')){ openDone(current); return; }
   const fb=ev.target.closest('[data-finish]'); if(fb){ finishDay(fb); return; }
   if(ev.target.closest('[data-done-close]')){ closeDone(); return; }
@@ -1394,13 +1411,14 @@ function confetti(){
 
 
 /* ---------- Disputa: cabo de guerra entre os dois ---------- */
-const PTS={treino:10, coringa:5, parcial:5, coringaParcial:2, recorde:3, sobe:2};
+const PTS={treino:10, coringa:5, parcial:5, coringaParcial:2, beach:5, recorde:3, sobe:2};
 function maxBefore(exId, date){
   let m=0; for(const o of Object.values(state.sessions)){ if(!(o.date<date)) continue; for(const x of ((o.sets||{})[exId]||[])) if(x&&x.done&&+x.kg>m) m=+x.kg; } return m;
 }
 function sessPoints(d, s){
-  const r={treinos:0, coringa:0, parc:0, parcCor:0, recs:0, ups:0};
-  if(!d||d.rest||!s) return r;
+  const r={treinos:0, coringa:0, parc:0, parcCor:0, beach:0, recs:0, ups:0};
+  if(!d||!s) return r;
+  if(d.rest){ if(s.beach) r.beach++; return r; }
   if(d.ex.every(e=>s.done[e.id])){ if(d.optional) r.coringa++; else r.treinos++; }
   else if(s.fin){ if(d.optional) r.parcCor++; else r.parc++; }
   for(const e of d.ex){
@@ -1413,13 +1431,13 @@ function sessPoints(d, s){
   return r;
 }
 function weekScore(plan, wk, skipId){
-  const t={treinos:0, coringa:0, parc:0, parcCor:0, recs:0, ups:0, pts:0};
+  const t={treinos:0, coringa:0, parc:0, parcCor:0, beach:0, recs:0, ups:0, pts:0};
   for(const [id,s] of Object.entries(state.sessions)){
     if(id===skipId || weekOf(s)!==wk) continue;
     const d=plan.find(x=>x.key===s.day); if(!d) continue;
     const r=sessPoints(d,s); for(const k in r) t[k]+=r[k];
   }
-  t.pts=t.treinos*PTS.treino+t.coringa*PTS.coringa+t.parc*PTS.parcial+t.parcCor*PTS.coringaParcial+t.recs*PTS.recorde+t.ups*PTS.sobe;
+  t.pts=t.treinos*PTS.treino+t.coringa*PTS.coringa+t.parc*PTS.parcial+t.parcCor*PTS.coringaParcial+t.beach*PTS.beach+t.recs*PTS.recorde+t.ups*PTS.sobe;
   return t;
 }
 function weekComplete(plan, wk){
@@ -1444,7 +1462,7 @@ function renderDuel(){
   const go=()=>sp.style.setProperty('--sh',sh.toFixed(3));
   if(duelFirst && !document.documentElement.classList.contains('nav-in') && !matchMedia('(prefers-reduced-motion: reduce)').matches){ sp.style.setProperty('--sh','.5'); setTimeout(go,750); } else go();
   duelFirst=false;
-  const chips=(x,st,lead)=>[lead?'<span class="lead">Puxando a corda</span>':'', x.treinos?`<span>${x.treinos} ${x.treinos===1?'treino':'treinos'}</span>`:'', x.parc?`<span>${x.parc} ${x.parc===1?'parcial':'parciais'}</span>`:'', x.recs?`<span>${x.recs} ${x.recs===1?'recorde':'recordes'} ★</span>`:'', x.ups?`<span>${x.ups} ${x.ups===1?'carga':'cargas'} ↑</span>`:'', st>1?`<span>🔥 ${st} semanas</span>`:''].join('');
+  const chips=(x,st,lead)=>[lead?'<span class="lead">Puxando a corda</span>':'', x.treinos?`<span>${x.treinos} ${x.treinos===1?'treino':'treinos'}</span>`:'', x.parc?`<span>${x.parc} ${x.parc===1?'parcial':'parciais'}</span>`:'', x.beach?`<span>🎾 beach</span>`:'', x.recs?`<span>${x.recs} ${x.recs===1?'recorde':'recordes'} ★</span>`:'', x.ups?`<span>${x.ups} ${x.ups===1?'carga':'cargas'} ↑</span>`:'', st>1?`<span>🔥 ${st} semanas</span>`:''].join('');
   $('#ptT').innerHTML=chips(D.T,D.sT,D.T.pts>D.J.pts); $('#ptJ').innerHTML=chips(D.J,D.sJ,D.J.pts>D.T.pts);
   $('#nmT').innerHTML='Thai'+(D.crown==='t'?'<span class="crown" title="Venceu a semana passada">👑</span>':'');
   $('#nmJ').innerHTML='Júnior'+(D.crown==='j'?'<span class="crown" title="Venceu a semana passada">👑</span>':'');
@@ -1454,13 +1472,13 @@ function openDuel(){
   const row=(l,k,mult)=>`<tr><td>${l} <small>×${mult}</small></td><td>${D.T[k]}</td><td>${D.J[k]}</td></tr>`;
   $('#duelBody').innerHTML=`
     <table class="duel-tb"><thead><tr><th></th><th class="t">Thai</th><th class="j">Júnior</th></tr></thead><tbody>
-      ${row('Treinos fechados','treinos',PTS.treino)}${row('Finalizados antes','parc',PTS.parcial)}${row('Coringa','coringa',PTS.coringa)}${row('Coringa finalizado antes','parcCor',PTS.coringaParcial)}${row('Recordes de carga','recs',PTS.recorde)}${row('Cargas pra subir','ups',PTS.sobe)}
+      ${row('Treinos fechados','treinos',PTS.treino)}${row('Finalizados antes','parc',PTS.parcial)}${row('Coringa','coringa',PTS.coringa)}${row('Coringa finalizado antes','parcCor',PTS.coringaParcial)}${row('Beach tennis','beach',PTS.beach)}${row('Recordes de carga','recs',PTS.recorde)}${row('Cargas pra subir','ups',PTS.sobe)}
       <tr class="tot"><td>Total</td><td>${D.T.pts}</td><td>${D.J.pts}</td></tr></tbody></table>
     <div class="duel-row" style="margin-top:12px"><span>Semanas vencidas em ${mName}</span><b>${D.mT} × ${D.mJ}</b></div>
     <div class="duel-row" style="margin-top:8px"><span>🔥 Semanas seguidas com a ficha completa</span><b>${D.sT} × ${D.sJ}</b></div>
     <label style="display:flex;flex-direction:column;gap:6px;margin-top:12px"><span class="sheet-txt"><b>Prêmio de ${mName}</b> · vale pra quem vencer mais semanas</span>
       <textarea class="duel-prize" id="duelPrize" rows="2" maxlength="80" placeholder="Ex.: quem perder paga o açaí">${esc(((state.config.premios||{})[TODAY.slice(0,7)])||'')}</textarea></label>
-    <p class="sheet-txt small" style="margin-top:10px">A semana vai de segunda a domingo. Quem fizer mais pontos ganha a 👑 na semana seguinte. Treino finalizado antes de marcar tudo vale metade. Recorde é levantar mais carga do que já levantou naquele exercício; "carga pra subir" é bater o topo da faixa em todas as séries.</p>`;
+    <p class="sheet-txt small" style="margin-top:10px">A semana vai de segunda a domingo. Quem fizer mais pontos ganha a 👑 na semana seguinte. Treino finalizado antes de marcar tudo vale metade. O beach tennis marcado no dia vale 5. Recorde é levantar mais carga do que já levantou naquele exercício; "carga pra subir" é bater o topo da faixa em todas as séries.</p>`;
   $('#duelSheet').hidden=false;
 }
 document.addEventListener('click',ev=>{
@@ -1488,7 +1506,7 @@ function duelCard(key){
 function todayTxt(plan){
   const d=plan.find(x=>x.dow===dow);
   if(!d) return 'Hoje: descanso';
-  if(d.rest) return plan===DAYS_JR?'Hoje: cross e beach tennis':'Hoje: beach tennis';
+  if(d.rest){ const b=session(d.key,false); return (plan===DAYS_JR?'Hoje: cross e beach tennis':'Hoje: beach tennis')+(b&&b.beach?' ✓':''); }
   const s=session(d.key,false); const n=s?d.ex.filter(e=>s.done[e.id]).length:0;
   return `Hoje: ${d.title}${n?` · ${n} de ${d.ex.length} feitos`:''}`;
 }
