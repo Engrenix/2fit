@@ -4,14 +4,21 @@
 Abre as duas fichas, toca em todos os dias, marca uma série, recarrega
 (simula o iPhone fechando o app) e abre o painel. Falha se der erro de JS.
 
-Instalar uma vez: pip3 install playwright && python3 -m playwright install webkit
-Uso: python3 tools/teste.py
+Instalar uma vez (cria o .venv na pasta do projeto, fora do git):
+  python3 -m venv .venv && .venv/bin/pip install playwright && .venv/bin/python -m playwright install webkit
+Uso: python3 tools/teste.py  (usa o .venv sozinho)
 """
-import http.server, threading, functools, re, sys
+import http.server, threading, functools, os, sys
 from pathlib import Path
-from playwright.sync_api import sync_playwright
 
 R = Path(__file__).resolve().parent.parent
+try:
+    from playwright.sync_api import sync_playwright
+except ImportError:
+    venv = R / '.venv/bin/python'
+    if venv.exists() and Path(sys.executable).resolve() != venv.resolve():
+        os.execv(str(venv), [str(venv), __file__, *sys.argv[1:]])
+    sys.exit('Playwright não instalado. Rode uma vez:\n  python3 -m venv .venv && .venv/bin/pip install playwright && .venv/bin/python -m playwright install webkit')
 tmp = R / '.teste'
 tmp.mkdir(exist_ok=True)
 html = (R / 'index.html').read_text().replace("const IS_SITE = location.protocol==='https:' && !window.claude;", "const IS_SITE = true;")
