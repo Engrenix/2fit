@@ -1684,7 +1684,16 @@ document.addEventListener('click',ev=>{
 
 /* ---------- Painel ---------- */
 const addDays=(iso,n)=>{ const [y,m,d]=iso.split('-').map(Number); const dt=new Date(y,m-1,d); dt.setDate(dt.getDate()+n); return isoOf(dt); };
+/* Exercícios que saíram da ficha: o histórico continua contando no painel e aparece no gráfico de evolução */
+const EX_ARCHIVE={thai:[
+  {id:'b3', n:'Desenvolvimento com halteres', per:'sentada', s:3, r:'8–10', rest:120, rir:'1–2', p:['delt'], q:['triceps'], o:'Desce até os halteres ficarem na altura da orelha. Sem arquear as costas no banco.', yt:'desenvolvimento com halteres sentado', day:'supA', saiu:'v3'},
+  {id:'b8', n:'Abdução sentada', per:'extra de glúteo', s:2, r:'15–20', rest:60, rir:'0–1', p:['gluteomed'], q:[], o:'Finalizador rápido para a parte de cima do glúteo. Glúteo leva estímulo 4 vezes na semana assim.', yt:'cadeira abdutora execução', day:'supA', saiu:'v3'},
+  {id:'d4', n:'Pulldown com braço estendido', s:2, r:'12–15', rest:75, rir:'0–1', p:['dorsal'], q:[], al:true, o:'Começa com os braços bem acima da cabeça, alongando a dorsal. Leva a barra até a coxa.', yt:'pulldown braço estendido polia', day:'supB', saiu:'v3'},
+  {id:'d8', n:'Elevação de pernas na paralela', s:3, r:'10–15', rest:60, rir:'1–2', p:['abdomen'], q:['obliquo'], o:'Sobe as pernas enrolando o quadril para a frente, sem balançar.', yt:'elevação de pernas na paralela abdominal', day:'supB', saiu:'v3'},
+  {id:'d9', n:'Abdução com tronco inclinado', s:2, r:'15–20', rest:60, rir:'0–1', p:['gluteomed'], q:[], o:'Finalizador de glúteo superior. Tronco à frente, segura a borda do banco.', yt:'cadeira abdutora tronco inclinado', day:'supB', saiu:'v3'}
+], jr:[]};
 const EXMAP={}; [...DAYS_THAI,...DAYS_JR].forEach(d=>(d.ex||[]).forEach(e=>EXMAP[e.id]={...e,day:d.key}));
+[...EX_ARCHIVE.thai,...EX_ARCHIVE.jr].forEach(e=>{ if(!EXMAP[e.id]) EXMAP[e.id]=e; });
 const GROUPS_BY={jr:[
   {k:'Ombro lateral', m:['delt'], lo:10, hi:14},
   {k:'Ombro posterior', m:['deltpost'], lo:6, hi:10},
@@ -1709,7 +1718,9 @@ const DEF_LIFT={thai:'a1', jr:'ja1'};
 let demo=null, liftSel=DEF_LIFT[WHO], liftTouched=false;
 function fillLiftSelect(){
   const selEl=$('#liftAll');
-  if(!selEl.options.length) selEl.innerHTML=DAYS.filter(d=>!d.rest).map(d=>`<optgroup label="${esc(d.short+' · '+d.title)}">${d.ex.map(e=>`<option value="${e.id}">${esc(e.n)}</option>`).join('')}</optgroup>`).join('');
+  if(!selEl.options.length){ const arq=(EX_ARCHIVE[WHO]||[]).filter(e=>SRC().some(x=>doneSets(x).some(y=>y.id===e.id)));
+    selEl.innerHTML=DAYS.filter(d=>!d.rest).map(d=>`<optgroup label="${esc(d.short+' · '+d.title)}">${d.ex.map(e=>`<option value="${e.id}">${esc(e.n)}</option>`).join('')}</optgroup>`).join('')
+      +(arq.length?`<optgroup label="Saíram da ficha">${arq.map(e=>`<option value="${e.id}">${esc(e.n)}</option>`).join('')}</optgroup>`:''); }
   selEl.value=liftSel;
 }
 /* Abre num exercício que já tem histórico (o primeiro da ficha, se tiver), até escolher outro */

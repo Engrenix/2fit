@@ -35,7 +35,7 @@ A divisão da semana continua a mesma: já cabe no teto sem reorganizar os dias.
 - `c6` Abdominal na polia: de 3 pra **4 séries**, pra o abdômen não ficar abaixo da meta do painel.
 - Dica do dia de beach: em vez de "tira 1 série do desenvolvimento", agora diz que o Superior A não tem desenvolvimento justamente pra poupar o ombro.
 
-Os ids que continuam são os mesmos, então o histórico de carga e o gráfico seguem inteiros. Nenhum id novo.
+Os 5 exercícios que saíram foram pra `EX_ARCHIVE`: o histórico deles continua no painel e no gráfico de evolução (grupo "Saíram da ficha"). Os ids que continuam são os mesmos, então o histórico de carga e o gráfico seguem inteiros. Nenhum id novo.
 
 ## Volume semanal (conta cheia, como na v1)
 
