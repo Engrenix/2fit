@@ -1276,6 +1276,7 @@ function toggleSet(row){
   }
   r.done=!r.done;
   if(r.done) r.t=Date.now(); else delete r.t;
+  saveFoco({ex});
   row.classList.toggle('ok', r.done);
   row.querySelector('.chk').setAttribute('aria-pressed', r.done);
   const d=DAYS.find(x=>x.key===current), e=d.ex.find(x=>x.id===ex), n=setsFor(e);
@@ -1425,8 +1426,29 @@ function unlockAudio(){ try{ if(!ac){ const C=window.AudioContext||window.webkit
 function beep(){ try{ if(!ac) return; [0,0.22,0.44].forEach(t=>{ const o=ac.createOscillator(), g=ac.createGain(); o.frequency.value=880; o.connect(g); g.connect(ac.destination);
   g.gain.setValueAtTime(0.0001,ac.currentTime+t); g.gain.exponentialRampToValueAtTime(0.25,ac.currentTime+t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,ac.currentTime+t+0.18);
   o.start(ac.currentTime+t); o.stop(ac.currentTime+t+0.2); }); }catch(e){} }
+/* Onde a pessoa parou: se o iPhone fechar o app no descanso, ele volta no exercício e com o cronômetro */
+const FOCO_KEY='2fit-foco';
+function saveFoco(o){ try{ const f=Object.assign(JSON.parse(localStorage.getItem(FOCO_KEY)||'{}'),o,{who:WHO,day:current,at:Date.now()}); localStorage.setItem(FOCO_KEY,JSON.stringify(f)); }catch(e){} }
+function restoreFoco(withTimer){
+  let f=null; try{ f=JSON.parse(localStorage.getItem(FOCO_KEY)||'null'); }catch(e){}
+  if(!f || f.who!==WHO || f.day!==current || $('#v-thai').hidden || Date.now()-f.at>2*3600e3) return;
+  const d=DAYS.find(x=>x.key===current); if(!d||d.rest) return;
+  const s=session(current,false)||{done:{}};
+  let i=d.ex.findIndex(e=>e.id===f.ex); if(i<0) return;
+  if(s.done[f.ex]){ const nx=d.ex.findIndex((e,k)=>k>i && !s.done[e.id]); if(nx>=0) i=nx; }
+  const el=$('#ex-'+d.ex[i].id); if(!el) return;
+  const top=el.getBoundingClientRect().top+window.scrollY-64;
+  window.scrollTo(0,Math.max(0,top));
+  if(withTimer && f.tEnd && f.tEnd>Date.now() && !$('#timer').classList.contains('show')){
+    tTotal=f.tTotal||Math.round((f.tEnd-Date.now())/1000); tEnd=f.tEnd;
+    $('#tname').textContent=f.name||''; $('#tsub').textContent=f.sub||'';
+    const t=$('#timer'); t.classList.add('show'); t.classList.remove('end');
+    clearInterval(tInt); tick(); tInt=setInterval(tick,250);
+  }
+}
 function startTimer(sec, name, sub){
   tTotal=sec; tEnd=Date.now()+sec*1000;
+  saveFoco({tEnd,tTotal,name,sub});
   $('#tname').textContent=name; $('#tsub').textContent=sub;
   const t=$('#timer'); t.classList.add('show'); t.classList.remove('end');
   clearInterval(tInt); tick(); tInt=setInterval(tick,250);
@@ -1439,8 +1461,8 @@ function tick(){
   $('#tprog').style.width = (100*(1-left/tTotal))+'%';
   if(left<=0){ clearInterval(tInt); $('#timer').classList.add('end'); $('#tsub').textContent='Bora para a próxima'; beep(); try{navigator.vibrate&&navigator.vibrate([200,100,200]);}catch(e){} setTimeout(()=>{ if(Date.now()>=tEnd) $('#timer').classList.remove('show'); },6000); }
 }
-$('#tplus').onclick=()=>{ tEnd+=15000; tTotal+=15; $('#timer').classList.remove('end'); clearInterval(tInt); tInt=setInterval(tick,250); tick(); pushRest(Math.round((tEnd-Date.now())/1000), $('#tname').textContent); };
-$('#tskip').onclick=()=>{ clearInterval(tInt); $('#timer').classList.remove('show'); pushRest(0); };
+$('#tplus').onclick=()=>{ tEnd+=15000; tTotal+=15; saveFoco({tEnd,tTotal}); $('#timer').classList.remove('end'); clearInterval(tInt); tInt=setInterval(tick,250); tick(); pushRest(Math.round((tEnd-Date.now())/1000), $('#tname').textContent); };
+$('#tskip').onclick=()=>{ clearInterval(tInt); saveFoco({tEnd:0}); $('#timer').classList.remove('show'); pushRest(0); };
 $('#tbell').onclick=()=>pushEnable();
 
 /* ---------- Comemoração ---------- */
@@ -2217,6 +2239,8 @@ state.config={phase:'normal',updatedAt:0};
 saveLocal=function(){}; queueRemote=function(){};
 (function(){ const b=document.createElement('div'); b.className='demo-flag'; b.textContent='Demonstração · nada fica salvo'; document.body.appendChild(b); })();
 renderTabs(); renderPhase(); renderDay(); renderCal(); renderHome(); route();
+setTimeout(()=>restoreFoco(true),60);
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible' && window.scrollY<80) restoreFoco(true); });
 </script>
 
 </body>
