@@ -96,7 +96,7 @@ html:has(#v-login:not([hidden])),body:has(#v-login:not([hidden])){background:#FF
 .push-row .bk-btn{flex:0 0 auto;width:auto;padding:0 14px}
 .push-btns{display:flex;gap:6px;flex:0 0 auto}
 .sheet-bg{position:fixed;inset:0;z-index:50;background:rgba(20,16,18,.45);display:flex;align-items:flex-end;justify-content:center}
-.sheet{width:100%;max-width:520px;background:#FFFFFF;color:#2B2420;border-radius:22px 22px 0 0;padding:18px max(18px, env(safe-area-inset-right, 0px)) calc(22px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px));display:flex;flex-direction:column;gap:12px;animation:sheetUp .3s cubic-bezier(.2,.8,.2,1)}
+.sheet{width:100%;max-width:520px;max-height:calc(100dvh - env(safe-area-inset-top, 0px) - 24px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:#FFFFFF;color:#2B2420;border-radius:22px 22px 0 0;padding:18px max(18px, env(safe-area-inset-right, 0px)) calc(22px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px));display:flex;flex-direction:column;gap:12px;animation:sheetUp .3s cubic-bezier(.2,.8,.2,1)}
 @keyframes sheetUp{from{transform:translateY(40%);opacity:.4}}
 .sheet form,#acctOn{display:flex;flex-direction:column;gap:12px}
 .sheet form .bk-btn{flex:none;height:48px;margin-top:4px}
@@ -129,6 +129,11 @@ html:has(#v-login:not([hidden])),body:has(#v-login:not([hidden])){background:#FF
 .bk-btn{display:inline-flex;align-items:center;justify-content:center;flex:1 1 140px;min-height:44px;border:0;border-radius:12px;background:var(--accent);color:var(--surface);font-weight:800;font-size:14px;cursor:pointer;padding:0 14px}
 .bk-btn.ghost{background:var(--surface);color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
 #bkInfo.late{color:var(--accent);font-weight:700}
+.pins{display:grid;gap:8px;margin-bottom:10px}
+.pin{display:flex;gap:10px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.pin .ic{flex:none;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;font-weight:900;background:var(--bg);color:var(--ink)}
+.pin.ok .ic,.pin.up .ic{background:var(--ok-soft);color:#2C7C5B}.pin.warn .ic{background:#FCE9B8;color:#6B5420}
+.pin b{display:block;font-size:14.5px;color:var(--ink)}.pin span{font-size:13px;color:var(--muted);line-height:1.35}
 .kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 @media (min-width:620px){.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -468,6 +473,40 @@ details.guide .in b{color:var(--ink)}
 .crown{display:inline-block;font-size:.55em;vertical-align:.45em;margin-left:.15em;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25))}
 @media (max-height:560px){ .hpts span:not(.lead){display:none} }
 /* Folha da disputa */
+.mission{position:absolute;left:max(18px, env(safe-area-inset-left, 0px));bottom:max(38px, calc(env(safe-area-inset-bottom, 0px) + 24px));z-index:4;min-height:40px;border:1px solid rgba(184,242,201,.22);background:rgba(10,16,13,.55);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#DDF3E4;border-radius:99px;padding:8px 14px;display:flex;align-items:center;gap:12px;font:600 12.5px var(--f-body);white-space:nowrap;max-width:calc(100% - 118px)}
+.mission .mi{display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.mission .mi b{font-weight:800}
+.mission .cp i{display:block;width:44px;height:5px;border-radius:9px;background:rgba(255,255,255,.18);overflow:hidden;flex:none}
+.mission .cp u{display:block;height:100%;background:#B8F2C9;border-radius:9px;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.mission.ok{background:#B8F2C9;color:#16201C;border-color:#B8F2C9}.mission.ok .cp u{background:#16201C}
+.dsc{display:flex;align-items:center;justify-content:center;gap:14px;margin:2px 0 14px}
+.dsc>span{font-weight:800;color:#A39A92}
+.dsc div{display:flex;flex-direction:column;align-items:center;border-radius:18px;padding:8px 22px;min-width:108px}
+.dsc small{font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.8}
+.dsc b{font:900 34px var(--f-display);font-stretch:118%;font-variant-numeric:tabular-nums;line-height:1.05}
+.dsc .t{background:#FFE3EC;color:#5A1E39}.dsc .j{background:#16201C;color:#B8F2C9}
+.dsc .w{box-shadow:0 0 0 3px #F4C95D}
+.dbox{background:#F7F4EF;border-radius:16px;padding:12px;margin-top:10px;display:grid;gap:6px}
+.dbox.ok{background:#DDF3E9}
+.dbox .kk{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6B5F57}
+.dbox h4{margin:0;font:900 18px var(--f-display);font-stretch:112%;color:#2B2420}
+.dbox p{margin:0;font-size:13px;color:#6B5F57}
+.chp{display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center;font-size:13px;color:#2B2420}
+.chp i{height:8px;border-radius:9px;background:#E6DFD7;overflow:hidden}
+.chp u{display:block;height:100%;border-radius:9px;background:#2B2420;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.chp.ok u{background:#3FA37A}.chp b{font-variant-numeric:tabular-nums;font-size:13px}.chp.ok b{color:#2C7C5B}
+.dh{margin:16px 0 8px;font-size:15px;font-weight:800;color:#2B2420}
+.dws{display:grid;gap:10px}
+@media (min-width:560px){.dws{grid-template-columns:1fr 1fr}}
+.dw{border:1px solid #EFE9E3;border-radius:16px;padding:10px 12px}
+.dwh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.dwh b{font:900 17px var(--f-display);font-stretch:112%}.dwh span{font-weight:800;font-variant-numeric:tabular-nums}
+.dw.t .dwh{color:#B23A6E}.dw.j .dwh{color:#2F4A3E}
+.dwl{display:flex;justify-content:space-between;padding:7px 0 3px;border-top:1px solid #EFE9E3;font-size:13.5px;font-weight:800;color:#2B2420}
+.dwl small{font-weight:600;color:#A39A92}.dwl b{font-variant-numeric:tabular-nums}
+.dwi{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:#6B5F57;padding:2px 0}
+.dwi span:last-child{font-variant-numeric:tabular-nums;white-space:nowrap}.dwi.cap{font-style:italic}
+.dn-duel .chd{margin:0;font-size:13px;font-weight:700;opacity:.9}
 .duel-tb{width:100%;border-collapse:collapse;font-size:14px}
 .duel-tb th,.duel-tb td{padding:7px 4px;border-bottom:1px solid #EFE9E3;text-align:center}
 .duel-tb th:first-child,.duel-tb td:first-child{text-align:left;color:#6B5F57}
@@ -625,6 +664,7 @@ html.dn-open #v-thai, html.dn-open #v-painel, html.dn-open #v-home{visibility:hi
   </a>
   <span class="hdate" id="homeDate" hidden>Hoje</span>
   <div class="rope" aria-hidden="true"></div>
+  <button type="button" class="mission" id="mission" aria-label="Ver o desafio da semana e a missão do casal"></button>
   <button type="button" class="score" id="scoreBtn" aria-label="Ver a disputa da semana"><span class="wk">Semana</span><span class="p t" id="scT">0</span><span class="x">×</span><span class="p j" id="scJ">0</span></button>
   <a class="half h-jr" href="#junior" data-go="junior" aria-label="Abrir o treino do Júnior">
     <span class="bigword" aria-hidden="true">JR</span>
@@ -712,6 +752,7 @@ html.dn-open #v-thai, html.dn-open #v-painel, html.dn-open #v-home{visibility:hi
       <button type="button" data-period="d365" aria-pressed="false">1 ano</button>
     </div>
   </header>
+  <div class="pins" id="pins"></div>
   <div class="kpis" id="kpis"></div>
   <section class="panel">
     <div class="panel-h"><h4>Peso total por semana</h4><span class="hint">carga × repetições das séries feitas</span></div>
@@ -788,6 +829,7 @@ html.dn-open #v-thai, html.dn-open #v-painel, html.dn-open #v-home{visibility:hi
       <p class="sheet-txt">Conectado como <b id="acctEmail"></b></p>
       <p class="sheet-txt" id="acctStatus"></p>
       <div class="push-row" id="pushRow" hidden><span><b>Aviso do descanso</b><small id="pushTxt">Notificação quando o descanso acabar, mesmo com o celular bloqueado.</small></span><span class="push-btns"><button type="button" class="bk-btn ghost" id="pushTest" hidden>Testar</button><button type="button" class="bk-btn" id="pushBtn">Ativar</button></span></div>
+      <div class="push-row" id="socialRow" hidden><span><b>Avisos da disputa</b><small>Quando o outro fecha um treino e o resumo de domingo à noite.</small></span><span class="push-btns"><button type="button" class="bk-btn" id="socialBtn">Ligado</button></span></div>
       <div class="bk-row"><button type="button" class="bk-btn" id="syncNow">Sincronizar agora</button><button type="button" class="bk-btn ghost" id="logoutBtn">Sair</button></div>
       <p class="sheet-txt small">Ao sair, os treinos continuam salvos neste celular.</p>
     </div>
@@ -1283,7 +1325,7 @@ function finishDay(btn){
   clearTimeout(finArm); btn.classList.remove('armed');
   const s=session(current,true); s.fin=Date.now(); touch(sid(current));
   celebrated[sid(current)]=true;
-  renderTabs(); updateProgress(); confetti(); setTimeout(()=>openDone(current),700);
+  renderTabs(); updateProgress(); confetti(); socialClosed(current); setTimeout(()=>openDone(current),700);
 }
 function updateProgress(){
   const d = DAYS.find(x=>x.key===current); if(!d||d.rest) return;
@@ -1432,7 +1474,7 @@ let celebrated={};
 function checkDay(){
   const d=DAYS.find(x=>x.key===current); const s=session(current,false); if(!s) return;
   const all=d.ex.every(e=>s.done[e.id]);
-  if(all && !celebrated[sid(current)]){ celebrated[sid(current)]=true; confetti(); setTimeout(()=>openDone(current),900); }
+  if(all && !celebrated[sid(current)]){ celebrated[sid(current)]=true; confetti(); socialClosed(current); setTimeout(()=>openDone(current),900); }
 }
 
 
@@ -1647,12 +1689,14 @@ function confetti(){
 
 
 /* ---------- Disputa: cabo de guerra entre os dois ---------- */
-const PTS={treino:10, coringa:5, parcial:5, coringaParcial:2, beach:5, cardio:3, recorde:3, sobe:2};
+/* Disputa justa: cada um vale 100 pela PRÓPRIA ficha (cada dia = 100 ÷ dias da ficha),
+   mais bônus (até 20) e o desafio da semana (10). Nada é salvo: sai tudo das sessões. */
+const PTS={ficha:100, parcial:.5, cardio:.3, coringa:8, coringaParcial:4, beach:4, recorde:2, sobe:1, bonusMax:20, desafio:10};
 function maxBefore(exId, date){
   let m=0; for(const o of Object.values(state.sessions)){ if(!(o.date<date)) continue; for(const x of ((o.sets||{})[exId]||[])) if(x&&x.done&&+x.kg>m) m=+x.kg; } return m;
 }
 function sessPoints(d, s){
-  const r={treinos:0, coringa:0, parc:0, parcCor:0, beach:0, cardio:0, recs:0, ups:0};
+  const r={treinos:0, coringa:0, parc:0, parcCor:0, beach:0, cardio:0, recs:0, ups:0, recN:[], upN:[]};
   if(!d||!s) return r;
   if(d.rest){ if(s.beach) r.beach++; return r; }
   if(d.ex.every(e=>s.done[e.id])){ if(d.optional) r.coringa++; else r.treinos++; }
@@ -1662,19 +1706,45 @@ function sessPoints(d, s){
     if(e.warm) continue;
     const rows=((s.sets||{})[e.id]||[]).filter(x=>x&&x.done); if(!rows.length) continue;
     const work=Math.max(0,...rows.map(x=>+x.kg||0)); if(!work) continue;
-    const before=maxBefore(e.id, s.date||TODAY); if(before>0 && work>before) r.recs++;
-    const top=topRep(e.r); if(rows.length>=e.s && rows.every(x=>(+x.reps||0)>=top)) r.ups++;
+    const before=maxBefore(e.id, s.date||TODAY); if(before>0 && work>before){ r.recs++; r.recN.push(e.n); }
+    const top=topRep(e.r); if(rows.length>=e.s && rows.every(x=>(+x.reps||0)>=top)){ r.ups++; r.upN.push(e.n); }
   }
   return r;
 }
+const weekSess=(plan,wk,skipId)=>Object.entries(state.sessions).filter(([id,s])=>id!==skipId&&weekOf(s)===wk).map(([,s])=>[plan.find(x=>x.key===s.day),s]).filter(([d])=>d).sort((a,b)=>(a[1].date||'')<(b[1].date||'')?-1:1);
+const dowOf=iso=>{ const [y,m,d]=String(iso||TODAY).split('-').map(Number); return new Date(y,m-1,d).getDay(); };
+/* Desafio da semana: muda toda segunda, vale PTS.desafio pra quem cumprir */
+const CHALLENGES=[
+  {t:'Caça-recordes', d:'Bater 2 recordes de carga na semana', goal:2, f:L=>L.reduce((a,[d,s])=>a+sessPoints(d,s).recs,0)},
+  {t:'No dia certo', d:'Fechar 3 treinos no dia marcado na ficha', goal:3, f:L=>L.filter(([d,s])=>!d.rest&&!d.optional&&(d.ex.every(e=>s.done[e.id])||s.fin)&&dowOf(s.date)===d.dow).length},
+  {t:'No capricho', d:'Responder o “Como foi?” em todos os exercícios de 3 treinos', goal:3, f:L=>L.filter(([d,s])=>!d.rest&&d.ex.filter(e=>!e.warm).every(e=>(s.rpe||{})[e.id])).length},
+  {t:'Subir de nível', d:'Bater o topo da faixa em 3 exercícios', goal:3, f:L=>L.reduce((a,[d,s])=>a+sessPoints(d,s).ups,0)},
+  {t:'Sábado conta', d:'Fazer o coringa de sábado', goal:1, f:L=>L.filter(([d,s])=>d.optional&&(d.ex.every(e=>s.done[e.id])||s.fin)).length},
+  {t:'Sem atalho', d:'Fechar todos os treinos da ficha sem finalizar antes', goal:0, f:L=>L.filter(([d,s])=>!d.rest&&!d.optional&&d.ex.every(e=>s.done[e.id])).length},
+];
+function challenge(wk){ const i=Math.round((Date.parse(wk)-Date.parse('2026-01-05'))/6048e5); return CHALLENGES[((i%CHALLENGES.length)+CHALLENGES.length)%CHALLENGES.length]; }
 function weekScore(plan, wk, skipId){
-  const t={treinos:0, coringa:0, parc:0, parcCor:0, beach:0, cardio:0, recs:0, ups:0, pts:0};
-  for(const [id,s] of Object.entries(state.sessions)){
-    if(id===skipId || weekOf(s)!==wk) continue;
-    const d=plan.find(x=>x.key===s.day); if(!d) continue;
-    const r=sessPoints(d,s); for(const k in r) t[k]+=r[k];
+  const t={treinos:0, coringa:0, parc:0, parcCor:0, beach:0, cardio:0, recs:0, ups:0, pts:0, items:[], bonusItems:[]};
+  const nDays=plan.filter(d=>!d.rest&&!d.optional).length||1, per=PTS.ficha/nDays, L=weekSess(plan,wk,skipId), recAll=[], upAll=[];
+  for(const [d,s] of L){
+    const r=sessPoints(d,s); for(const k in r) if(typeof r[k]==='number') t[k]+=r[k];
+    const nm=d.rest?'Beach tennis':d.title;
+    if(r.treinos) t.items.push([`${nm} fechado`, Math.round(per)]);
+    if(r.parc) t.items.push([`${nm} finalizado antes`, Math.round(per*PTS.parcial)]);
+    if(r.cardio) t.items.push([`${nm} trocado por cardio`, Math.round(per*PTS.cardio)]);
+    if(r.coringa) t.bonusItems.push(['Coringa fechado', PTS.coringa]);
+    if(r.parcCor) t.bonusItems.push(['Coringa finalizado antes', PTS.coringaParcial]);
+    if(r.beach) t.bonusItems.push(['Beach tennis', PTS.beach]);
+    recAll.push(...r.recN); upAll.push(...r.upN);
   }
-  t.pts=t.treinos*PTS.treino+t.coringa*PTS.coringa+t.parc*PTS.parcial+t.parcCor*PTS.coringaParcial+t.beach*PTS.beach+t.cardio*PTS.cardio+t.recs*PTS.recorde+t.ups*PTS.sobe;
+  const nomes=a=>a.slice(0,3).join(', ')+(a.length>3?` e mais ${a.length-3}`:'');
+  if(recAll.length) t.bonusItems.push([`${recAll.length} ${recAll.length===1?'recorde':'recordes'}: ${nomes(recAll)}`, recAll.length*PTS.recorde]);
+  if(upAll.length) t.bonusItems.push([`Topo da faixa em ${upAll.length}: ${nomes(upAll)}`, upAll.length*PTS.sobe]);
+  t.base=Math.min(PTS.ficha, Math.round((t.treinos+t.parc*PTS.parcial+t.cardio*PTS.cardio)*per));
+  t.bonusRaw=t.bonusItems.reduce((a,x)=>a+x[1],0); t.bonus=Math.min(PTS.bonusMax,t.bonusRaw);
+  const ch=challenge(wk), goal=ch.goal||nDays, n=ch.f(L);
+  t.ch={t:ch.t, d:ch.d, n:Math.min(n,goal), goal, ok:n>=goal}; t.desafio=t.ch.ok?PTS.desafio:0;
+  t.pts=t.base+t.bonus+t.desafio;
   return t;
 }
 function weekComplete(plan, wk){
@@ -1683,13 +1753,20 @@ function weekComplete(plan, wk){
 function streak(plan){
   let n=0; for(let i=0;i<104;i++){ const wk=addDays(WEEK,-7*i); if(weekComplete(plan,wk)) n++; else if(i===0) continue; else break; } return n;
 }
-function duelData(){
-  const T=weekScore(DAYS_THAI,WEEK), J=weekScore(DAYS_JR,WEEK);
-  const lastWk=addDays(WEEK,-7), lT=weekScore(DAYS_THAI,lastWk).pts, lJ=weekScore(DAYS_JR,lastWk).pts;
+/* Missão do casal: os dois fecham a semana. Conta os dias da ficha fechados por cada um. */
+function coupleData(wk){
+  const cnt=plan=>{ const ds=plan.filter(d=>!d.rest&&!d.optional); return [ds.filter(d=>Object.values(state.sessions).some(s=>s.day===d.key&&weekOf(s)===wk&&d.ex.every(e=>s.done[e.id]))).length, ds.length]; };
+  const [a,na]=cnt(DAYS_THAI), [b,nb]=cnt(DAYS_JR);
+  let st=0; for(let i=0;i<104;i++){ const w=addDays(WEEK,-7*i); if(weekComplete(DAYS_THAI,w)&&weekComplete(DAYS_JR,w)) st++; else if(i===0) continue; else break; }
+  return {n:a+b, total:na+nb, ok:a===na&&b===nb, st};
+}
+function duelData(wk=WEEK){
+  const T=weekScore(DAYS_THAI,wk), J=weekScore(DAYS_JR,wk);
+  const lastWk=addDays(wk,-7), lT=weekScore(DAYS_THAI,lastWk).pts, lJ=weekScore(DAYS_JR,lastWk).pts;
   const crown = lT>lJ?'t':lJ>lT?'j':'';
   const mon=TODAY.slice(0,7); let mT=0, mJ=0;
-  for(let wk=mondayOf(mon+'-01'); wk<WEEK; wk=addDays(wk,7)){ if(wk.slice(0,7)!==mon) continue; const a=weekScore(DAYS_THAI,wk).pts, b=weekScore(DAYS_JR,wk).pts; if(a>b) mT++; else if(b>a) mJ++; }
-  return {T, J, crown, mT, mJ, sT:streak(DAYS_THAI), sJ:streak(DAYS_JR)};
+  for(let w=mondayOf(mon+'-01'); w<WEEK; w=addDays(w,7)){ if(w.slice(0,7)!==mon) continue; const a=weekScore(DAYS_THAI,w).pts, b=weekScore(DAYS_JR,w).pts; if(a>b) mT++; else if(b>a) mJ++; }
+  return {wk, T, J, crown, mT, mJ, sT:streak(DAYS_THAI), sJ:streak(DAYS_JR), C:coupleData(wk)};
 }
 let duelFirst=true;
 function renderDuel(){
@@ -1699,27 +1776,45 @@ function renderDuel(){
   const go=()=>sp.style.setProperty('--sh',sh.toFixed(3));
   if(duelFirst && !document.documentElement.classList.contains('nav-in') && !matchMedia('(prefers-reduced-motion: reduce)').matches){ sp.style.setProperty('--sh','.5'); setTimeout(go,750); } else go();
   duelFirst=false;
-  const chips=(x,st,lead)=>[lead?'<span class="lead">Puxando a corda</span>':'', x.treinos?`<span>${x.treinos} ${x.treinos===1?'treino':'treinos'}</span>`:'', x.parc?`<span>${x.parc} ${x.parc===1?'parcial':'parciais'}</span>`:'', x.beach?`<span>🎾 beach</span>`:'', x.cardio?`<span>🏃 ${x.cardio} cardio</span>`:'', x.recs?`<span>${x.recs} ${x.recs===1?'recorde':'recordes'} ★</span>`:'', x.ups?`<span>${x.ups} ${x.ups===1?'carga':'cargas'} ↑</span>`:'', st>1?`<span>🔥 ${st} semanas</span>`:''].join('');
+  const chips=(x,st,lead)=>[lead?'<span class="lead">Puxando a corda</span>':'', x.treinos?`<span>${x.treinos} ${x.treinos===1?'treino':'treinos'}</span>`:'', x.parc?`<span>${x.parc} ${x.parc===1?'parcial':'parciais'}</span>`:'', x.beach?`<span>🎾 beach</span>`:'', x.cardio?`<span>🏃 ${x.cardio} cardio</span>`:'', x.recs?`<span>${x.recs} ${x.recs===1?'recorde':'recordes'} ★</span>`:'', x.ups?`<span>${x.ups} ${x.ups===1?'carga':'cargas'} ↑</span>`:'', x.desafio?`<span>🎯 desafio</span>`:'', st>1?`<span>🔥 ${st} semanas</span>`:''].join('');
   $('#ptT').innerHTML=chips(D.T,D.sT,D.T.pts>D.J.pts); $('#ptJ').innerHTML=chips(D.J,D.sJ,D.J.pts>D.T.pts);
   $('#nmT').innerHTML='Thai'+(D.crown==='t'?'<span class="crown" title="Venceu a semana passada">👑</span>':'');
   $('#nmJ').innerHTML='Júnior'+(D.crown==='j'?'<span class="crown" title="Venceu a semana passada">👑</span>':'');
+  const m=$('#mission'); if(m){ const pct=Math.round(D.C.n/Math.max(1,D.C.total)*100);
+    m.classList.toggle('ok',D.C.ok);
+    m.innerHTML=`<span class="mi">🎯 <b>${esc(D.T.ch.t)}</b></span><span class="mi cp">${D.C.ok?'🤝 Casal fechou a semana!':`🤝 Casal ${D.C.n}/${D.C.total}`}<i><u style="width:${pct}%"></u></i></span>`; }
 }
-function openDuel(){
-  const D=duelData(); const mName=MONTHS[+TODAY.slice(5,7)-1];
-  const row=(l,k,mult)=>`<tr><td>${l} <small>×${mult}</small></td><td>${D.T[k]}</td><td>${D.J[k]}</td></tr>`;
+function openDuel(wk=WEEK){
+  const D=duelData(wk), past=wk<WEEK; const mName=MONTHS[+TODAY.slice(5,7)-1];
+  const win = D.T.pts>D.J.pts?'t':D.J.pts>D.T.pts?'j':'';
+  const who=(nm,x,c)=>`<div class="dw ${c}"><div class="dwh"><b>${nm}</b><span>${x.pts} pts</span></div>
+    <div class="dwl"><span class="g">Ficha <small>até ${PTS.ficha}</small></span><b>${x.base}</b></div>
+    ${x.items.map(([l,v])=>`<div class="dwi"><span>${esc(l)}</span><span>+${v}</span></div>`).join('')||'<div class="dwi"><span>Nenhum treino ainda</span><span></span></div>'}
+    <div class="dwl"><span class="g">Bônus <small>até ${PTS.bonusMax}</small></span><b>${x.bonus}</b></div>
+    ${x.bonusItems.map(([l,v])=>`<div class="dwi"><span>${esc(l)}</span><span>+${v}</span></div>`).join('')||'<div class="dwi"><span>Recordes, topo da faixa, beach e coringa</span><span></span></div>'}
+    ${x.bonusRaw>PTS.bonusMax?`<div class="dwi cap"><span>Passou do teto: valem ${PTS.bonusMax}</span><span></span></div>`:''}
+    <div class="dwl"><span class="g">Desafio</span><b>${x.desafio}</b></div></div>`;
+  const chRow=(nm,x)=>`<div class="chp ${x.ch.ok?'ok':''}"><span>${nm}</span><i><u style="width:${Math.round(x.ch.n/x.ch.goal*100)}%"></u></i><b>${x.ch.ok?'✓ +'+PTS.desafio:`${x.ch.n}/${x.ch.goal}`}</b></div>`;
+  $('#duelTitle').textContent = past ? 'Semana passada' : 'Disputa da semana';
   $('#duelBody').innerHTML=`
-    <table class="duel-tb"><thead><tr><th></th><th class="t">Thai</th><th class="j">Júnior</th></tr></thead><tbody>
-      ${row('Treinos fechados','treinos',PTS.treino)}${row('Finalizados antes','parc',PTS.parcial)}${row('Coringa','coringa',PTS.coringa)}${row('Coringa finalizado antes','parcCor',PTS.coringaParcial)}${row('Beach tennis','beach',PTS.beach)}${row('Só cardio','cardio',PTS.cardio)}${row('Recordes de carga','recs',PTS.recorde)}${row('Cargas pra subir','ups',PTS.sobe)}
-      <tr class="tot"><td>Total</td><td>${D.T.pts}</td><td>${D.J.pts}</td></tr></tbody></table>
-    <div class="duel-row" style="margin-top:12px"><span>Semanas vencidas em ${mName}</span><b>${D.mT} × ${D.mJ}</b></div>
+    <div class="dsc"><div class="t ${win==='t'?'w':''}"><small>Thai${win==='t'&&past?' 👑':''}</small><b>${D.T.pts}</b></div><span>×</span><div class="j ${win==='j'?'w':''}"><small>Júnior${win==='j'&&past?' 👑':''}</small><b>${D.J.pts}</b></div></div>
+    <div class="dbox"><div class="kk">🎯 Desafio da semana · +${PTS.desafio} pts</div><h4>${esc(D.T.ch.t)}</h4><p>${esc(D.T.ch.d)}</p>${chRow('Thai',D.T)}${chRow('Júnior',D.J)}</div>
+    <div class="dbox ${D.C.ok?'ok':''}"><div class="kk">🤝 Missão do casal</div><h4>${D.C.ok?'Os dois fecharam a semana!':'Os dois fecham a ficha inteira'}</h4>
+      <div class="chp ${D.C.ok?'ok':''}"><span>Juntos</span><i><u style="width:${Math.round(D.C.n/Math.max(1,D.C.total)*100)}%"></u></i><b>${D.C.n}/${D.C.total}</b></div>
+      ${D.C.st>0?`<p>🔥 ${D.C.st} ${D.C.st===1?'semana seguida':'semanas seguidas'} fechando juntos</p>`:'<p>Aqui ninguém perde: se os dois fecharem, a sequência do casal sobe.</p>'}</div>
+    <h4 class="dh">De onde vieram os pontos</h4>
+    <div class="dws">${who('Thai',D.T,'t')}${who('Júnior',D.J,'j')}</div>
+    ${past?'':`<div class="duel-row" style="margin-top:12px"><span>Semanas vencidas em ${mName}</span><b>${D.mT} × ${D.mJ}</b></div>
     <div class="duel-row" style="margin-top:8px"><span>🔥 Semanas seguidas com a ficha completa</span><b>${D.sT} × ${D.sJ}</b></div>
     <label style="display:flex;flex-direction:column;gap:6px;margin-top:12px"><span class="sheet-txt"><b>Prêmio de ${mName}</b> · vale pra quem vencer mais semanas</span>
       <textarea class="duel-prize" id="duelPrize" rows="2" maxlength="80" placeholder="Ex.: quem perder paga o açaí">${esc(((state.config.premios||{})[TODAY.slice(0,7)])||'')}</textarea></label>
-    <p class="sheet-txt small" style="margin-top:10px">A semana vai de segunda a domingo. Quem fizer mais pontos ganha a 👑 na semana seguinte. Treino finalizado antes de marcar tudo vale metade. O beach tennis marcado no dia vale 5, e o dia trocado por cardio vale 3. Recorde é levantar mais carga do que já levantou naquele exercício; "carga pra subir" é bater o topo da faixa em todas as séries.</p>`;
+    <button type="button" class="bk-btn ghost" data-duel-last style="margin-top:12px;width:100%">Ver a semana passada</button>`}
+    <p class="sheet-txt small" style="margin-top:10px">Cada um vale ${PTS.ficha} pontos pela própria ficha: fechar todos os dias dá ${PTS.ficha}, não importa quantos dias a ficha tem. Finalizar antes vale metade do dia e trocar por cardio vale 30%. O bônus soma até ${PTS.bonusMax}: coringa ${PTS.coringa}, beach ${PTS.beach}, recorde ${PTS.recorde} e topo da faixa ${PTS.sobe}. Quem fizer mais pontos ganha a 👑 na semana seguinte.</p>`;
   $('#duelSheet').hidden=false;
 }
 document.addEventListener('click',ev=>{
-  if(ev.target.closest('#scoreBtn')){ openDuel(); return; }
+  if(ev.target.closest('#scoreBtn') || ev.target.closest('#mission')){ openDuel(); return; }
+  if(ev.target.closest('[data-duel-last]')){ openDuel(addDays(WEEK,-7)); $('#duelSheet .sheet').scrollTop=0; return; }
   if(ev.target.closest('[data-duel-close]') || ev.target.id==='duelSheet'){ $('#duelSheet').hidden=true; }
 });
 document.addEventListener('input',ev=>{
@@ -1729,14 +1824,17 @@ document.addEventListener('input',ev=>{
 });
 function duelCard(key){
   const id=sid(key), mine=WHO, plan=PLANS[mine], other=mine==='jr'?'thai':'jr';
-  const me=weekScore(plan,WEEK).pts, them=weekScore(PLANS[other],WEEK).pts, before=weekScore(plan,WEEK,id).pts;
+  const M=weekScore(plan,WEEK), B=weekScore(plan,WEEK,id), me=M.pts, them=weekScore(PLANS[other],WEEK).pts, before=B.pts;
   const nm={thai:'Thai',jr:'Júnior'};
   const sc=`<div class="sc"><span class="p t">${mine==='thai'?me:them}</span><span>×</span><span class="p j">${mine==='jr'?me:them}</span></div>`;
   const gained=me-before;
-  if(before<=them && me>them) return `<section class="dn-duel win ${mine==='thai'?'t':''}"><div class="kk">Disputa da semana</div><h3>Virou! ${nm[mine]} passou na frente</h3>${sc}<p>+${gained} pontos com esse treino</p></section>`;
-  if(me>them) return `<section class="dn-duel"><div class="kk">Disputa da semana</div><h3>Segue puxando a corda</h3>${sc}<p>+${gained} pontos com esse treino</p></section>`;
-  if(me===them) return `<section class="dn-duel"><div class="kk">Disputa da semana</div><h3>Empatou!</h3>${sc}<p>+${gained} pontos com esse treino</p></section>`;
-  return `<section class="dn-duel"><div class="kk">Disputa da semana</div><h3>Faltam ${them-me} pontos pra virar</h3>${sc}<p>+${gained} pontos com esse treino</p></section>`;
+  const extra = M.desafio&&!B.desafio ? `<p class="chd">🎯 Desafio cumprido: ${esc(M.ch.t)} (+${PTS.desafio})</p>` : !M.ch.ok ? `<p class="chd">🎯 ${esc(M.ch.t)}: ${M.ch.n}/${M.ch.goal}</p>` : '';
+  const C=coupleData(WEEK), cp = C.ok ? `<p class="chd">🤝 Missão do casal cumprida!</p>` : '';
+  const tail=`${sc}<p>+${gained} pontos com esse treino</p>${extra}${cp}`;
+  if(before<=them && me>them) return `<section class="dn-duel win ${mine==='thai'?'t':''}"><div class="kk">Disputa da semana</div><h3>Virou! ${nm[mine]} passou na frente</h3>${tail}</section>`;
+  if(me>them) return `<section class="dn-duel"><div class="kk">Disputa da semana</div><h3>Segue puxando a corda</h3>${tail}</section>`;
+  if(me===them) return `<section class="dn-duel"><div class="kk">Disputa da semana</div><h3>Empatou!</h3>${tail}</section>`;
+  return `<section class="dn-duel"><div class="kk">Disputa da semana</div><h3>Faltam ${them-me} pontos pra virar</h3>${tail}</section>`;
 }
 
 /* ---------- Início ---------- */
@@ -1991,6 +2089,7 @@ function renderPanel(){
   $('#chVol').closest('.panel').querySelector('h4').textContent = period==='semana' ? 'Peso total por dia' : period==='d365' ? 'Peso total por mês' : 'Peso total por semana';
   $('#chMus').closest('.panel').querySelector('h4').textContent = period==='semana' ? 'Séries por músculo nesta semana' : 'Séries por músculo por semana';
   $('#chMus').closest('.panel').querySelector('.hint').textContent = period==='semana' ? 'faixa clara = meta semanal' : 'média do período · faixa clara = meta';
+  $('#pins').innerHTML = S.length ? panelInsights(S,SR,wk,nDays) : '';
   pickLift(S); fillLiftSelect();
   if(!S.length){
     ['#chVol','#chMus','#chLift','#chFreq'].forEach(id=>$(id).innerHTML='<p class="empty-p">Os gráficos aparecem quando as primeiras séries forem marcadas na ficha. Pra ver como fica, toque em “Ver com dados de exemplo”.</p>');
@@ -2017,6 +2116,25 @@ function drawVol(labels,vals,tips,hl){
     if(v>0&&(mark||v===top)) g+=`<text x="${x+w/2}" y="${y-6}" text-anchor="middle" font-size="11" font-weight="700" fill="var(--ink)">${fmtKg(v)}</text>`;
   });
   el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Peso total"><line x1="0" x2="${W}" y1="${H-pb}" y2="${H-pb}" stroke="var(--line)"/><g class="bar-g">${g}</g></svg>`;
+}
+/* Resumo do painel em linguagem simples: o que está bem, o que falta e o que evoluiu */
+function musCount(list){ const cnt={}; GROUPS.forEach(g=>cnt[g.k]=0);
+  list.forEach(s=>doneSets(s).forEach(x=>{ const e=EXMAP[x.id]; if(!e||e.warm) return; GROUPS.forEach(g=>{ if(e.p.some(m=>g.m.includes(m))) cnt[g.k]++; }); })); return cnt; }
+function panelInsights(S,SR,wk,nDays){
+  const cnt=musCount(SR), out=[], per=period==='semana'?'nesta semana':'por semana';
+  const rows=GROUPS.map(g=>({g, v:Math.round(cnt[g.k]/wk)}));
+  const good=rows.filter(r=>r.v>=r.g.lo).sort((a,b)=>b.v/b.g.hi-a.v/a.g.hi)[0];
+  if(good) out.push(['ok','✓',`${good.g.k} em dia`,`${good.v} séries ${per}, ${good.v>good.g.hi?'acima da':'dentro da'} meta de ${good.g.lo}–${good.g.hi}.`]);
+  const low=rows.filter(r=>r.v<r.g.lo).sort((a,b)=>a.v/a.g.lo-b.v/b.g.lo)[0];
+  if(low){ let n=0; for(let i=1;i<=12;i++){ const w=addDays(WEEK,-7*i); const c=musCount(S.filter(x=>weekOf(x)===w))[low.g.k]; if(c<low.g.lo) n++; else break; }
+    out.push(['warn','!',`${low.g.k} abaixo da meta`,`${low.v} séries ${per}, a meta é ${low.g.lo}–${low.g.hi}.${n>=2?` Já são ${n} semanas seguidas abaixo.`:''}`]); }
+  else out.push(['ok','✓','Todos os músculos na meta','Nenhum grupo ficou abaixo do mínimo no período.']);
+  let best=null; const ids=new Set(SR.flatMap(x=>Object.keys(x.sets||{})));
+  ids.forEach(id=>{ const e=EXMAP[id]; if(!e||e.warm) return; const H=SR.filter(x=>x.sets&&x.sets[id]&&x.sets[id].some(y=>y&&y.done)).sort((a,b)=>a.date<b.date?-1:1); if(H.length<2) return;
+    const a=workOf(H[0].sets[id].filter(y=>y&&y.done)), b=workOf(H[H.length-1].sets[id].filter(y=>y&&y.done)); if(a>0&&b>a&&(!best||(b-a)/a>best.r)) best={n:e.n,a,b,r:(b-a)/a}; });
+  if(best) out.push(['up','↗',`${best.n} evoluiu`,`De ${fmtKgN(best.a)} kg pra ${fmtKgN(best.b)} kg no período (+${Math.round(best.r*100)}%).`]);
+  else out.push(['','•','Constância',`${(nDays/wk).toLocaleString('pt-BR',{maximumFractionDigits:1})} dias de treino por semana no período.`]);
+  return out.slice(0,3).map(([c,ic,t,d])=>`<div class="pin ${c}"><span class="ic">${ic}</span><div><b>${esc(t)}</b><span>${esc(d)}</span></div></div>`).join('');
 }
 function drawMus(SR,wk){
   const cnt={}; GROUPS.forEach(g=>cnt[g.k]=0);
@@ -2169,6 +2287,7 @@ function updPushUI(){
   const row=$('#pushRow'); if(!row) return; row.hidden=!PUSH_OK; if(!PUSH_OK) return;
   $('#pushBtn').textContent = on ? 'Desligar' : 'Ativar';
   $('#pushTest').hidden = !on;
+  { const sr=$('#socialRow'); if(sr){ sr.hidden=!on; const so=socialOn(); $('#socialBtn').textContent=so?'Ligado':'Desligado'; $('#socialBtn').classList.toggle('ghost',!so); } }
   $('#pushTxt').textContent = Notification.permission==='denied' ? 'Bloqueado no iPhone: libere em Ajustes › Notificações › 2Fit.' : on ? (pushErr ? 'Último aviso falhou: '+pushErr : 'Ligado neste celular.') : 'Notificação quando o descanso acabar, mesmo com o celular bloqueado.';
 }
 async function pushEnable(){
@@ -2178,10 +2297,37 @@ async function pushEnable(){
     if(perm!=='granted'){ toast('Notificações bloqueadas'); updPushUI(); return; }
     const reg = await navigator.serviceWorker.ready;
     await pushGetSub();
-    localStorage.setItem('2fit-push','1'); toast('Aviso do descanso ligado');
+    localStorage.setItem('2fit-push','1'); toast('Aviso do descanso ligado'); socialCall({kind:'registrar'});
     if(tEnd>Date.now()) pushRest(Math.round((tEnd-Date.now())/1000), $('#tname').textContent);
   }catch(e){ toast('Não deu pra ligar o aviso'); }
   updPushUI();
+}
+/* Avisos da disputa: ao fechar um treino, o outro celular recebe uma notificação.
+   O placar da semana vai em state.config.placar pra função do Supabase mandar o resumo de domingo. */
+const socialOn = () => pushOn() && localStorage.getItem('2fit-social')!=='0';
+async function socialCall(payload){
+  if(!pushOn()) return;
+  try{
+    const sub=await pushGetSub(); const t=await sbToken(); if(!t) return;
+    await fetch(`${SBC.url}/functions/v1/social`,{method:'POST', headers:{apikey:SBC.anonKey,Authorization:`Bearer ${t}`,'Content-Type':'application/json'},
+      body:JSON.stringify({sub:sub.toJSON(), who:localStorage.getItem('2fit-quem')||WHO, social:socialOn(), ...payload})});
+  }catch(e){}
+}
+function socialClosed(key){
+  if(typeof SB_ON==='undefined' || !SB_ON) return;
+  try{
+    localStorage.setItem('2fit-quem',WHO);
+    const d=DAYS.find(x=>x.key===key), nm=WHO==='jr'?'Júnior':'Thai', D=duelData(), me=WHO==='jr'?D.J.pts:D.T.pts, ot=WHO==='jr'?D.T.pts:D.J.pts;
+    savePlacar(D);
+    if(!socialOn()) return;
+    socialCall({kind:'fechou', title:`${nm} fechou o ${d.title} 👀`, body: me>ot?`${nm} na frente: ${me} × ${ot}. Bora responder?`:me===ot?`Empatou em ${me} × ${ot}.`:`Placar: ${me} × ${ot}. Você segue na frente.`});
+  }catch(e){}
+}
+function savePlacar(D){
+  if(typeof SB_ON==='undefined' || !SB_ON) return;
+  const p={wk:D.wk, t:D.T.pts, j:D.J.pts, rt:D.T.recs, rj:D.J.recs, casal:D.C.ok}, o=state.config.placar||{};
+  if(o.wk===p.wk&&o.t===p.t&&o.j===p.j&&o.rt===p.rt&&o.rj===p.rj&&o.casal===p.casal) return;
+  state.config.placar=p; touch('config');
 }
 function pushDisable(){ pushRest(0); localStorage.removeItem('2fit-push'); updPushUI(); }
 let pushErr='';
@@ -2218,8 +2364,10 @@ async function pushTest(){
   }catch(e){ pushErr=e.message; $('#pushTxt').textContent='Falhou: '+e.message; }
   b.disabled=false; b.textContent='Testar';
 }
-document.addEventListener('click',ev=>{ if(ev.target.id==='pushBtn'){ pushOn()?pushDisable():pushEnable(); } if(ev.target.id==='pushTest') pushTest(); });
+document.addEventListener('click',ev=>{ if(ev.target.id==='socialBtn'){ localStorage.setItem('2fit-social', socialOn()?'0':'1'); updPushUI(); socialCall({kind:'registrar'}); }
+  if(ev.target.id==='pushBtn'){ pushOn()?pushDisable():pushEnable(); } if(ev.target.id==='pushTest') pushTest(); });
 // permissão já dada no iPhone mas aviso nunca ligado aqui: liga sozinho
+setTimeout(()=>{ try{ if(pushOn()) socialCall({kind:'registrar'}); }catch(e){} },5000);
 if(PUSH_OK && Notification.permission==='granted' && !localStorage.getItem('2fit-push')){ pushGetSub().then(()=>{ localStorage.setItem('2fit-push','1'); updPushUI(); }).catch(()=>{}); }
 updPushUI();
 
