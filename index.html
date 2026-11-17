@@ -233,7 +233,7 @@ body.jr .inp input:focus{outline-color:#2F4A3E}
 .half:hover .bigword{transform:translateX(-10px)}
 .hwho{font-size:13px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;opacity:.75;position:relative}
 .hname{font-family:var(--f-display);font-stretch:118%;font-weight:900;font-size:clamp(46px,13vw,64px);line-height:.95;letter-spacing:-.02em;position:relative}
-.hinfo{font-size:15px;font-weight:600;opacity:.85;margin-top:8px;position:relative}
+.hinfo{font-size:18px;font-weight:800;margin-top:8px;position:relative;line-height:1.2}
 .htag{align-self:flex-start;margin-top:10px;background:#B8F2C9;color:#16201C;font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:99px;position:relative}
 .hgo{position:absolute;right:max(24px, env(safe-area-inset-right, 0px));bottom:30px;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;transition:transform .25s}
 .h-jr .hgo{bottom:max(30px, calc(env(safe-area-inset-bottom, 0px) + 16px))}
@@ -357,6 +357,11 @@ h1 em{font-style:normal;color:var(--accent)}
 
 .ex-body{padding:0 14px 14px;display:flex;flex-direction:column;gap:10px}
 .obs{font-size:13.5px;color:var(--muted);margin:0;max-width:62ch}
+.tip summary{font-size:13px;font-weight:700;color:var(--muted);list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:32px}
+.tip summary::-webkit-details-marker{display:none}
+.tip summary::before{content:'+';display:grid;place-items:center;width:20px;height:20px;border-radius:50%;border:1px solid var(--line);font-weight:800}
+.tip[open] summary::before{content:'–'}
+.tip .obs{margin-top:4px}
 .obs strong{color:var(--ink);font-weight:600}
 /* Anotação fixa do exercício (vale pra todas as semanas) */
 .note-btn{display:flex;gap:6px;align-items:flex-start;width:100%;text-align:left;border:1px dashed var(--line);background:transparent;border-radius:10px;padding:9px 11px;font-size:13px;line-height:1.35;color:var(--muted)}
@@ -382,20 +387,26 @@ h1 em{font-style:normal;color:var(--accent)}
 .last b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
 
 .sets{display:flex;flex-direction:column;gap:6px}
-.set{display:grid;grid-template-columns:44px 1fr 1fr 44px;gap:8px;align-items:center}
+.set{display:grid;grid-template-columns:44px 1fr 1fr 54px;gap:8px;align-items:center}
 .set .lbl{font-size:12px;color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
 .field{position:relative}
-.field input{width:100%;height:42px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:600 16px var(--f-body);font-variant-numeric:tabular-nums;padding:0 34px 0 12px;-moz-appearance:textfield}
+.field input{width:100%;height:48px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:600 16px var(--f-body);font-variant-numeric:tabular-nums;padding:0 34px 0 12px;-moz-appearance:textfield}
 .field input::-webkit-outer-spin-button,.field input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .field input::placeholder{color:var(--ink);opacity:.38;font-weight:700}
 .field span{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--muted);pointer-events:none}
-.chk{width:44px;height:42px;border-radius:10px;border:1.5px solid var(--line);background:transparent;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.chk svg{width:20px;height:20px;stroke:var(--muted);stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.chk{width:54px;height:48px;border-radius:12px;border:1.5px solid var(--line);background:transparent;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.chk svg{width:24px;height:24px;stroke:var(--muted);stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .set.ok .chk{background:var(--ok);border-color:var(--ok)}
 .set.ok .chk svg{stroke:var(--surface)}
 .set.ok input{border-color:var(--ok)}
-.set.ok .chk{animation:pop .35s ease}
-@keyframes pop{50%{transform:scale(1.12)}}
+.set.ok .chk{animation:pop .5s cubic-bezier(.3,1.5,.5,1)}
+.set.ok .chk svg{stroke-dasharray:24;animation:chkDraw .35s .08s ease-out both}
+.set.ok{animation:rowFlash .6s ease-out}
+@keyframes pop{0%{transform:scale(.8)}40%{transform:scale(1.2);box-shadow:0 0 0 8px color-mix(in srgb,var(--ok) 30%,transparent)}100%{transform:scale(1);box-shadow:0 0 0 18px transparent}}
+@keyframes chkDraw{from{stroke-dashoffset:24}to{stroke-dashoffset:0}}
+@keyframes rowFlash{0%{background:color-mix(in srgb,var(--ok) 18%,transparent)}100%{background:transparent}}
+.set{border-radius:12px}
+@media (prefers-reduced-motion: reduce){ .set.ok,.set.ok .chk,.set.ok .chk svg{animation:none} }
 
 .ex-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .link{font-size:13px;font-weight:600;color:var(--accent);text-decoration:none}
@@ -467,7 +478,8 @@ details.guide .in b{color:var(--ink)}
 .h-jr .hpts span{background:rgba(184,242,201,.12);color:#B8F2C9}
 .h-thai .hpts span.lead{background:#5A1E39;color:#FFD9E6}.h-jr .hpts span.lead{background:#B8F2C9;color:#16201C}
 .crown{display:inline-block;font-size:.55em;vertical-align:.45em;margin-left:.15em;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25))}
-@media (max-height:560px){ .hpts span:not(.lead){display:none} }
+@media (max-height:620px){ .hpts span:not(.lead){display:none} }
+@media (max-width:360px){ .mission .mi:first-child{display:none} }
 /* Folha da disputa */
 .mission{position:absolute;left:max(18px, env(safe-area-inset-left, 0px));bottom:max(38px, calc(env(safe-area-inset-bottom, 0px) + 24px));z-index:4;min-height:40px;border:1px solid rgba(184,242,201,.22);background:rgba(10,16,13,.55);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#DDF3E4;border-radius:99px;padding:8px 14px;display:flex;align-items:center;gap:12px;font:600 12.5px var(--f-body);white-space:nowrap;max-width:calc(100% - 118px)}
 .mission .mi{display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis}
@@ -538,6 +550,8 @@ html{touch-action:manipulation}
 .dn[hidden]{display:none!important}
 @media (prefers-reduced-motion: no-preference){ .dn:not([hidden]) .dn-in>*{animation:dnUp .5s cubic-bezier(.2,.8,.2,1) both} .dn-in>*:nth-child(2){animation-delay:.05s}.dn-in>*:nth-child(3){animation-delay:.12s}.dn-in>*:nth-child(4){animation-delay:.2s}.dn-in>*:nth-child(5){animation-delay:.28s}.dn-in>*:nth-child(6){animation-delay:.34s}.dn-in>*:nth-child(7){animation-delay:.4s} }
 @keyframes dnUp{from{opacity:0;transform:translateY(14px)}}
+@media (prefers-reduced-motion: no-preference){ .dn:not([hidden]) .dn-in>.rv{animation:none;opacity:0;transform:translateY(22px);transition:opacity .55s ease, transform .55s cubic-bezier(.2,.8,.2,1)} .dn:not([hidden]) .dn-in>.rv.in{opacity:1;transform:none} }
+.dn-more{text-align:center;font-size:12.5px;font-weight:700;color:var(--muted);padding:2px 0}
 .dn-in{max-width:560px;margin:0 auto;padding:max(14px, calc(env(safe-area-inset-top, 0px) + 8px)) max(16px, env(safe-area-inset-right, 0px)) max(28px, calc(env(safe-area-inset-bottom, 0px) + 20px)) max(16px, env(safe-area-inset-left, 0px));display:flex;flex-direction:column;gap:14px}
 .dn-x{align-self:flex-end;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:16px;display:grid;place-items:center;color:var(--ink)}
 .dn-hd{display:flex;align-items:center;gap:14px;margin-top:-10px}
@@ -623,6 +637,10 @@ html{touch-action:manipulation}
 .end-btn.done{background:var(--ok);box-shadow:0 12px 28px color-mix(in srgb,var(--ok) 32%,transparent)}
 .wclock{position:fixed;z-index:25;top:calc(env(safe-area-inset-top, 0px) + 6px);left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:7px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:99px;padding:6px 12px 6px 10px;box-shadow:0 6px 18px rgba(0,0,0,.10);font-family:var(--f-display);font-stretch:112%;font-weight:900;font-size:16px;font-variant-numeric:tabular-nums;pointer-events:none}
 .wclock[hidden]{display:none}
+.wclock{overflow:hidden}
+.wclock .wp{font-size:12.5px;font-weight:800;color:var(--muted);padding-left:8px;border-left:1px solid var(--line);font-variant-numeric:tabular-nums}
+.wclock .wbar{position:absolute;left:0;right:0;bottom:0;height:3px;background:transparent;text-decoration:none}
+.wclock .wbar u{display:block;height:100%;background:var(--ok);border-radius:0 3px 3px 0;transition:width .6s cubic-bezier(.2,.8,.2,1)}
 .wclock i{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 60%,transparent);animation:wpulse 1.6s infinite}
 @keyframes wpulse{70%{box-shadow:0 0 0 7px transparent}100%{box-shadow:0 0 0 0 transparent}}
 .cardio-btn{width:100%;border:1px dashed var(--line);background:transparent;border-radius:16px;padding:10px 14px;margin-top:10px;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--ink);font-family:var(--f-body)}
@@ -833,7 +851,7 @@ html.dn-open #v-thai, html.dn-open #v-painel, html.dn-open #v-home{visibility:hi
   </div>
 </div>
 <div class="dn" id="doneView" hidden role="dialog" aria-modal="true" aria-labelledby="dnTitle"><div class="dn-in" id="doneIn"></div></div>
-<div class="wclock" id="wclock" hidden role="timer" aria-label="Tempo de treino"><i></i><b>0:00</b></div>
+<div class="wclock" id="wclock" hidden role="timer" aria-label="Tempo e progresso do treino"><i></i><b>0:00</b><span class="wp" id="wprog">0/0</span><u class="wbar"><u id="wfill"></u></u></div>
 <canvas id="confetti" aria-hidden="true"></canvas>
 <div class="toast" id="toast" role="status">Treino fechado</div>
 
@@ -1257,7 +1275,7 @@ function exCard(d,e,i,s){
       <div class="mapsheet" id="map-${e.id}" hidden>${bodySVG(e.p,e.q,true)}
         <div class="legend"><span><i style="background:var(--accent)"></i>Principal</span><span><i style="background:var(--aux)"></i>Auxiliar</span></div>
         <div class="last">Foco: <b>${esc(musc)}</b></div></div>
-      <p class="obs">${e.o}</p>
+      ${histFor(e.id,TODAY).length>=3 ? `<details class="tip"><summary>Ver dica de execução</summary><p class="obs">${e.o}</p></details>` : `<p class="obs">${e.o}</p>`}
       ${noteHtml(e.id)}
       ${lastTxt}
       <div class="sets">${setsHtml}</div>
@@ -1568,6 +1586,8 @@ function openDone(key){
     <div class="dn-hd"><div class="dn-badge"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
       <div><div class="kicker">${DOWN[new Date(y,m-1,dd).getDay()]} · ${dd} ${MONTHS[m-1].slice(0,3)}</div><h2 id="dnTitle">${R.part?'Treino finalizado!':d.optional?'Coringa fechado!':'Treino fechado!'}</h2><p>${esc(d.title)} · ${R.part?`${R.nDone} de ${R.nEx} exercícios`:esc(d.sub)}</p></div></div>
     ${scoreCard(R)}
+    ${duelCard(key)}
+    <div class="dn-more" aria-hidden="true">Role pra ver a análise ↓</div>
     ${R.ins.length?`<section class="dn-ins"><h4>Leitura do consultor</h4>${R.ins.map(x=>`<div class="in"><span class="ic">${x.ic}</span><div><b>${esc(x.t)}</b><span>${esc(x.d)}</span></div></div>`).join('')}</section>`:''}
     <section class="dn-card"><h4>Músculos trabalhados</h4><div class="dn-body">${bodySVG(R.prim,R.sec,true)}</div>
       <div class="dn-leg"><span><i style="background:var(--accent)"></i>Principal</span><span><i style="background:var(--aux)"></i>Auxiliar</span></div></section>
@@ -1579,12 +1599,15 @@ function openDone(key){
         ${keep.map(x=>`<div class="kr"><span>${esc(x.n)}</span><b>${kgTxt(x.to)}</b></div>`).join('')}</div>`:''}</section>`:''}
     ${R.nextDay?`<section class="dn-nd"><div class="kk">Seu próximo treino · ${esc(R.nextDay.when)}</div><h3>${esc(R.nextDay.d.title)}</h3><p>${esc(R.nextDay.d.sub||'')}</p>
       ${R.nextDay.items.map(x=>`<div class="ndr"><span>${esc(x.n)}</span><b>${esc(x.txt)}</b></div>`).join('')}</section>`:''}
-    ${duelCard(key)}
     <div class="dn-stats">${st.join('')}</div>
     <div class="dn-btns"><button type="button" data-done-close>Fechar</button><button type="button" class="pri" data-done-panel>Ver painel</button></div>`;
   clearInterval(tInt); $('#timer').classList.remove('show');
   const v=$('#doneView'); v.hidden=false; v.scrollTop=0; document.documentElement.classList.add('dn-open');
+  [...$('#doneIn').children].slice(5,-1).forEach(el=>el.classList.add('rv'));
+  dnReveal(); v.onscroll=dnReveal;
 }
+/* fim de treino em etapas: cada bloco aparece quando entra na tela */
+function dnReveal(){ const h=innerHeight; document.querySelectorAll('#doneIn .rv:not(.in)').forEach(el=>{ if(el.getBoundingClientRect().top < h*0.94) el.classList.add('in'); }); }
 function scoreCard(R){
   const sc=R.score, g = sc>=90?'Treino de elite':sc>=75?'Treino forte':sc>=60?'Treino sólido':sc>=40?'Deu o recado':'Valeu por aparecer';
   const sub = R.mTot ? `${R.mHit} de ${R.mTot} séries na meta` : `${R.sets} de ${R.plan} séries feitas`;
@@ -1618,6 +1641,7 @@ function tickWorkout(){
       if(ts.length && now-Math.max(...ts) < 2*3600e3){
         const sec=Math.floor((now-Math.min(...ts))/1000), h=Math.floor(sec/3600), m=Math.floor(sec%3600/60), ss=sec%60;
         el.querySelector('b').textContent = h ? `${h}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}` : `${m}:${String(ss).padStart(2,'0')}`;
+        const nd=d.ex.filter(e=>s.done[e.id]).length; $('#wprog').textContent=`${nd}/${d.ex.length}`; $('#wfill').style.width=(nd/d.ex.length*100)+'%';
         show=true;
       }
     }
@@ -1841,7 +1865,9 @@ function todayTxt(plan){
   if(d.rest){ const b=session(d.key,false); return (plan===DAYS_JR?'Hoje: cross e beach tennis':'Hoje: beach tennis')+(b&&b.beach?' ✓':''); }
   const s=session(d.key,false); const n=s?d.ex.filter(e=>s.done[e.id]).length:0;
   if(s && s.cardio && n<d.ex.length && !s.fin) return 'Hoje: só cardio ✓';
-  return `Hoje: ${d.title}${n?` · ${n} de ${d.ex.length} feitos`:''}`;
+  const min=Math.round(d.ex.reduce((a,e)=>a+e.s*(e.rest+45),0)/60/5)*5;
+  if(s && (s.fin || n===d.ex.length)) return `Hoje: ${d.title} ✓`;
+  return `Hoje: ${d.title} · ${n?`${n} de ${d.ex.length} feitos`:`~${min} min`}`;
 }
 function renderHome(){
   $('#thaiToday').textContent=todayTxt(DAYS_THAI);
