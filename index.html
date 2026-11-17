@@ -360,6 +360,19 @@ h1 em{font-style:normal;color:var(--accent)}
 .note-btn b{font-weight:700}
 .note-in{display:block;width:100%;font:16px/1.35 var(--f-body);border:1.5px solid var(--accent);border-radius:10px;padding:9px 11px;background:var(--surface);color:var(--ink);resize:none}
 .note-foot{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-top:4px}
+.meta-box{border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--bg);display:grid;gap:3px}
+.meta-box.up{border-color:var(--ok);background:var(--ok-soft)}
+.meta-box.down{border-color:#E8C77A;background:#FFF6DE}
+.meta-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.meta-k{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.meta-v{font:800 19px var(--f-display);font-stretch:108%;color:var(--ink);font-variant-numeric:tabular-nums}
+.meta-why{font-size:12.5px;color:var(--muted);line-height:1.35}
+.meta-last{font-size:11.5px;color:var(--muted);opacity:.85;margin-top:2px;font-variant-numeric:tabular-nums}
+.meta-box.new b{font-size:13px;color:var(--ink)} .meta-box.new span{font-size:12.5px;color:var(--muted)}
+.chip.keep{background:var(--surface);border:1px solid var(--line)} .chip.down{background:#FCE9B8;color:#6B5420}
+.set .lbl{display:flex;flex-direction:column;gap:2px;line-height:1.1}
+.set .vm{font-style:normal;font-size:11px;font-weight:800;height:13px}
+.set .vm.beat{color:var(--ok)} .set .vm.hit{color:var(--ok)} .set .vm.miss{color:#B7791F}
 .last{font-size:12.5px;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .last b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
 
@@ -369,7 +382,7 @@ h1 em{font-style:normal;color:var(--accent)}
 .field{position:relative}
 .field input{width:100%;height:42px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:600 16px var(--f-body);font-variant-numeric:tabular-nums;padding:0 34px 0 12px;-moz-appearance:textfield}
 .field input::-webkit-outer-spin-button,.field input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.field input::placeholder{color:var(--muted);opacity:.6;font-weight:500}
+.field input::placeholder{color:var(--ink);opacity:.38;font-weight:700}
 .field span{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--muted);pointer-events:none}
 .chk{width:44px;height:42px;border-radius:10px;border:1.5px solid var(--line);background:transparent;display:flex;align-items:center;justify-content:center;transition:all .2s}
 .chk svg{width:20px;height:20px;stroke:var(--muted);stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
@@ -966,8 +979,56 @@ const setsFor = ex => ex.s;
 const rirFor = ex => ex.rir;
 const topRep = r => { const m=String(r).match(/(\d+)\D*$/); return m?+m[1]:0; };
 
+/* ---------- Progressão dupla: a meta de cada série ----------
+   Faixa 8–12: enquanto não bate 12 em todas as séries, mantém a carga e busca +1 rep por série.
+   Bateu o topo em todas: sobe a carga (passo do aparelho) e volta pro começo da faixa.
+   Ficou abaixo da faixa: baixa um passo. */
+function incFor(e, kg){
+  if(e.inc) return e.inc;
+  const n=e.n.toLowerCase();
+  if(/halter/.test(n)) return kg<10 ? 1 : 2;
+  if(/m[aá]quina|cabo|polia|pulley|cadeira|mesa|leg|puxada|pulldown|pullover|crossover|voador|peck|face pull|remada baixa|tri[aâ]ngulo|panturrilha sentad/.test(n)) return kg<15 ? 2.5 : 5;
+  return kg<20 ? 1 : 2;
+}
+function planFor(e, last){
+  const n=setsFor(e), top=topRep(e.r), bot=botRep(e.r)||top;
+  if(!last || !last.sets.length) return {kind:'new', sets:Array.from({length:n},()=>({kg:null, reps:bot}))};
+  const L=last.sets, at=k=>L[Math.min(k,L.length-1)];
+  const kgs=L.map(x=>+kgNorm(x.kg||0)||0), reps=L.map(x=>+x.reps||0), work=Math.max(0,...kgs);
+  const allTop = L.length>=n && reps.every(r=>r>=top);
+  const under = reps.some(r=>r>0 && r<bot);
+  if(!work){ // sem carga (peso do corpo): só repetições
+    return {kind: allTop?'reps':'keep', sets:Array.from({length:n},(_,k)=>({kg:null, reps: allTop ? (+at(k).reps||bot)+1 : Math.min(top,(+at(k).reps||bot-1)+1)}))};
+  }
+  if(allTop){ const kg=work+incFor(e,work); return {kind:'up', from:work, kg, sets:Array.from({length:n},()=>({kg, reps:bot}))}; }
+  if(under){ const kg=Math.max(0,work-incFor(e,work)); return {kind:'down', from:work, kg, sets:Array.from({length:n},()=>({kg, reps:bot}))}; }
+  return {kind:'keep', kg:work, sets:Array.from({length:n},(_,k)=>{ const x=at(k); return {kg:+kgNorm(x.kg||0)||work, reps:Math.min(top,(+x.reps||bot)+1)}; })};
+}
+/* compara a série feita com a meta: 1 superou, 0 bateu, -1 ficou abaixo */
+function vsMeta(row, t){
+  if(!t || !row || !row.done) return null;
+  const kg=+kgNorm(row.kg||0)||0, rp=+row.reps||0, tkg=+t.kg||0;
+  if(tkg && kg>tkg) return {v:1, txt:'↑ kg'};
+  if(tkg && kg<tkg) return {v:-1, txt:'↓ kg'};
+  const d=rp-t.reps; return d>0?{v:1,txt:'+'+d}:d===0?{v:0,txt:'✓'}:{v:-1,txt:String(d)};
+}
+const fmtKgN = v => (Math.round(v*100)/100).toLocaleString('pt-BR');
+function metaHtml(e, plan, last){
+  if(plan.kind==='new') return `<div class="meta-box new"><b>Primeira vez</b><span>Escolha uma carga que deixe ${rirFor(e)||'1–2'} reps de sobra em ${plan.sets[0].reps}–${topRep(e.r)} reps. Daqui pra frente o app calcula a meta.</span></div>`;
+  const T=plan.sets, kgs=[...new Set(T.map(x=>x.kg))], rp=T.map(x=>x.reps);
+  const kgTxt = kgs[0]==null ? '' : (kgs.length===1 ? fmtKgN(kgs[0])+' kg × ' : '');
+  const repTxt = kgs.length>1 ? T.map(x=>`${fmtKgN(x.kg)}×${x.reps}`).join(' · ') : (new Set(rp).size===1 ? rp[0]+' reps' : rp.join(' · ')+' reps');
+  const tag = {up:['up','Subiu a carga'], down:['down','Carga ajustada'], keep:['keep','+1 rep'], reps:['up','Mais reps']}[plan.kind];
+  const why = {up:`Você fez ${topRep(e.r)}+ em todas as séries: +${fmtKgN(plan.kg-plan.from)} kg e volta pras ${T[0].reps} reps.`,
+               down:`Ficou abaixo de ${botRep(e.r)} reps: baixa ${fmtKgN(plan.from-plan.kg)} kg e reconstrói.`,
+               keep:`Mesma carga, 1 rep a mais em cada série até chegar a ${topRep(e.r)}.`,
+               reps:`Bateu ${topRep(e.r)} em todas: agora busca mais repetições.`}[plan.kind];
+  const lastTxt = last ? `<div class="meta-last">Última vez (${fmtDate(last.date)}): ${last.sets.map(x=>`${x.kg?kgShow(x.kg):'–'}×${x.reps||'–'}`).join(' · ')}</div>` : '';
+  return `<div class="meta-box ${tag[0]}"><div class="meta-top"><span class="meta-k">Meta de hoje</span><span class="chip ${tag[0]}">${tag[1]}</span></div>
+    <div class="meta-v">${kgTxt}${repTxt}</div><div class="meta-why">${why}</div>${lastTxt}</div>`;
+}
 function lastFor(dayKey, exId){
-  const list = Object.values(state.sessions).filter(s=>s.day===dayKey && weekOf(s)<WEEK && s.sets && s.sets[exId] && s.sets[exId].some(x=>x&&x.done)).sort((a,b)=>a.date<b.date?1:-1);
+  const list = Object.values(state.sessions).filter(s=>weekOf(s)<WEEK && s.sets && s.sets[exId] && s.sets[exId].some(x=>x&&x.done)).sort((a,b)=>a.date<b.date?1:-1);
   return list[0] ? {date:list[0].date, sets:list[0].sets[exId].filter(x=>x&&x.done)} : null;
 }
 
@@ -1065,17 +1126,17 @@ function renderDay(){
 }
 
 function exCard(d,e,i,s){
-  const n=setsFor(e), rows=s.sets[e.id]||[], last=lastFor(d.key,e.id), top=topRep(e.r);
-  const up = last && last.sets.length>=n && last.sets.every(x=>+x.reps>=top);
+  const n=setsFor(e), rows=s.sets[e.id]||[], last=e.warm?null:lastFor(d.key,e.id);
+  const plan=e.warm?{kind:'new',sets:Array.from({length:n},()=>({kg:null,reps:botRep(e.r)}))}:planFor(e,last);
   const done = !!s.done[e.id];
-  const lastTxt = last ? `<div class="last">Última vez (${fmtDate(last.date)}): <b>${last.sets.map(x=>`${x.kg?kgShow(x.kg):'–'} kg × ${x.reps||'–'}`).join(' · ')}</b>${up?'<span class="chip up">Subir carga</span>':''}</div>` : '';
+  const lastTxt = e.warm ? '' : metaHtml(e, plan, last);
   let setsHtml='';
   for(let k=0;k<n;k++){
-    const r=rows[k]||{}, l=last&&last.sets[k]||{};
+    const r=rows[k]||{}, t=plan.sets[k]||{}, vm=vsMeta(r, plan.kind==='new'?null:t);
     setsHtml+=`<div class="set ${r.done?'ok':''}" data-ex="${e.id}" data-i="${k}">
-      <span class="lbl">Série ${k+1}</span>
-      <label class="field"><input id="kg-${e.id}-${k}" inputmode="decimal" type="text" autocomplete="off" enterkeyhint="next" maxlength="6" placeholder="${l.kg?kgShow(l.kg):'carga'}" value="${r.kg?kgShow(r.kg):''}" data-f="kg" aria-label="Carga série ${k+1}"><span>kg</span></label>
-      <label class="field"><input id="rp-${e.id}-${k}" inputmode="numeric" pattern="[0-9]*" type="text" autocomplete="off" enterkeyhint="done" maxlength="3" placeholder="${l.reps||e.r.split('–')[0]}" value="${r.reps??''}" data-f="reps" aria-label="Repetições série ${k+1}"><span>reps</span></label>
+      <span class="lbl">Série ${k+1}<i class="vm ${vm?(vm.v>0?'beat':vm.v<0?'miss':'hit'):''}">${vm?vm.txt:''}</i></span>
+      <label class="field"><input id="kg-${e.id}-${k}" inputmode="decimal" type="text" autocomplete="off" enterkeyhint="next" maxlength="6" placeholder="${t.kg!=null?kgShow(fmtKgN(t.kg).replace(/\./g,'')):'carga'}" value="${r.kg?kgShow(r.kg):''}" data-f="kg" aria-label="Carga série ${k+1}"><span>kg</span></label>
+      <label class="field"><input id="rp-${e.id}-${k}" inputmode="numeric" pattern="[0-9]*" type="text" autocomplete="off" enterkeyhint="done" maxlength="3" placeholder="${t.reps||botRep(e.r)}" value="${r.reps??''}" data-f="reps" aria-label="Repetições série ${k+1}"><span>reps</span></label>
       <button class="chk" type="button" aria-label="Marcar série ${k+1} como feita" aria-pressed="${!!r.done}">${CHECK}</button>
     </div>`;
   }
@@ -1271,6 +1332,8 @@ function toggleSet(row){
   row.classList.toggle('ok', r.done);
   row.querySelector('.chk').setAttribute('aria-pressed', r.done);
   const d=DAYS.find(x=>x.key===current), e=d.ex.find(x=>x.id===ex), n=setsFor(e);
+  { const vmEl=row.querySelector('.vm'); if(vmEl && !e.warm){ const pl=planFor(e,lastFor(current,ex)); const vm=pl.kind==='new'?null:vsMeta(r,pl.sets[i]);
+      vmEl.className='vm '+(vm?(vm.v>0?'beat':vm.v<0?'miss':'hit'):''); vmEl.textContent=vm?vm.txt:''; } }
   const allDone = Array.from({length:n},(_,k)=>s.sets[ex][k]&&s.sets[ex][k].done).every(Boolean);
   if(allDone !== !!s.done[ex]){ s.done[ex]=allDone; refreshCard(ex); }
   touch(sid(current));
@@ -1311,8 +1374,6 @@ function checkDay(){
 
 
 /* ---------- Tela de treino fechado ---------- */
-const stepKg = kg => kg>=20 ? 2.5 : 1;
-const fmtKgN = v => (Math.round(v*10)/10).toLocaleString('pt-BR');
 const botRep = r => { const m=String(r).match(/^(\d+)/); return m?+m[1]:0; };
 const DOWN=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
 function doneSummary(key){
@@ -1336,8 +1397,8 @@ function doneSummary(key){
     const allTop = rows.length>=e.s && reps.every(r=>r>=top);
     const under = reps.some(r=>r>0 && r<bot);
     if(!work){ next.push({k:'keep', n:e.n, to:'sem carga'}); continue; }
-    if(allTop) next.push({k:'up', n:e.n, why:`Fez ${top} reps ou mais em todas as séries`, to:work+stepKg(work), from:work});
-    else if(under) next.push({k:'down', n:e.n, why:`Ficou em ${Math.min(...reps.filter(r=>r>0))} reps, abaixo da faixa de ${e.r}`, to:Math.max(0,work-stepKg(work)), from:work});
+    if(allTop) next.push({k:'up', n:e.n, why:`Fez ${top} reps ou mais em todas as séries`, to:work+incFor(e,work), from:work});
+    else if(under) next.push({k:'down', n:e.n, why:`Ficou em ${Math.min(...reps.filter(r=>r>0))} reps, abaixo da faixa de ${e.r}`, to:Math.max(0,work-incFor(e,work)), from:work});
     else next.push({k:'keep', n:e.n, why:'Dentro da faixa: tenta 1 rep a mais em cada série', to:work});
   }
   prim.forEach(m=>sec.delete(m));
