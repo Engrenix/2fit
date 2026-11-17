@@ -361,11 +361,11 @@ h1 em{font-style:normal;color:var(--accent)}
 
 .ex-body{padding:0 14px 14px;display:flex;flex-direction:column;gap:10px}
 .obs{font-size:13.5px;color:var(--muted);margin:0;max-width:62ch}
-.tip summary{font-size:13px;font-weight:700;color:var(--muted);list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:32px}
-.tip summary::-webkit-details-marker{display:none}
-.tip summary::before{content:'+';display:grid;place-items:center;width:20px;height:20px;border-radius:50%;border:1px solid var(--line);font-weight:800}
-.tip[open] summary::before{content:'–'}
-.tip .obs{margin-top:4px}
+.dica summary{font-size:13px;font-weight:700;color:var(--muted);list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:32px}
+.dica summary::-webkit-details-marker{display:none}
+.dica summary::before{content:'+';display:grid;place-items:center;width:20px;height:20px;border-radius:50%;border:1px solid var(--line);font-weight:800}
+.dica[open] summary::before{content:'–'}
+.dica .obs{margin-top:4px}
 .obs strong{color:var(--ink);font-weight:600}
 /* Anotação fixa do exercício (vale pra todas as semanas) */
 .note-btn{display:flex;gap:6px;align-items:flex-start;width:100%;text-align:left;border:1px dashed var(--line);background:transparent;border-radius:10px;padding:9px 11px;font-size:13px;line-height:1.35;color:var(--muted)}
@@ -1278,7 +1278,7 @@ function exCard(d,e,i,s){
       <div class="mapsheet" id="map-${e.id}" hidden>${bodySVG(e.p,e.q,true)}
         <div class="legend"><span><i style="background:var(--accent)"></i>Principal</span><span><i style="background:var(--aux)"></i>Auxiliar</span></div>
         <div class="last">Foco: <b>${esc(musc)}</b></div></div>
-      ${histFor(e.id,TODAY).length>=3 ? `<details class="tip"><summary>Ver dica de execução</summary><p class="obs">${e.o}</p></details>` : `<p class="obs">${e.o}</p>`}
+      ${histFor(e.id,TODAY).length>=3 ? `<details class="dica"><summary>Ver dica de execução</summary><p class="obs">${e.o}</p></details>` : `<p class="obs">${e.o}</p>`}
       ${noteHtml(e.id)}
       ${lastTxt}
       <div class="sets">${setsHtml}</div>

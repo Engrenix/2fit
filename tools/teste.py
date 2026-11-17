@@ -49,6 +49,13 @@ with sync_playwright() as p:
             t = pg.query_selector_all('.tab')[k].inner_text().replace('\n', ' ')
             q = pg.evaluate("document.querySelectorAll('#day article.ex').length")
             print(f'  {quem:6} {t:22} {q} exercícios' + ('  ⚠ passa de 6' if q > 6 else ''))
+        dica = pg.query_selector('#day details.dica summary')
+        if dica:
+            box = dica.bounding_box(); card = pg.query_selector('#day article.ex').bounding_box()
+            dica.click(); pg.wait_for_timeout(150)
+            ok = pg.evaluate("document.querySelector('#day details.dica').open") and box['x'] >= card['x']
+            print(f'  {quem:6} ver dica: {"abre" if ok else "QUEBRADO"}')
+            if not ok: erros.append('Ver dica de execução não abre ou está fora do cartão')
         chk = pg.query_selector('#day .set .chk')
         if chk:
             chk.click(); pg.wait_for_timeout(300)
