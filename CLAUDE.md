@@ -33,7 +33,7 @@ App de treino do casal (Júnior e Thai). O app inteiro é um arquivo só (HTML, 
 
 ## Regras do app
 
-- Ficha dinâmica do Júnior (`docs/fichas/junior-v4.md`): os dias de academia dele têm `dyn:true` e a lista antiga em `old`. O `ex` desses dias é calculado do plano guardado na sessão (`s.plan`); sessões antigas sem plano usam `old`. Pra olhar sessões de qualquer semana use `exOf(d,s)` e `closedDay(d,s)`, nunca `d.ex`. Fluxo: colar o cross (`renderCheckin`, `parseCross`) → cansaço (`crossFatigue` + `residualF`) → plano (`buildPlan`, a partir do `CARDAPIO`). O cross fica em `s.cross`. Depois da primeira série o plano não muda (`editCross` bloqueia); antes disso dá pra trocar pelo reserva (`swapEx`).
+- Ficha dinâmica do Júnior (`docs/fichas/junior-v4.md`): antes do plano a tela pergunta "Qual foi o treino do cross hoje?"; depois, o título vira o foco do plano (`dynTitle`, ex.: "Costas e ombros") com "Complemento do cross" em cima. Os dias de academia dele têm `dyn:true` e a lista antiga em `old`. O `ex` desses dias é calculado do plano guardado na sessão (`s.plan`); sessões antigas sem plano usam `old`. Pra olhar sessões de qualquer semana use `exOf(d,s)` e `closedDay(d,s)`, nunca `d.ex`. Fluxo: colar o cross (`renderCheckin`, `parseCross`) → cansaço (`crossFatigue` + `residualF`) → plano (`buildPlan`, a partir do `CARDAPIO`). O cross fica em `s.cross`. Depois da primeira série o plano não muda (`editCross` bloqueia); antes disso dá pra trocar pelo reserva (`swapEx`).
 
 - Teste sempre pensando em iPhone (os dois usam iOS): campos com fonte de 16px ou mais, teclado numérico com vírgula na carga e só números nas repetições.
 - A carga é guardada com ponto e exibida com vírgula (`kgNorm` e `kgShow`).

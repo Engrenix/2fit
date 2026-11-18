@@ -983,7 +983,7 @@ const DAYS_THAI = [
 const OMBRO='<strong>Ombro esquerdo:</strong> se doer mais que 3 de 10, ou continuar doendo no dia seguinte, corta 1 série de ombro na semana.';
 const LAT='Sobe com o braço <strong>um pouco à frente do corpo</strong> (uns 30°), polegar pra cima, só até a altura do ombro. Nunca com o polegar pra baixo.';
 const DAYS_JR = [
- {key:'jB', dow:1, short:'Seg', title:'Treino da noite', sub:'Montado a partir do cross do dia', dyn:true, old:[
+ {key:'jB', dow:1, short:'Seg', title:'Academia', sub:'Complemento do cross', dyn:true, old:[
   {id:'jb0', n:'Rotação externa no cabo', per:'aquecimento', warm:true, s:2, r:'15', rest:45, rir:'leve', p:['deltpost'], q:[], o:'<strong>Leve, só pra aquecer o manguito.</strong> Cotovelo colado no corpo a 90°, gira o antebraço pra fora devagar. Protege o ombro esquerdo.', yt:'rotação externa no cabo manguito rotador'},
   {id:'jb1', n:'Supino inclinado com halteres', per:'pegada neutra, 30°', s:3, r:'6–10', rest:150, rir:'1–2', p:['peito'], q:['delt','triceps'], al:true, o:'Banco a 30° e palmas viradas uma pra outra: mais seguro pro ombro. Desce até sentir o peito esticar. '+OMBRO, yt:'supino inclinado halteres pegada neutra'},
   {id:'jb2', n:'Crossover de baixo pra cima', s:3, r:'10–15', rest:75, rir:'0–1', p:['peito'], q:['delt'], o:'Polias embaixo, leva as mãos até a altura do queixo. Pega a parte de cima do peito.', yt:'crossover de baixo para cima peitoral superior'},
@@ -993,15 +993,15 @@ const DAYS_JR = [
  ]},
  {key:'jbt', dow:2, short:'Ter', title:'Cross e beach tennis', sub:'Sem academia hoje', rest:true,
   restTitle:'Cross e beach tennis', restText:'Hoje não tem academia. Cross no almoço e beach à noite, num ritmo leve: capricha no sono.',
-  restTips:['Amanhã o treino da noite sai do cross de quarta: cola o quadro depois do box.','Se o ombro esquerdo reclamou no beach, marca o bloco do cross como pesado: o app poupa o ombro.']},
- {key:'jA', dow:3, short:'Qua', title:'Treino da noite', sub:'Montado a partir do cross do dia', dyn:true, old:[
+  restTips:['Amanhã a academia sai do cross de quarta: escreve o treino do box depois que terminar.','Se o ombro esquerdo reclamou no beach, marca o bloco do cross como pesado: o app poupa o ombro.']},
+ {key:'jA', dow:3, short:'Qua', title:'Academia', sub:'Complemento do cross', dyn:true, old:[
   {id:'ja1', n:'Puxada alta pegada neutra', s:3, r:'6–10', rest:150, rir:'1–2', p:['dorsal'], q:['biceps','trap'], al:true, o:'Em cima, deixa a dorsal esticar antes de puxar. Leva os cotovelos em direção ao quadril, peito pra cima.', yt:'puxada alta pegada neutra'},
   {id:'ja2', n:'Remada baixa sentada', s:3, r:'8–12', rest:120, rir:'1–2', p:['dorsal','trap'], q:['deltpost','biceps'], al:true, o:'Deixa os ombros irem à frente pra esticar as costas e puxa até a barriga, sem jogar o tronco pra trás.', yt:'remada baixa sentada triângulo'},
   {id:'ja3', n:'Pullover no cabo', s:2, r:'10–15', rest:75, rir:'0–1', p:['dorsal'], q:[], al:true, o:'Braços quase esticados, começa bem acima da cabeça e leva a barra até a coxa. É o que mais abre a dorsal sem cansar o braço.', yt:'pullover no cabo dorsal'},
   {id:'ja4', n:'Crucifixo inverso na máquina', s:3, r:'12–20', rest:60, rir:'0–1', p:['deltpost'], q:['trap'], o:'Braços quase esticados, abre até a linha do corpo. Ajuda a postura e dá contorno ao ombro visto de costas.', yt:'crucifixo inverso máquina'},
   {id:'ja6', n:'Rosca inclinada com halteres', s:4, r:'8–12', rest:75, rir:'0–1', p:['biceps'], q:[], al:true, o:'Banco a 45° e braço pendurado atrás do corpo: o bíceps trabalha esticado, a posição que mais faz crescer.', yt:'rosca inclinada halteres banco'}
  ]},
- {key:'jD', dow:4, short:'Qui', title:'Treino da noite', sub:'Montado a partir do cross do dia', dyn:true, old:[
+ {key:'jD', dow:4, short:'Qui', title:'Academia', sub:'Complemento do cross', dyn:true, old:[
   {id:'jd0', n:'Rotação externa no cabo', per:'aquecimento', warm:true, s:2, r:'15', rest:45, rir:'leve', p:['deltpost'], q:[], o:'<strong>Leve, só pra aquecer o manguito.</strong> Cotovelo colado no corpo a 90°, gira o antebraço pra fora devagar.', yt:'rotação externa no cabo manguito rotador'},
   {id:'jd1', n:'Supino inclinado na máquina', per:'pegada neutra se tiver', s:3, r:'6–10', rest:150, rir:'1–2', p:['peito'], q:['delt','triceps'], o:'Desce controlando até o peito esticar, sem deixar o ombro ir pra frente. <strong>Se o cross do dia acabou com o ombro, tira 1 série.</strong>', yt:'supino inclinado máquina'},
   {id:'jd2', n:'Voador (peck deck)', s:2, r:'12–15', rest:75, rir:'0–1', p:['peito'], q:[], al:true, o:'Abre até o peito esticar, sem deixar o ombro passar da linha do corpo. Junta as mãos apertando o peito.', yt:'voador peck deck execução'},
@@ -1009,7 +1009,7 @@ const DAYS_JR = [
   {id:'jd4', n:'Tríceps no pulley', s:3, r:'10–15', rest:60, rir:'0–1', p:['triceps'], q:[], o:'Cotovelos colados no corpo, estica o braço todo lá embaixo.', yt:'tríceps pulley barra'},
   {id:'jd6', n:'Panturrilha sentado', s:4, r:'10–20', rest:60, rir:'0–1', p:['panturrilha'], q:[], al:true, o:'Pausa de 2 s lá embaixo. Sentado pega a parte de dentro da panturrilha (sóleo).', yt:'panturrilha sentado máquina'}
  ]},
- {key:'jC', dow:5, short:'Sex', title:'Treino da noite', sub:'Montado a partir do cross do dia', dyn:true, old:[
+ {key:'jC', dow:5, short:'Sex', title:'Academia', sub:'Complemento do cross', dyn:true, old:[
   {id:'jc1', n:'Puxada unilateral no cabo', per:'cada lado', s:3, r:'8–12', rest:90, rir:'1–2', p:['dorsal'], q:['biceps'], al:true, o:'Sentado ou ajoelhado, deixa o braço subir bem esticado e puxa o cotovelo em direção ao quadril.', yt:'puxada unilateral no cabo dorsal'},
   {id:'jc2', n:'Remada com peito apoiado', per:'cotovelo aberto', s:3, r:'8–12', rest:120, rir:'1–2', p:['dorsal','trap'], q:['deltpost','biceps'], o:'Peito colado no apoio, sem roubar com a lombar. Cotovelos abertos pegam a parte de cima das costas.', yt:'remada peito apoiado máquina'},
   {id:'jc3', n:'Face pull', s:3, r:'15–20', rest:60, rir:'1–2', p:['deltpost'], q:['trap'], o:'Corda na altura do rosto, puxa abrindo as mãos e girando pra fora no final. Ótimo pro manguito do ombro esquerdo.', yt:'face pull corda execução'},
@@ -1025,6 +1025,7 @@ const DAYS_JR = [
  ]}
 ];
 /* dias dinâmicos: a lista de exercícios é o plano guardado na sessão da semana */
+DAYS_JR.filter(d=>d.dyn).forEach(d=>{ const base=d.title; Object.defineProperty(d,'title',{get(){ const s=session(this.key,false); return s&&s.plan ? dynTitle(planEx(s.plan)) : base; }, enumerable:true}); });
 DAYS_JR.filter(d=>d.dyn).forEach(d=>Object.defineProperty(d,'ex',{get(){ const s=session(this.key,false); return s&&s.plan ? planEx(s.plan) : (s&&hasWork(s) ? this.old : []); }, enumerable:true}));
 const PLANS={thai:DAYS_THAI, jr:DAYS_JR};
 const whoOf=h=>(h==='junior'||h==='painel-jr'||DAYS_JR.some(d=>d.key===h))?'jr':'thai';
@@ -1281,12 +1282,12 @@ const CHECK = '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
 
 function renderTabs(){
   $('#tabs').innerHTML = DAYS.map(d=>{ const st=dayState(d.key); return `<button class="tab ${st}" role="tab" id="tab-${d.key}" aria-selected="${d.key===current}" data-k="${d.key}">
-     ${d.dow===dow?'<i class="today" title="Hoje"></i>':''}${st==='full'?'<i class="tdone" title="Feito esta semana">✓</i>':''}<b>${d.short}</b><span>${esc(d.rest?'Beach':d.optional?'Coringa':d.dyn?((session(d.key,false)||{}).plan?'Pronto':hasWork(session(d.key,false)||{})?'Treino':'Noite'):d.title.replace('Treino ',''))}</span></button>`; }).join('');
+     ${d.dow===dow?'<i class="today" title="Hoje"></i>':''}${st==='full'?'<i class="tdone" title="Feito esta semana">✓</i>':''}<b>${d.short}</b><span>${esc(d.rest?'Beach':d.optional?'Coringa':d.dyn?((session(d.key,false)||{}).plan?d.title.split(' e ')[0]:hasWork(session(d.key,false)||{})?'Treino':'Cross'):d.title.replace('Treino ',''))}</span></button>`; }).join('');
 }
 function renderPhase(){}
 
 /* =====================================================================
-   Ficha dinâmica do Júnior: o treino da noite sai do que o cross cobrou.
+   Ficha dinâmica do Júnior: a academia sai do que o cross cobrou.
    1) parseCross: lê o texto do quadro (colado do Texto ao Vivo do iPhone)
    2) crossFatigue: quanto cada músculo foi cobrado (0 a 1)
    3) buildPlan: escolhe de 4 a 6 exercícios do CARDAPIO pra noite
@@ -1525,6 +1526,13 @@ function draftPreview(){
       <select data-teach="${ui}" aria-label="Qual movimento é ${esc(u.raw)}"><option value="">É qual movimento?</option>${CROSS_MOVES.map(m=>`<option value="${m.id}">${esc(m.n)}</option>`).join('')}<option value="__ign">Ignorar</option></select></div>`).join('');
   return `${blocks}${unk}${P.blocks.length?`<div class="cx-fat"><h4>O que o cross cobrou</h4>${fatMap(F,true)}</div>`:''}`;
 }
+/* título do dia: os dois grupos com mais séries no plano ("Costas e ombros") */
+const GSHORT={'Ombro lateral':'ombros','Ombro posterior':'ombros','Costas':'costas','Peito':'peito','Bíceps':'bíceps','Tríceps':'tríceps','Panturrilha':'panturrilha','Posterior':'posterior'};
+function dynTitle(L){
+  const sets={}; L.filter(e=>!e.warm).forEach(e=>{ const sl=CARDAPIO.find(x=>x.k===e.slot); const g=sl&&sl.g&&GSHORT[sl.g]; if(g) sets[g]=(sets[g]||0)+e.s; });
+  const top=Object.entries(sets).sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>x[0]);
+  return top.length ? cap(top.join(' e ')) : 'Academia';
+}
 function dynSub(d){
   const g=[...new Set(d.ex.filter(e=>!e.warm).map(e=>{ const sl=CARDAPIO.find(x=>x.k===e.slot); return sl&&sl.g; }).filter(Boolean))];
   return g.length ? cap(g.map(x=>x.toLowerCase()).join(', ').replace(/, ([^,]*)$/,' e $1')) : 'Montado a partir do cross';
@@ -1536,15 +1544,15 @@ function renderCheckin(d, el){
   el.innerHTML = `
    <section class="cx">
      <div class="kicker">${d.optional?'Sábado · opcional':DOW_NAME[d.dow]}</div>
-     <h2>${d.optional?'Coringa':'Treino da noite'}</h2>
-     <p class="cx-lead">Cole o treino do cross e eu monto a academia de hoje em cima do que ele já cobrou.</p>
+     <h2>Qual foi o treino do cross hoje?</h2>
+     <p class="cx-lead">Escreve ou cola aqui o que você fez, e eu monto a academia pra completar.</p>
      <label class="cx-field"><span class="sr">Treino do cross</span>
        <textarea id="crossTxt" rows="6" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="FORÇA&#10;5x 8 push press&#10;WOD&#10;30 hang power clean&#10;150 DU&#10;30 jerk">${esc(crossDraft.txt||'')}</textarea></label>
      <p class="cx-tip">No iPhone: abra a foto do quadro, toque no ícone de texto no canto e em <b>Copiar</b>.</p>
      <button type="button" class="cx-none" id="cxNone">Hoje sem cross</button>
      <div id="cxPrev" class="cx-prev">${draftPreview()}</div>
      <div class="cx-act" id="cxAct" ${ok?'':'hidden'}>
-       <button type="button" class="cx-go" id="cxGo">Montar treino da noite</button>
+       <button type="button" class="cx-go" id="cxGo">Montar a academia</button>
      </div>
    </section>
    ${weekHtml()}`;
@@ -1568,7 +1576,7 @@ function makePlan(none){
   s.cross=cross; s.plan=buildPlan(F,{optional:d.optional, date:s.date});
   touch(sid(current)); crossDraft=null;
   renderTabs(); renderDay(); window.scrollTo({top:0});
-  toast(none?'Treino completo montado':'Treino da noite montado');
+  toast(none?'Treino completo montado':'Academia montada');
 }
 function editCross(){
   const s=session(current,false); if(!s) return;
@@ -1614,7 +1622,7 @@ function renderDay(){
   el.innerHTML = `
    <div class="hero" id="hero">
      <div>
-       <div class="kicker">${d.optional?'Sábado · opcional':esc(['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][d.dow])}</div>
+       <div class="kicker">${d.dyn&&s.plan?(s.cross&&s.cross.none?'Sem cross hoje':'Complemento do cross'):d.optional?'Sábado · opcional':esc(['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][d.dow])}</div>
        <h2>${esc(d.title)}</h2>
        <p>${d.dyn&&s.plan?esc(dynSub(d)):esc(d.sub)}${d.optional&&!d.dyn?`. ${d.note?esc(d.note)+' ':''}Se for, ótimo; se não for, a semana já está completa.`:''}</p>
        <div class="meta"><span class="chip">${d.ex.length} exercícios</span><span class="chip">${totalSets} séries</span></div>
@@ -1963,7 +1971,7 @@ function nextWorkout(key){
   if(!list.length) return null;
   const nd=list.find(d=>d.dow>(cur?cur.dow:0) && !(state.sessions[sid(d.key)]||{}).sets) || list[0];
   const thisWeek = nd.dow>(cur?cur.dow:0);
-  if(nd.dyn) return {d:{...nd, title:'Treino da noite', sub:'Sai do cross do dia: cola o quadro depois do box.'}, when:(thisWeek?'':'Próxima ')+DOWN[nd.dow].toLowerCase(), items:[]};
+  if(nd.dyn) return {d:{...nd, title:'Depois do cross', sub:'Escreve o treino do box e a academia sai na hora.'}, when:(thisWeek?'':'Próxima ')+DOWN[nd.dow].toLowerCase(), items:[]};
   const items=nd.ex.filter(e=>!e.warm).slice(0,3).map(e=>{ const pl=planFor(e,lastFor(nd.key,e.id,true)); const t=pl.sets[0]||{};
     return {n:e.n, txt: pl.kind==='new' ? e.s+' × '+e.r : (t.kg!=null?fmtKgN(t.kg)+' kg × ':'')+t.reps, k:pl.kind}; });
   return {d:nd, when:(thisWeek?'':'Próxima ')+DOWN[nd.dow].toLowerCase(), items};
@@ -2284,7 +2292,7 @@ function todayTxt(plan){
   if(!d) return 'Hoje: descanso';
   if(d.rest){ const b=session(d.key,false); return (plan===DAYS_JR?'Hoje: cross e beach tennis':'Hoje: beach tennis')+(b&&b.beach?' ✓':''); }
   const s=session(d.key,false); const n=s?d.ex.filter(e=>s.done[e.id]).length:0;
-  if(d.dyn && !(s && (s.plan||hasWork(s)))) return s&&s.cardio ? 'Hoje: só cardio ✓' : 'Hoje: treino da noite · cola o cross';
+  if(d.dyn && !(s && (s.plan||hasWork(s)))) return s&&s.cardio ? 'Hoje: só cardio ✓' : 'Hoje: escreve o treino do cross';
   if(s && s.cardio && n<d.ex.length && !s.fin) return 'Hoje: só cardio ✓';
   const min=Math.round(d.ex.reduce((a,e)=>a+e.s*(e.rest+45),0)/60/5)*5;
   if(s && (s.fin || n===d.ex.length)) return `Hoje: ${d.title} ✓`;
