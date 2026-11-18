@@ -991,9 +991,9 @@ const DAYS_JR = [
   {id:'jb4', n:'Tríceps acima da cabeça no cabo', s:3, r:'10–15', rest:75, rir:'0–1', p:['triceps'], q:[], al:true, o:'Cotovelos apontando pra frente, desce até o tríceps esticar. <strong>Se incomodar o ombro</strong>, troca pela corda no pulley.', yt:'tríceps francês na polia'},
   {id:'jb5', n:'Panturrilha em pé', s:4, r:'8–15', rest:60, rir:'0–1', p:['panturrilha'], q:[], al:true, o:'<strong>Pausa de 2 s lá embaixo</strong>, com a panturrilha esticada. Sobe até a ponta do pé, sem quicar.', yt:'panturrilha em pé máquina'}
  ]},
- {key:'jbt', dow:2, short:'Ter', title:'Cross e beach tennis', sub:'Sem academia hoje', rest:true,
+ {key:'jbt', dow:2, short:'Ter', title:'Cross e beach tennis', sub:'Sem academia hoje', rest:true, logCross:true,
   restTitle:'Cross e beach tennis', restText:'Hoje não tem academia. Cross no almoço e beach à noite, num ritmo leve: capricha no sono.',
-  restTips:['Amanhã a academia sai do cross de quarta: escreve o treino do box depois que terminar.','Se o ombro esquerdo reclamou no beach, marca o bloco do cross como pesado: o app poupa o ombro.']},
+  restTips:['Registra o cross de hoje aqui em cima: amanhã a academia já sai poupando o que ele cansou.','Se o ombro esquerdo reclamou no beach, marca o bloco do cross como pesado: o app poupa o ombro.']},
  {key:'jA', dow:3, short:'Qua', title:'Academia', sub:'Complemento do cross', dyn:true, old:[
   {id:'ja1', n:'Puxada alta pegada neutra', s:3, r:'6–10', rest:150, rir:'1–2', p:['dorsal'], q:['biceps','trap'], al:true, o:'Em cima, deixa a dorsal esticar antes de puxar. Leva os cotovelos em direção ao quadril, peito pra cima.', yt:'puxada alta pegada neutra'},
   {id:'ja2', n:'Remada baixa sentada', s:3, r:'8–12', rest:120, rir:'1–2', p:['dorsal','trap'], q:['deltpost','biceps'], al:true, o:'Deixa os ombros irem à frente pra esticar as costas e puxa até a barriga, sem jogar o tronco pra trás.', yt:'remada baixa sentada triângulo'},
@@ -1395,7 +1395,8 @@ const combF=(a,b)=>{ const o={...a}; for(const [m,v] of Object.entries(b)) o[m]=
 function residualF(date){
   const y=addDays(date,-1), R={}, keys=new Set(DAYS_JR.map(d=>d.key));
   for(const s of Object.values(state.sessions)){
-    if(!keys.has(s.day) || s.date!==y) continue;
+    const dd=DAYS_JR.find(d=>d.key===s.day), sd=dd&&dd.rest&&s.week ? addDays(s.week, (dd.dow+6)%7) : s.date; // terça: o cross vale pro dia dele, mesmo registrado depois
+    if(!keys.has(s.day) || sd!==y) continue;
     const F=crossFatigue(s.cross); for(const [m,v] of Object.entries(F)) R[m]=1-(1-(R[m]||0))*(1-0.4*v);
     const cnt={}; doneSets(s).forEach(r=>{ const e=EXMAP[r.id]; if(e&&!e.warm) e.p.forEach(m=>cnt[m]=(cnt[m]||0)+1); });
     for(const [m,n] of Object.entries(cnt)){ const v=n>=4?0.5:n>=2?0.3:0; if(v) R[m]=1-(1-(R[m]||0))*(1-v); }
@@ -1484,6 +1485,7 @@ function exOf(d, s){ if(!d) return []; if(!d.dyn) return d.ex; return s && s.pla
 const closedDay = (d,s) => { const L=exOf(d,s); return !!s && L.length>0 && L.every(e=>s.done[e.id]); };
 
 /* ---------- Telas da ficha dinâmica ---------- */
+let crossEditing = false; // terça: reabrindo o cross salvo pra editar
 let crossDraft = null;   // {txt, parsed} enquanto a pessoa cola o treino, antes de montar
 const DOW_NAME=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
 function fatLists(F){
@@ -1537,7 +1539,7 @@ function dynSub(d){
   const g=[...new Set(d.ex.filter(e=>!e.warm).map(e=>{ const sl=CARDAPIO.find(x=>x.k===e.slot); return sl&&sl.g; }).filter(Boolean))];
   return g.length ? cap(g.map(x=>x.toLowerCase()).join(', ').replace(/, ([^,]*)$/,' e $1')) : 'Montado a partir do cross';
 }
-function renderCheckin(d, el){
+function renderCheckin(d, el, log){
   const s=session(d.key,false);
   if(!crossDraft){ const prev=s&&s.cross&&!s.cross.none ? s.cross.txt : ''; crossDraft={txt:prev, parsed:prev?parseCross(prev):null}; if(s&&s.cross&&s.cross.blocks) crossDraft.parsed.blocks=JSON.parse(JSON.stringify(s.cross.blocks)); }
   const ok=crossDraft.parsed && crossDraft.parsed.blocks.length;
@@ -1545,17 +1547,17 @@ function renderCheckin(d, el){
    <section class="cx">
      <div class="kicker">${d.optional?'Sábado · opcional':DOW_NAME[d.dow]}</div>
      <h2>Qual foi o treino do cross hoje?</h2>
-     <p class="cx-lead">Escreve ou cola aqui o que você fez, e eu monto a academia pra completar.</p>
+     <p class="cx-lead">${log?'Escreve ou cola aqui o que você fez. Amanhã eu monto a academia levando ele em conta.':'Escreve ou cola aqui o que você fez, e eu monto a academia pra completar.'}</p>
      <label class="cx-field"><span class="sr">Treino do cross</span>
        <textarea id="crossTxt" rows="6" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="FORÇA&#10;5x 8 push press&#10;WOD&#10;30 hang power clean&#10;150 DU&#10;30 jerk">${esc(crossDraft.txt||'')}</textarea></label>
      <p class="cx-tip">No iPhone: abra a foto do quadro, toque no ícone de texto no canto e em <b>Copiar</b>.</p>
-     <button type="button" class="cx-none" id="cxNone">Hoje sem cross</button>
+     ${log?'':'<button type="button" class="cx-none" id="cxNone">Hoje sem cross</button>'}
      <div id="cxPrev" class="cx-prev">${draftPreview()}</div>
      <div class="cx-act" id="cxAct" ${ok?'':'hidden'}>
-       <button type="button" class="cx-go" id="cxGo">Montar a academia</button>
+       <button type="button" class="cx-go" id="cxGo">${log?'Salvar o cross':'Montar a academia'}</button>
      </div>
    </section>
-   ${weekHtml()}`;
+   ${log?'':weekHtml()}`;
   $('#evoSec').hidden=true;
 }
 function refreshDraft(){
@@ -1572,6 +1574,7 @@ function onCrossInput(v){
 function makePlan(none){
   const d=DAYS.find(x=>x.key===current); const s=session(current,true);
   const cross = none ? {none:true, at:Date.now()} : {txt:crossDraft.txt, blocks:crossDraft.parsed.blocks, at:Date.now()};
+  if(d.rest){ s.cross=cross; touch(sid(current)); crossDraft=null; crossEditing=false; renderTabs(); renderDay(); renderHome(); window.scrollTo({top:0}); toast('Cross salvo: amanhã a academia leva ele em conta'); return; }
   const F=combF(crossFatigue(cross), residualF(s.date||TODAY));
   s.cross=cross; s.plan=buildPlan(F,{optional:d.optional, date:s.date});
   touch(sid(current)); crossDraft=null;
@@ -1580,6 +1583,7 @@ function makePlan(none){
 }
 function editCross(){
   const s=session(current,false); if(!s) return;
+  if(DAYS.find(x=>x.key===current).rest){ crossDraft=null; crossEditing=true; renderDay(); return; }
   if(hasWork(s)){ toast('O treino já começou: ele fica como está'); return; }
   crossDraft=null; delete s.plan; touch(sid(current)); renderTabs(); renderDay(); window.scrollTo({top:0});
 }
@@ -1593,8 +1597,8 @@ function swapEx(id){
   const el=$('#ex-'+nid); if(el) el.scrollIntoView({block:'center'});
   toast('Trocado por '+EXMAP[nid].n);
 }
-function crossSumHtml(s){
-  const F=combF(crossFatigue(s.cross), residualF(s.date||TODAY)), locked=hasWork(s);
+function crossSumHtml(s, rest){
+  const F=combF(crossFatigue(s.cross), residualF(s.date||TODAY)), locked=!rest&&hasWork(s);
   return `<section class="cxs"><div class="cxs-h"><b>${s.cross&&s.cross.none?'Hoje sem cross':'Cross de hoje'}</b>
       ${locked?'':'<button type="button" class="cxs-ed" id="cxEdit">Editar</button>'}</div>
     <div class="cxs-c">${crossChips(s.cross)}</div>${fatMap(F,false)}</section>`;
@@ -1604,7 +1608,10 @@ function renderDay(){
   const d = DAYS.find(x=>x.key===current);
   const el = $('#day');
   if(d.rest && d.restText){
-    el.innerHTML = `<div class="rest-card"><div class="kicker">${['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'][d.dow]}</div><h3>${esc(d.restTitle)}</h3><p>${esc(d.restText)}</p>
+    const sx=session(d.key,false), hasX=sx&&sx.cross&&!sx.cross.none;
+    let top='';
+    if(d.logCross){ if(!hasX||crossEditing){ renderCheckin(d, el, true); top=el.innerHTML; } else top=crossSumHtml(sx, true); }
+    el.innerHTML = top + `<div class="rest-card"${top?' style="margin-top:16px"':''}><div class="kicker">${['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'][d.dow]}</div><h3>${esc(d.restTitle)}</h3><p>${esc(d.restText)}</p>
       <ul>${d.restTips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>
       <div class="day-end" id="beachEnd">${beachAct(d)}</div>`;
     $('#evoSec').hidden=true; return;
@@ -1813,7 +1820,7 @@ function softRender(){
 /* ---------- Interação ---------- */
 document.addEventListener('click', ev=>{
   const tab=ev.target.closest('.tab');
-  if(tab){ current=tab.dataset.k; try{history.replaceState(null,'','#'+current);}catch(e){} renderTabs(); renderDay(); window.scrollTo({top:0,behavior:'smooth'}); return; }
+  if(tab){ current=tab.dataset.k; crossDraft=null; crossEditing=false; try{history.replaceState(null,'','#'+current);}catch(e){} renderTabs(); renderDay(); window.scrollTo({top:0,behavior:'smooth'}); return; }
   const ph=ev.target.closest('[data-phase]');
   if(ph){ state.config.phase=ph.dataset.phase; touch('config'); renderPhase(); renderDay(); return; }
   const mp=ev.target.closest('[data-map]');
