@@ -1336,7 +1336,7 @@ const CROSS_MOVES = [
   {id:'situp', n:'Abdominal', re:/sit ?-?ups?|abdominais?|\bghd\b/, m:{abdomen:2}, ref:80},
   {id:'du', n:'Double under', re:/double ?unders?|\bdu\b/, m:{panturrilha:2}, ref:200},
   {id:'su', n:'Single under', re:/single ?unders?|\bsu\b|pular corda/, m:{panturrilha:1}, ref:250},
-  {id:'run', n:'Corrida', re:/\brun\b|corrida|correr/, m:{quad:0.5,panturrilha:2,posterior:0.5}, dist:2000},
+  {id:'run', n:'Corrida', re:/\brun\b|corrida|correr|\bcorri\b/, m:{quad:0.5,panturrilha:2,posterior:0.5}, dist:2000},
   {id:'row', n:'Remo', re:/\brow\b|\bremo\b|rower/, m:{dorsal:1,posterior:1,quad:1}, dist:2000, cal:60},
   {id:'bike', n:'Bike', re:/bike|assault|echo/, m:{quad:2}, cal:60},
   {id:'ski', n:'Ski', re:/\bski\b|skierg/, m:{dorsal:1,triceps:1,abdomen:1}, cal:60}
@@ -1362,20 +1362,33 @@ function parseCross(txt){
       if(r) cur.mult=+r[1]; else if(am) cur.mult=Math.max(1,+am[2]/(am[1]==='amrap'?4:6));
       continue;
     }
-    if(!cur) newBlock('wod','WOD');
+    // linha que começa com "amrap 12 min:" ou "força:" e já traz os movimentos
+    const hd=l.match(/^((?:forca|strength|lpo|wod|metcon|amrap|emom|e\d+mom|for time|rft|tabata)[^:]*):\s*(.+)$/);
+    if(hd){ const h=hd[1], k=/^(forca|strength|lpo)/.test(h)?'forca':'wod'; newBlock(k, k==='forca'?'Força':'WOD');
+      const r=h.match(/(\d+)\s*(rounds?|rds|rft)/), am=h.match(/(amrap|emom)\s*(\d+)/);
+      if(r) cur.mult=+r[1]; else if(am) cur.mult=Math.max(1,+am[2]/(am[1]==='amrap'?4:6)); l=hd[2]; }
+    if(!cur){ const forte=/\d+\s*x\s*\d+|\d+\s*kg\b|\b\d*rm\b|\bpr\b/.test(l); newBlock(forte?'forca':'wod', forte?'Força':'WOD'); }
     const rr=l.match(/^(\d+)\s*(rounds?|rds|rft)\b/); if(rr && !CROSS_MOVES.some(m=>m.re.test(l))){ cur.mult=+rr[1]; continue; }
     const sx=l.match(/^(\d+)\s*x\s*$/); if(sx){ pendingSets=+sx[1]; continue; }
     const sch=l.match(/^(\d+(?:\s*-\s*\d+)+)$/); if(sch){ cur.scheme=sch[1].split('-').reduce((a,v)=>a+(+v),0); continue; }
-    const body=l.replace(/^(by (in|off)|buy (in|out))\s*:?\s*/,'');
-    let mv=null; const ak=Object.keys(alias).find(k=>k && body.includes(k)); if(ak) mv=CMOVE[alias[ak]];
-    if(!mv) mv=CROSS_MOVES.find(m=>m.re.test(body));
-    if(!mv){ const w=body.replace(/\b\d+\s*x\b/g,' ').replace(/[\d:()\-*%,+]+/g,' ').replace(/\s+/g,' ').trim(); if(w.length>=3 && !IGNORE.test(body)) unknown.push({raw:raw.trim(), key:w}); continue; }
-    let reps=null, dist=null, cal=null;
-    const d=body.match(/(\d+(?:,\d+)?)\s*(km|m)\b/); const c=body.match(/(\d+)\s*cal/);
-    if(d) dist=parseFloat(d[1].replace(',','.'))*(d[2]==='km'?1000:1);
-    else if(c) cal=+c[1];
-    else { const n=body.match(/^(\d+)\s*(?:x\s*(\d+))?/); if(n) reps=(n[2]? +n[1]*+n[2] : +n[1])*pendingSets; else if(cur.scheme) reps=cur.scheme; }
-    cur.moves.push({id:mv.id, reps, dist, cal});
+    // texto livre: uma linha pode ter vários movimentos ("30 burpees e corri 1 km", "15 wall ball, 10 pull up")
+    const segs=l.split(/\s*[,;]\s*|\s+e\s+(?=\D*\d|[a-z])|\s+\+\s+/).filter(Boolean);
+    const found=[], miss=[];
+    for(const seg of segs){
+      const body=seg.replace(/^(by (in|off)|buy (in|out))\s*:?\s*/,'');
+      let mv=null; const ak=Object.keys(alias).find(k=>k && body.includes(k)); if(ak) mv=CMOVE[alias[ak]];
+      if(!mv) mv=CROSS_MOVES.find(m=>m.re.test(body));
+      if(!mv){ miss.push(body); continue; }
+      let reps=null, dist=null, cal=null;
+      const d=body.match(/(\d+(?:,\d+)?)\s*(km|m)\b/); const c=body.match(/(\d+)\s*cal/);
+      if(d) dist=parseFloat(d[1].replace(',','.'))*(d[2]==='km'?1000:1);
+      else if(c) cal=+c[1];
+      else { const n=body.match(/^(\d+)\s*(?:x\s*(\d+))?/) || body.match(/(\d+)\s*x\s*(\d+)/) || body.match(/(\d+)(?!\s*(?:kg|min|s\b|seg|%))\s+[a-z]/);
+        if(n) reps=(n[2]? +n[1]*+n[2] : +n[1])*pendingSets; else if(cur.scheme) reps=cur.scheme; }
+      found.push({id:mv.id, reps, dist, cal});
+    }
+    if(found.length){ cur.moves.push(...found); continue; }   // o resto da linha é comentário ("acabei com 85 kg")
+    const w=l.replace(/\b\d+\s*x\b/g,' ').replace(/[\d:()\-*%,+]+/g,' ').replace(/\s+/g,' ').trim(); if(w.length>=3 && !IGNORE.test(l)) unknown.push({raw:raw.trim(), key:w});
   }
   return {blocks:blocks.filter(b=>b.moves.length), unknown};
 }
