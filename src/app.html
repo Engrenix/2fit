@@ -1363,7 +1363,9 @@ function crossFatigue(cross){
   const F={}; if(!cross || cross.none) return F;
   for(const b of cross.blocks||[]) for(const x of b.moves){
     const mv=CMOVE[x.id]; if(!mv) continue;
-    const vol=Math.min(1.2, moveVol(mv,x)*(b.mult||1)), k=INT[b.int]||0.8;
+    // força: cada repetição pesada cansa bem mais que uma rep de WOD (8 singles pesados ≈ uma série forte)
+    const fz=b.kind==='forca' && x.reps ? ({leve:1.3, medio:2, pesado:3}[b.int]||2) : 1;
+    const vol=Math.min(1.2, moveVol(mv,x)*(b.mult||1)*fz), k=INT[b.int]||0.8;
     for(const [m,l] of Object.entries(mv.m)){ const c=Math.min(1, l/3*vol*k); F[m]=1-(1-(F[m]||0))*(1-c); }
   }
   return F;
