@@ -19,6 +19,7 @@ App de treino do casal (Júnior e Thai). O app inteiro é um arquivo só (HTML, 
 2. Leia o arquivo da versão atual em `docs/fichas/` (ex.: `thai-v3.md`). Ele tem o contexto da pessoa, os princípios usados, o motivo de cada exercício, o volume planejado e o checklist da próxima revisão.
 3. Use os dados reais do painel (frequência, séries por músculo, evolução de carga) pra justificar qualquer mudança. Se não tiver acesso aos dados, peça um print do painel no filtro de 60 dias.
 4. Pesquise se saiu evidência nova sobre o assunto antes de manter ou trocar uma técnica.
+5. O app é o consultor dos dois: quando os dados mostrarem necessidade, pode sugerir ou incluir cardio em qualquer dia da ficha (de qualquer um dos dois), sem pedir antes. Registre o motivo no doc da ficha e em `docs/HISTORICO.md`.
 
 ## Ao criar uma nova versão da ficha
 
