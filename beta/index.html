@@ -1289,7 +1289,7 @@ const CHECK = '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
 
 function renderTabs(){
   $('#tabs').innerHTML = DAYS.map(d=>{ const st=dayState(d.key); return `<button class="tab ${st}" role="tab" id="tab-${d.key}" aria-selected="${d.key===current}" data-k="${d.key}">
-     ${d.dow===dow?'<i class="today" title="Hoje"></i>':''}${st==='full'?'<i class="tdone" title="Feito esta semana">✓</i>':''}<b>${d.short}</b><span>${esc(d.rest?'Beach':d.optional?'Coringa':d.dyn?((session(d.key,false)||{}).plan?d.title.split(' e ')[0]:hasWork(session(d.key,false)||{})?'Treino':'Cross'):d.title.replace('Treino ',''))}</span></button>`; }).join('');
+     ${d.dow===dow?'<i class="today" title="Hoje"></i>':''}${st==='full'?'<i class="tdone" title="Feito esta semana">✓</i>':''}<b>${d.short}</b><span>${esc(d.rest?'Beach':d.optional?'Coringa':d.dyn?((session(d.key,false)||{}).plan?d.title.split(' e ')[0]:hasWork(session(d.key,false)||{})?'Treino':(session(d.key,false)||{}).soCross?'Só cross':'Cross'):d.title.replace('Treino ',''))}</span></button>`; }).join('');
 }
 function renderPhase(){}
 
@@ -1593,6 +1593,7 @@ function renderCheckin(d, el, log){
      <div id="cxPrev" class="cx-prev">${draftPreview()}</div>
      <div class="cx-act" id="cxAct" ${ok?'':'hidden'}>
        <button type="button" class="cx-go" id="cxGo">${log?'Salvar o cross':'Montar a academia'}</button>
+       ${log?'':`<button type="button" class="cardio-btn" id="cxSkip"><b>Hoje só cross, sem academia</b><span>Salva o cross e conta como dia de cardio · vale ${cardioPts()} pontos</span></button>`}
      </div>
    </section>
    ${log?'':weekHtml()}`;
@@ -1626,6 +1627,7 @@ function editCross(){
   const s=session(current,false); if(!s) return;
   if(DAYS.find(x=>x.key===current).rest){ crossDraft=null; crossEditing=true; renderDay(); return; }
   if(hasWork(s)){ toast('O treino já começou: ele fica como está'); return; }
+  if(s.soCross){ delete s.soCross; delete s.cardio; delete s.cardioAt; }
   crossDraft=null; delete s.plan; touch(sid(current)); renderTabs(); renderDay(); window.scrollTo({top:0});
 }
 function swapEx(id){
@@ -1663,7 +1665,13 @@ function renderDay(){
       <ul><li>Quinta é Inferior B: chega com a perna descansada.</li><li>Se a perna estiver muito pesada na quinta, tira uma série do terra romeno.</li></ul></div>`;
     $('#evoSec').hidden=true; return;
   }
-  if(d.dyn){ const s0=session(d.key,false); if(!s0 || (!s0.plan && !hasWork(s0))){ renderCheckin(d, el); return; } }
+  if(d.dyn){ const s0=session(d.key,false);
+    if(s0 && s0.soCross && !s0.plan && !hasWork(s0)){
+      el.innerHTML = crossSumHtml(s0, true) + `<div class="rest-card" style="margin-top:16px"><div class="kicker">${DOW_NAME[d.dow]}</div><h3>Hoje foi só cross</h3>
+        <p>Sem academia hoje. O cross fica salvo: o próximo treino já sai poupando o que ele cansou, e a semana soma o que você fez.</p></div>
+        <div class="day-end"><button type="button" class="end-btn done" id="cxUnskip"><b>Só cross ✓</b><span>+${cardioPts()} pontos na disputa · toque pra montar a academia</span></button></div>${weekHtml()}`;
+      $('#evoSec').hidden=true; return; }
+    if(!s0 || (!s0.plan && !hasWork(s0))){ renderCheckin(d, el); return; } }
   $('#evoSec').hidden=false;
   const s = session(d.key,false) || {sets:{},done:{}};
   const totalSets = d.ex.reduce((a,e)=>a+setsFor(e),0);
@@ -2295,6 +2303,11 @@ document.addEventListener('click',ev=>{
   if(ev.target.id==='cxGo'){ if(crossDraft&&crossDraft.parsed&&crossDraft.parsed.blocks.length) makePlan(false); return; }
   if(ev.target.id==='cxOk'){ const ta=$('#crossTxt'); if(ta) ta.blur(); flushDraft(); const c=ta&&ta.closest('.cx'); if(c) c.classList.remove('typing');
     const pv=$('#cxPrev'); if(pv) setTimeout(()=>pv.scrollIntoView({block:'start',behavior:'smooth'}),250); return; }
+  const sk=ev.target.closest('#cxSkip'); if(sk){ if(!(crossDraft&&crossDraft.parsed&&crossDraft.parsed.blocks.length)) return;
+    if(!sk.classList.contains('armed')){ sk.classList.add('armed'); const o=sk.innerHTML; sk.innerHTML='<b>Toque de novo pra confirmar</b><span>Hoje sem academia</span>'; setTimeout(()=>{ if(sk.isConnected){ sk.classList.remove('armed'); sk.innerHTML=o; } },3000); return; }
+    const s=session(current,true); s.cross={txt:crossDraft.txt, blocks:crossDraft.parsed.blocks, at:Date.now()}; s.soCross=true; s.cardio=true; s.cardioAt=Date.now();
+    touch(sid(current)); crossDraft=null; confetti(); renderTabs(); renderDay(); renderHome(); window.scrollTo({top:0}); return; }
+  if(ev.target.closest('#cxUnskip')){ const s=session(current,false); if(s){ delete s.soCross; delete s.cardio; delete s.cardioAt; touch(sid(current)); } crossDraft=null; renderTabs(); renderDay(); renderHome(); return; }
   if(ev.target.id==='cxNone'){ crossDraft=crossDraft||{}; makePlan(true); return; }
   if(ev.target.id==='cxEdit'){ editCross(); return; }
   const rd=ev.target.closest('[data-rd]'); if(rd){ const [bi,dv]=rd.dataset.rd.split(':').map(Number); const B=crossDraft.parsed.blocks[bi]; B.mult=Math.min(20,Math.max(1,Math.round(B.mult||1)+dv)); refreshDraft(); return; }
@@ -2346,7 +2359,7 @@ function todayTxt(plan){
   if(!d) return 'Hoje: descanso';
   if(d.rest){ const b=session(d.key,false); return (plan===DAYS_JR?'Hoje: cross e beach tennis':'Hoje: beach tennis')+(b&&b.beach?' ✓':''); }
   const s=session(d.key,false); const n=s?d.ex.filter(e=>s.done[e.id]).length:0;
-  if(d.dyn && !(s && (s.plan||hasWork(s)))) return s&&s.cardio ? 'Hoje: só cardio ✓' : 'Hoje: escreve o treino do cross';
+  if(d.dyn && !(s && (s.plan||hasWork(s)))) return s&&s.cardio ? (s.soCross?'Hoje: só cross ✓':'Hoje: só cardio ✓') : 'Hoje: escreve o treino do cross';
   if(s && s.cardio && n<d.ex.length && !s.fin) return 'Hoje: só cardio ✓';
   const min=Math.round(d.ex.reduce((a,e)=>a+e.s*(e.rest+45),0)/60/5)*5;
   if(s && (s.fin || n===d.ex.length)) return `Hoje: ${d.title} ✓`;
