@@ -146,6 +146,9 @@ html:has(#v-login:not([hidden])),body:has(#v-login:not([hidden])){background:#FF
 .fl.red i{background:#D64545}.fl.yel i{background:#E3A72F}
 .fatleg{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}
 .fatleg .fl{background:transparent;padding:0 8px 0 0;font-weight:600;color:var(--muted)}
+.cx-ok{border:0;border-radius:16px;min-height:48px;background:color-mix(in srgb,var(--ink) 9%,var(--surface));color:var(--ink);font:800 15px var(--f-body)}
+.cx-ok:active{transform:scale(.98)}
+.cx.typing .cx-prev,.cx.typing .cx-act{display:none}
 .cx-act{display:grid}
 .cx-act[hidden]{display:none}
 .cx-go{border:0;border-radius:16px;min-height:56px;background:var(--ink);color:var(--surface);font:800 17px var(--f-body);box-shadow:0 10px 24px color-mix(in srgb,var(--ink) 22%,transparent);transition:transform .15s, opacity .2s}
@@ -1456,7 +1459,7 @@ function dynWhy(o, W, F){
 const cap = t => t ? t[0].toUpperCase()+t.slice(1) : t;
 function planEx(plan){ return (plan||[]).map(p=>{ const e=EXMAP[p.id]; return e ? {...e, s:p.s, why:p.why, slot:p.slot} : null; }).filter(Boolean); }
 /* lista de exercícios de uma sessão qualquer (dias dinâmicos guardam o plano na própria sessão) */
-function exOf(d, s){ if(!d) return []; if(!d.dyn) return d.ex; return s && s.plan ? planEx(s.plan) : d.old; }
+function exOf(d, s){ if(!d) return []; if(!d.dyn) return d.ex||[]; return s && s.plan ? planEx(s.plan) : d.old; }
 const closedDay = (d,s) => { const L=exOf(d,s); return !!s && L.length>0 && L.every(e=>s.done[e.id]); };
 
 /* ---------- Telas da ficha dinâmica ---------- */
@@ -1525,6 +1528,7 @@ function renderCheckin(d, el, log){
      <p class="cx-lead">${log?'Escreve ou cola aqui o que você fez. Amanhã eu monto a academia levando ele em conta.':'Escreve ou cola aqui o que você fez, e eu monto a academia pra completar.'}</p>
      <label class="cx-field"><span class="sr">Treino do cross</span>
        <textarea id="crossTxt" rows="6" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="FORÇA&#10;5x 8 push press&#10;WOD&#10;30 hang power clean&#10;150 DU&#10;30 jerk">${esc(crossDraft.txt||'')}</textarea></label>
+     <button type="button" class="cx-ok" id="cxOk">Pronto, ler o treino</button>
      <p class="cx-tip">No iPhone: abra a foto do quadro, toque no ícone de texto no canto e em <b>Copiar</b>.</p>
      ${log?'':'<button type="button" class="cx-none" id="cxNone">Hoje sem cross</button>'}
      <div id="cxPrev" class="cx-prev">${draftPreview()}</div>
@@ -1540,6 +1544,9 @@ function refreshDraft(){
   const a=$('#cxAct'); if(a) a.hidden=!(crossDraft.parsed && crossDraft.parsed.blocks.length);
 }
 let draftT=null;
+function flushDraft(){ if(!crossDraft) return; clearTimeout(draftT); const old=crossDraft.parsed, P=parseCross(crossDraft.txt||'');
+  if(old) P.blocks.forEach((b,i)=>{ if(old.blocks[i] && old.blocks[i].kind===b.kind) b.int=old.blocks[i].int; });
+  crossDraft.parsed=P; refreshDraft(); }
 function onCrossInput(v){
   crossDraft.txt=v; clearTimeout(draftT);
   draftT=setTimeout(()=>{ const old=crossDraft.parsed; const P=parseCross(v);
@@ -2227,6 +2234,8 @@ function openDuel(wk=WEEK){
 }
 document.addEventListener('click',ev=>{
   if(ev.target.id==='cxGo'){ if(crossDraft&&crossDraft.parsed&&crossDraft.parsed.blocks.length) makePlan(false); return; }
+  if(ev.target.id==='cxOk'){ const ta=$('#crossTxt'); if(ta) ta.blur(); flushDraft(); const c=ta&&ta.closest('.cx'); if(c) c.classList.remove('typing');
+    const pv=$('#cxPrev'); if(pv) setTimeout(()=>pv.scrollIntoView({block:'start',behavior:'smooth'}),250); return; }
   if(ev.target.id==='cxNone'){ crossDraft=crossDraft||{}; makePlan(true); return; }
   if(ev.target.id==='cxEdit'){ editCross(); return; }
   const ib=ev.target.closest('[data-int]'); if(ib){ const [bi,k]=ib.dataset.int.split(':'); crossDraft.parsed.blocks[+bi].int=k; refreshDraft(); return; }
@@ -2234,6 +2243,9 @@ document.addEventListener('click',ev=>{
   const sw=ev.target.closest('[data-swap]'); if(sw){ swapEx(sw.dataset.swap); return; }
 });
 document.addEventListener('input',ev=>{ if(ev.target.id==='crossTxt') onCrossInput(ev.target.value); });
+/* enquanto digita, a leitura do quadro fica escondida (o teclado tampava); aparece ao fechar o teclado ou tocar em "Pronto" */
+document.addEventListener('focusin',ev=>{ if(ev.target.id==='crossTxt') ev.target.closest('.cx').classList.add('typing'); });
+document.addEventListener('focusout',ev=>{ if(ev.target.id!=='crossTxt') return; flushDraft(); const c=ev.target.closest('.cx'); if(c) c.classList.remove('typing'); });
 document.addEventListener('change',ev=>{
   const t=ev.target.closest('[data-teach]'); if(!t || !crossDraft) return;
   const u=crossDraft.parsed.unknown[+t.dataset.teach]; if(!u) return;
