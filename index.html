@@ -143,6 +143,10 @@ html:has(#v-login:not([hidden])),body:has(#v-login:not([hidden])){background:#FF
 .cx-empty{margin:0;font-size:13.5px;color:var(--muted);padding:12px 14px;border:1px dashed var(--line);border-radius:14px}
 .cx-prev{display:grid;gap:10px}
 .cxb{border:1px solid var(--line);border-radius:16px;padding:10px 12px;display:grid;gap:8px}
+.cxr{display:flex;align-items:center;gap:6px;font:700 14px var(--f-body);color:var(--muted)}
+.cxr span{margin-right:auto}
+.cxr button{width:44px;height:40px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:800 18px var(--f-body)}
+.cxr b{min-width:28px;text-align:center;color:var(--ink);font-size:16px}
 .cxbh{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .cxbh b{font:800 15px var(--f-body);color:var(--ink)}
 .seg{display:inline-flex;background:var(--bg);border-radius:12px;padding:3px;gap:2px}
@@ -1367,14 +1371,14 @@ function parseCross(txt){
     const isForca=/\b(forca|strength|skill|lpo|tecnica|heavy)\b/.test(l), isWod=/\b(wod|metcon|amrap|emom|e\d+mom|for time|rft|chipper|tabata)\b/.test(l);
     if((isForca||isWod) && l.split(' ').length<=6 && !CROSS_MOVES.some(m=>m.re.test(l))){
       newBlock(isForca?'forca':'wod', isForca?'Força':'WOD');
-      const r=l.match(/(\d+)\s*(rounds?|rds|rft)/), am=l.match(/(amrap|emom)\s*(\d+)/);
+      const r=l.match(/(\d+)\s*(rounds?|rds|rft|rodadas?|vezes|x\b)/), am=l.match(/(amrap|emom)\s*(\d+)/);
       if(r) cur.mult=+r[1]; else if(am) cur.mult=Math.max(1,+am[2]/(am[1]==='amrap'?4:6));
       continue;
     }
     // linha que começa com "amrap 12 min:" ou "força:" e já traz os movimentos
     const hd=l.match(/^((?:forca|strength|lpo|wod|metcon|amrap|emom|e\d+mom|for time|rft|tabata)[^:]*):\s*(.+)$/);
     if(hd){ const h=hd[1], k=/^(forca|strength|lpo)/.test(h)?'forca':'wod'; newBlock(k, k==='forca'?'Força':'WOD');
-      const r=h.match(/(\d+)\s*(rounds?|rds|rft)/), am=h.match(/(amrap|emom)\s*(\d+)/);
+      const r=h.match(/(\d+)\s*(rounds?|rds|rft|rodadas?|vezes|x\b)/), am=h.match(/(amrap|emom)\s*(\d+)/);
       if(r) cur.mult=+r[1]; else if(am) cur.mult=Math.max(1,+am[2]/(am[1]==='amrap'?4:6)); l=hd[2]; }
     if(!cur){ const forte=/\d+\s*x\s*\d+|\d+\s*kg\b|\b\d*rm\b|\bpr\b/.test(l); newBlock(forte?'forca':'wod', forte?'Força':'WOD'); }
     const rr=l.match(/^(\d+)\s*(rounds?|rds|rft)\b/); if(rr && !CROSS_MOVES.some(m=>m.re.test(l))){ cur.mult=+rr[1]; continue; }
@@ -1555,6 +1559,7 @@ function draftPreview(){
   const F=crossFatigue({blocks:P.blocks});
   const blocks=P.blocks.map((b,bi)=>`<div class="cxb"><div class="cxbh"><b>${esc(b.title)}</b>
       <span class="seg" role="radiogroup" aria-label="Intensidade de ${esc(b.title)}">${Object.keys(INT).map(k=>`<button type="button" role="radio" aria-checked="${b.int===k}" class="${b.int===k?'on':''}" data-int="${bi}:${k}">${INT_TXT[k]}</button>`).join('')}</span></div>
+      ${b.kind==='wod'?`<div class="cxr"><span>Rodadas</span><button type="button" data-rd="${bi}:-1" aria-label="Menos uma rodada">−</button><b>${Math.max(1,Math.round(b.mult||1))}</b><button type="button" data-rd="${bi}:1" aria-label="Mais uma rodada">+</button></div>`:''}
       <div class="cxm">${b.moves.map((x,mi)=>`<span class="mv">${esc(CMOVE[x.id].n)}${x.reps?` <small>${x.reps}</small>`:x.dist?` <small>${x.dist>=1000?(x.dist/1000).toLocaleString('pt-BR')+' km':x.dist+' m'}</small>`:x.cal?` <small>${x.cal} cal</small>`:''}<button type="button" class="mvx" data-mvx="${bi}:${mi}" aria-label="Tirar ${esc(CMOVE[x.id].n)}">✕</button></span>`).join('')}</div></div>`).join('');
   const unk=P.unknown.map((u,ui)=>`<div class="cxu"><span>Não reconheci <b>“${esc(u.raw)}”</b></span>
       <select data-teach="${ui}" aria-label="Qual movimento é ${esc(u.raw)}"><option value="">É qual movimento?</option>${CROSS_MOVES.map(m=>`<option value="${m.id}">${esc(m.n)}</option>`).join('')}<option value="__ign">Ignorar</option></select></div>`).join('');
@@ -2292,6 +2297,7 @@ document.addEventListener('click',ev=>{
     const pv=$('#cxPrev'); if(pv) setTimeout(()=>pv.scrollIntoView({block:'start',behavior:'smooth'}),250); return; }
   if(ev.target.id==='cxNone'){ crossDraft=crossDraft||{}; makePlan(true); return; }
   if(ev.target.id==='cxEdit'){ editCross(); return; }
+  const rd=ev.target.closest('[data-rd]'); if(rd){ const [bi,dv]=rd.dataset.rd.split(':').map(Number); const B=crossDraft.parsed.blocks[bi]; B.mult=Math.min(20,Math.max(1,Math.round(B.mult||1)+dv)); refreshDraft(); return; }
   const ib=ev.target.closest('[data-int]'); if(ib){ const [bi,k]=ib.dataset.int.split(':'); crossDraft.parsed.blocks[+bi].int=k; refreshDraft(); return; }
   const mx=ev.target.closest('[data-mvx]'); if(mx){ const [bi,mi]=mx.dataset.mvx.split(':').map(Number); const B=crossDraft.parsed.blocks; B[bi].moves.splice(mi,1); if(!B[bi].moves.length) B.splice(bi,1); refreshDraft(); return; }
   const sw=ev.target.closest('[data-swap]'); if(sw){ swapEx(sw.dataset.swap); return; }
