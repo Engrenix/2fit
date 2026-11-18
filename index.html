@@ -1339,6 +1339,18 @@ const CROSS_MOVES = [
   {id:'ski', n:'Ski', re:/\bski\b|skierg/, m:{dorsal:1,triceps:1,abdomen:1}, cal:60}
 ];
 const CMOVE = Object.fromEntries(CROSS_MOVES.map(x=>[x.id,x]));
+/* erro de digitação ("deadlifit", "trhuster"): compara as palavras com os nomes dos movimentos, aceitando 1 ou 2 letras trocadas */
+let CVOCAB=null; const cvocab=()=>CVOCAB||(CVOCAB=CROSS_MOVES.flatMap(m=>[m.n.toLowerCase(), ...m.re.source.split('|').map(s=>s.replace(/\\b|\\s[?*+]?/g,' ').replace(/\(\?:|\)\??/g,'').replace(/\s+/g,' ').trim())]
+  .map(w=>crossNorm(w.replace(/[-?]/g,' ')).replace(/\s+/g,' ').trim()).filter(w=>/^[a-z ]{4,}$/.test(w)).map(w=>({w, id:m.id}))));
+function lev(a,b){ const d=Array.from({length:a.length+1},(_,i)=>[i]); for(let j=1;j<=b.length;j++) d[0][j]=j;
+  for(let i=1;i<=a.length;i++) for(let j=1;j<=b.length;j++) d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1)); return d[a.length][b.length]; }
+function fuzzyMove(body){
+  const ws=body.replace(/[^a-z ]/g,' ').split(/\s+/).filter(Boolean); let best=null;
+  for(const v of cvocab()){ const n=v.w.split(' ').length;
+    for(let i=0;i+n<=ws.length;i++){ const s=ws.slice(i,i+n).join(' '); if(Math.abs(s.length-v.w.length)>2) continue;
+      const lim=v.w.length>=8?2:v.w.length>=5?1:0, d=lev(s,v.w); if(d<=lim && (!best||d<best.d)) best={d,id:v.id}; } }
+  return best && CMOVE[best.id];
+}
 const INT = {leve:0.5, medio:0.8, pesado:1};
 const INT_TXT = {leve:'Leve', medio:'Médio', pesado:'Pesado'};
 const crossNorm = t => String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
@@ -1368,6 +1380,7 @@ function parseCross(txt){
     const rr=l.match(/^(\d+)\s*(rounds?|rds|rft)\b/); if(rr && !CROSS_MOVES.some(m=>m.re.test(l))){ cur.mult=+rr[1]; continue; }
     const sx=l.match(/^(\d+)\s*x\s*$/); if(sx){ pendingSets=+sx[1]; continue; }
     const sch=l.match(/^(\d+(?:\s*-\s*\d+)+)$/); if(sch){ cur.scheme=sch[1].split('-').reduce((a,v)=>a+(+v),0); continue; }
+    const sch2=l.match(/^(\d+(?:\s*-\s*\d+)+)\s+(.+)$/); if(sch2){ cur.scheme=sch2[1].split('-').reduce((a,v)=>a+(+v),0); l=sch2[2]; }   // "21-15-9 thruster, pull up"
     // texto livre: uma linha pode ter vários movimentos ("30 burpees e corri 1 km", "15 wall ball, 10 pull up")
     const segs=l.split(/\s*[,;]\s*|\s+e\s+(?=\D*\d|[a-z])|\s+\+\s+/).filter(Boolean);
     const found=[], miss=[];
@@ -1375,6 +1388,7 @@ function parseCross(txt){
       const body=seg.replace(/^(by (in|off)|buy (in|out))\s*:?\s*/,'');
       let mv=null; const ak=Object.keys(alias).find(k=>k && body.includes(k)); if(ak) mv=CMOVE[alias[ak]];
       if(!mv) mv=CROSS_MOVES.find(m=>m.re.test(body));
+      if(!mv) mv=fuzzyMove(body);
       if(!mv){ miss.push(body); continue; }
       let reps=null, dist=null, cal=null;
       const d=body.match(/(\d+(?:,\d+)?)\s*(km|m)\b/); const c=body.match(/(\d+)\s*cal/);
