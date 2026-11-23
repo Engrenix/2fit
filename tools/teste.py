@@ -40,12 +40,16 @@ with sync_playwright() as p:
         print('(WebKit não instalado, usando Chromium)')
         b = p.chromium.launch()
     pg = b.new_context(**p.devices['iPhone 14']).new_page()
-    pg.on('pageerror', lambda e: erros.append(str(e)))
+    pg.on('pageerror', lambda e: erros.append(str(e)+' | '+(e.stack or '').split(chr(10))[1].strip() if e.stack else str(e)))
     for quem, painel in [('thai', 'painel'), ('junior', 'painel-jr')]:
         pg.goto(f'{base}#{quem}'); pg.wait_for_timeout(800)
         n = len(pg.query_selector_all('.tab'))
         for k in range(n):
             pg.query_selector_all('.tab')[k].click(); pg.wait_for_timeout(200)
+            if pg.query_selector('#crossTxt'):   # dia dinâmico do Júnior: cola um cross de exemplo e monta
+                pg.fill('#crossTxt', 'FORCA\n5x\n8 push press\nWOD\n30 hang power clean\n150 du\n30 jerk'); pg.wait_for_timeout(400)
+                pg.click('#cxOk'); pg.wait_for_timeout(400)
+                pg.click('#cxGo'); pg.wait_for_timeout(300)
             t = pg.query_selector_all('.tab')[k].inner_text().replace('\n', ' ')
             q = pg.evaluate("document.querySelectorAll('#day article.ex').length")
             print(f'  {quem:6} {t:22} {q} exercícios' + ('  ⚠ passa de 6' if q > 6 else ''))

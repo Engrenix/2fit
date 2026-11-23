@@ -3,7 +3,7 @@
    e uma cópia nova é buscada em segundo plano pra próxima abertura.
    Ao publicar uma versão, suba o número abaixo: o celular baixa tudo de novo,
    troca pra versão nova e o app recarrega sozinho uma vez. */
-const VERSAO = '2fit-v54';
+const VERSAO = '2fit-v79';
 const ARQUIVOS = [
   './',
   './index.html',
@@ -50,7 +50,6 @@ self.addEventListener('fetch', ev => {
   const proprio = url.origin === location.origin;
   const fonte = url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com';
   if (!proprio && !fonte) return;
-  if (proprio && url.pathname.includes('/beta/')) return; // versão de teste: sempre da rede, nunca no cache do app
 
   // Página: cópia guardada na hora (trocar de tela recarrega a página), atualiza em segundo plano
   if (req.mode === 'navigate') {

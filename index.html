@@ -130,6 +130,90 @@ html:has(#v-login:not([hidden])),body:has(#v-login:not([hidden])){background:#FF
 .pin .ic{flex:none;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;font-weight:900;background:var(--bg);color:var(--ink)}
 .pin.ok .ic,.pin.up .ic{background:var(--ok-soft);color:#2C7C5B}.pin.warn .ic{background:#FCE9B8;color:#6B5420}
 .pin b{display:block;font-size:14.5px;color:var(--ink)}.pin span{font-size:13px;color:var(--muted);line-height:1.35}
+.cx{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px 16px 16px;display:grid;gap:12px}
+.cx .kicker{margin:0}
+.cx h2{margin:-4px 0 0;font:900 30px/1.05 var(--f-display);font-stretch:115%;color:var(--ink);letter-spacing:-.01em}
+.cx-lead{margin:0;font-size:15px;line-height:1.4;color:var(--muted);max-width:42ch}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.cx-field textarea{width:100%;min-height:150px;resize:vertical;border:1.5px solid var(--line);border-radius:16px;background:var(--bg);color:var(--ink);font:500 16px/1.45 var(--f-body);padding:12px 14px;outline:none;transition:border-color .2s, box-shadow .2s}
+.cx-field textarea:focus{border-color:var(--ink);box-shadow:0 0 0 4px color-mix(in srgb,var(--ink) 10%,transparent)}
+.cx-field textarea::placeholder{color:var(--muted);opacity:.55}
+.cx-tip{margin:-4px 0 0;font-size:13px;color:var(--muted);line-height:1.4}
+.cx-tip b{color:var(--ink)}
+.cx-empty{margin:0;font-size:13.5px;color:var(--muted);padding:12px 14px;border:1px dashed var(--line);border-radius:14px}
+.cx-prev{display:grid;gap:10px}
+.cxb{border:1px solid var(--line);border-radius:16px;padding:10px 12px;display:grid;gap:8px}
+.cxr{display:flex;align-items:center;gap:6px;font:700 14px var(--f-body);color:var(--muted)}
+.cxr span{margin-right:auto}
+.cxr button{width:44px;height:40px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:800 18px var(--f-body)}
+.cxr b{min-width:28px;text-align:center;color:var(--ink);font-size:16px}
+.cxbh{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.cxbh b{font:800 15px var(--f-body);color:var(--ink)}
+.seg{display:inline-flex;background:var(--bg);border-radius:12px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;color:var(--muted);font:700 13px var(--f-body);padding:0 11px;min-height:40px;border-radius:9px}
+.seg button.on{background:var(--ink);color:var(--surface)}
+.cxm{display:flex;flex-wrap:wrap;gap:6px}
+.mv{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border-radius:99px;padding:0 2px 0 12px;min-height:44px;font:600 14px var(--f-body);color:var(--ink)}
+.mv small{font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
+.mvx{border:0;background:transparent;color:var(--muted);width:40px;height:40px;border-radius:50%;font-size:13px}
+.mvx:active{background:var(--line)}
+.cxu{display:grid;gap:6px;background:#FFF6DE;border:1px solid #F1DFA6;border-radius:14px;padding:10px 12px;font-size:13.5px;color:#6B5420}
+.cxu select{font:600 16px var(--f-body);min-height:44px;border-radius:10px;border:1px solid #E8D290;background:#fff;color:var(--ink);padding:0 10px}
+.cx-fat h4{margin:4px 0 6px;font-size:15px;font-weight:800;color:var(--ink)}
+.fat{display:flex;gap:12px;align-items:center}
+.fatfig{flex:none;width:clamp(96px,28vw,118px);--accent:#D64545;--aux:#E3A72F}
+.fat.big .fatfig{width:clamp(110px,34vw,150px)}
+.fatfig svg{width:100%;height:auto;display:block}
+.fatlist{display:grid;gap:10px;align-content:center;min-width:0}
+.fr{margin:0;display:flex;gap:8px;align-items:flex-start;font-size:13.5px;line-height:1.35;color:var(--ink)}
+.fr i{flex:none;width:10px;height:10px;border-radius:50%;margin-top:4px;background:var(--ok)}
+.fr.red i{background:#D64545}.fr.yel i{background:#E3A72F}
+.fr b{display:block;font-size:12px;font-weight:800;color:var(--muted)}
+.fl{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-size:13px;font-weight:700;color:var(--ink);background:var(--bg);border-radius:99px;padding:5px 10px 5px 8px}
+.fl i{width:9px;height:9px;border-radius:50%;background:var(--ok)}
+.fl.red i{background:#D64545}.fl.yel i{background:#E3A72F}
+.fatleg{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}
+.fatleg .fl{background:transparent;padding:0 8px 0 0;font-weight:600;color:var(--muted)}
+.cx-ok{border:0;border-radius:16px;min-height:48px;background:color-mix(in srgb,var(--ink) 9%,var(--surface));color:var(--ink);font:800 15px var(--f-body)}
+.cx-ok:active{transform:scale(.98)}
+.cx.typing .cx-prev,.cx.typing .cx-act{display:none}
+.cx-act{display:grid}
+.cx-act[hidden]{display:none}
+.cx-go{border:0;border-radius:16px;min-height:56px;background:var(--ink);color:var(--surface);font:800 17px var(--f-body);box-shadow:0 10px 24px color-mix(in srgb,var(--ink) 22%,transparent);transition:transform .15s, opacity .2s}
+.cx-go:active{transform:scale(.98)}
+.cx-go:disabled{opacity:.35;box-shadow:none}
+.cx-none{border:1.5px solid var(--line);border-radius:16px;min-height:48px;background:var(--surface);color:var(--ink);font:700 15px var(--f-body)}
+.cx-none:active{background:var(--bg)}
+.cxs{margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:grid;gap:10px}
+.cxs-h{display:flex;justify-content:space-between;align-items:center}
+.cxs-h b{font-size:15px;color:var(--ink)}
+.cxs-ed{border:1px solid var(--line);background:var(--surface);color:var(--ink);font:700 13px var(--f-body);border-radius:99px;padding:0 16px;min-height:40px}
+.cxs-c{display:flex;flex-wrap:wrap;gap:6px}
+.cc{font-size:13px;color:var(--ink);background:var(--bg);border-radius:12px;padding:6px 10px;line-height:1.35}
+.cc b{font-weight:800;margin-right:4px}.cc em{font-style:normal;color:var(--muted);font-weight:700;margin-left:6px}
+.cc.none{font-weight:700}
+.why{margin:7px 0 0;font-size:12.5px;line-height:1.35;color:var(--muted)}
+.swap{border:1px solid var(--line);background:transparent;color:var(--ink);font:700 13px var(--f-body);border-radius:99px;padding:0 12px;min-height:40px}
+.wk{margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:0 14px}
+.wk summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:52px;cursor:pointer}
+.wk summary::-webkit-details-marker{display:none}
+.wk summary b{font-size:15px;color:var(--ink)}.wk summary span{font-size:12.5px;color:var(--muted)}
+.wk summary::after{content:'+';font:800 18px var(--f-body);color:var(--muted)}
+.wk[open] summary::after{content:'–'}
+.wkl{display:grid;gap:9px;padding:2px 0 14px}
+.wkr{display:grid;grid-template-columns:104px 1fr 74px;gap:10px;align-items:center;font-size:13px}
+.wn{color:var(--ink);font-weight:600}
+.wb{position:relative;height:10px;border-radius:9px;background:var(--bg);overflow:hidden;display:flex}
+.wb .lo{position:absolute;top:0;bottom:0;background:color-mix(in srgb,var(--ok) 16%,transparent);border-left:1.5px solid var(--ok)}
+.wb u{position:relative;height:100%;display:block;text-decoration:none}
+.wb .g{background:var(--ink)}
+.wb .c{background:repeating-linear-gradient(135deg,var(--muted) 0 3px,transparent 3px 6px)}
+.wv{text-align:right;font-variant-numeric:tabular-nums;font-weight:800;color:var(--ink)}
+.wv small{font-weight:700;color:var(--muted);margin-left:2px}.wv em{font-style:normal;font-weight:600;color:var(--muted)}
+.wkr.ok .wn::after{content:' ✓';color:var(--ok);font-weight:800}
+.wkleg{display:flex;gap:12px;flex-wrap:wrap;margin:4px 0 0;font-size:12px;color:var(--muted)}
+.wkleg i{display:inline-block;width:12px;height:8px;border-radius:3px;margin-right:5px;vertical-align:middle}
+.wkleg .g{background:var(--ink)}.wkleg .c{background:repeating-linear-gradient(135deg,var(--muted) 0 3px,transparent 3px 6px)}.wkleg .lo{background:color-mix(in srgb,var(--ok) 25%,transparent);border-left:1.5px solid var(--ok)}
 .kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 @media (min-width:620px){.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -410,6 +494,10 @@ h1 em{font-style:normal;color:var(--accent)}
 
 .ex-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .link{font-size:13px;font-weight:600;color:var(--accent);text-decoration:none}
+/* área de toque maior sem mexer no desenho (Início, link do YouTube, fechar folha) */
+.back,.link,.sheet-x{position:relative}
+.back::after,.link::after{content:'';position:absolute;inset:-12px -8px}
+.sheet-x::after{content:'';position:absolute;inset:-6px}
 .link:hover{text-decoration:underline}
 .mark{border:1px solid var(--line);background:transparent;border-radius:99px;padding:6px 12px;font-size:13px;font-weight:600}
 .ex.done .mark{background:var(--ok-soft);border-color:var(--ok)}
@@ -906,7 +994,7 @@ const DAYS_THAI = [
 const OMBRO='<strong>Ombro esquerdo:</strong> se doer mais que 3 de 10, ou continuar doendo no dia seguinte, corta 1 série de ombro na semana.';
 const LAT='Sobe com o braço <strong>um pouco à frente do corpo</strong> (uns 30°), polegar pra cima, só até a altura do ombro. Nunca com o polegar pra baixo.';
 const DAYS_JR = [
- {key:'jB', dow:1, short:'Seg', title:'Treino A', sub:'Peito superior, ombro e tríceps', ex:[
+ {key:'jB', dow:1, short:'Seg', title:'Academia', sub:'Complemento do cross', dyn:true, old:[
   {id:'jb0', n:'Rotação externa no cabo', per:'aquecimento', warm:true, s:2, r:'15', rest:45, rir:'leve', p:['deltpost'], q:[], o:'<strong>Leve, só pra aquecer o manguito.</strong> Cotovelo colado no corpo a 90°, gira o antebraço pra fora devagar. Protege o ombro esquerdo.', yt:'rotação externa no cabo manguito rotador'},
   {id:'jb1', n:'Supino inclinado com halteres', per:'pegada neutra, 30°', s:3, r:'6–10', rest:150, rir:'1–2', p:['peito'], q:['delt','triceps'], al:true, o:'Banco a 30° e palmas viradas uma pra outra: mais seguro pro ombro. Desce até sentir o peito esticar. '+OMBRO, yt:'supino inclinado halteres pegada neutra'},
   {id:'jb2', n:'Crossover de baixo pra cima', s:3, r:'10–15', rest:75, rir:'0–1', p:['peito'], q:['delt'], o:'Polias embaixo, leva as mãos até a altura do queixo. Pega a parte de cima do peito.', yt:'crossover de baixo para cima peitoral superior'},
@@ -914,17 +1002,17 @@ const DAYS_JR = [
   {id:'jb4', n:'Tríceps acima da cabeça no cabo', s:3, r:'10–15', rest:75, rir:'0–1', p:['triceps'], q:[], al:true, o:'Cotovelos apontando pra frente, desce até o tríceps esticar. <strong>Se incomodar o ombro</strong>, troca pela corda no pulley.', yt:'tríceps francês na polia'},
   {id:'jb5', n:'Panturrilha em pé', s:4, r:'8–15', rest:60, rir:'0–1', p:['panturrilha'], q:[], al:true, o:'<strong>Pausa de 2 s lá embaixo</strong>, com a panturrilha esticada. Sobe até a ponta do pé, sem quicar.', yt:'panturrilha em pé máquina'}
  ]},
- {key:'jbt', dow:2, short:'Ter', title:'Cross e beach tennis', sub:'Sem academia hoje', rest:true,
-  restTitle:'Cross e beach tennis', restText:'Hoje não tem academia. Cross no almoço e beach à noite: é o dia mais pesado da semana, então capricha no sono.',
-  restTips:['Amanhã é costas e bíceps: o ombro só trabalha a parte de trás e descansa do jogo.','Se o ombro esquerdo reclamou no beach, corta 1 série de elevação lateral na quinta.']},
- {key:'jA', dow:3, short:'Qua', title:'Treino B', sub:'Costas em largura e bíceps', ex:[
+ {key:'jbt', dow:2, short:'Ter', title:'Cross e beach tennis', sub:'Sem academia hoje', rest:true, logCross:true,
+  restTitle:'Cross e beach tennis', restText:'Hoje não tem academia. Cross no almoço e beach à noite, num ritmo leve: capricha no sono.',
+  restTips:['Registra o cross de hoje aqui em cima: amanhã a academia já sai poupando o que ele cansou.','Se o ombro esquerdo reclamou no beach, marca o bloco do cross como pesado: o app poupa o ombro.']},
+ {key:'jA', dow:3, short:'Qua', title:'Academia', sub:'Complemento do cross', dyn:true, old:[
   {id:'ja1', n:'Puxada alta pegada neutra', s:3, r:'6–10', rest:150, rir:'1–2', p:['dorsal'], q:['biceps','trap'], al:true, o:'Em cima, deixa a dorsal esticar antes de puxar. Leva os cotovelos em direção ao quadril, peito pra cima.', yt:'puxada alta pegada neutra'},
   {id:'ja2', n:'Remada baixa sentada', s:3, r:'8–12', rest:120, rir:'1–2', p:['dorsal','trap'], q:['deltpost','biceps'], al:true, o:'Deixa os ombros irem à frente pra esticar as costas e puxa até a barriga, sem jogar o tronco pra trás.', yt:'remada baixa sentada triângulo'},
   {id:'ja3', n:'Pullover no cabo', s:2, r:'10–15', rest:75, rir:'0–1', p:['dorsal'], q:[], al:true, o:'Braços quase esticados, começa bem acima da cabeça e leva a barra até a coxa. É o que mais abre a dorsal sem cansar o braço.', yt:'pullover no cabo dorsal'},
   {id:'ja4', n:'Crucifixo inverso na máquina', s:3, r:'12–20', rest:60, rir:'0–1', p:['deltpost'], q:['trap'], o:'Braços quase esticados, abre até a linha do corpo. Ajuda a postura e dá contorno ao ombro visto de costas.', yt:'crucifixo inverso máquina'},
   {id:'ja6', n:'Rosca inclinada com halteres', s:4, r:'8–12', rest:75, rir:'0–1', p:['biceps'], q:[], al:true, o:'Banco a 45° e braço pendurado atrás do corpo: o bíceps trabalha esticado, a posição que mais faz crescer.', yt:'rosca inclinada halteres banco'}
  ]},
- {key:'jD', dow:4, short:'Qui', title:'Treino C', sub:'Peito, ombro e braços', ex:[
+ {key:'jD', dow:4, short:'Qui', title:'Academia', sub:'Complemento do cross', dyn:true, old:[
   {id:'jd0', n:'Rotação externa no cabo', per:'aquecimento', warm:true, s:2, r:'15', rest:45, rir:'leve', p:['deltpost'], q:[], o:'<strong>Leve, só pra aquecer o manguito.</strong> Cotovelo colado no corpo a 90°, gira o antebraço pra fora devagar.', yt:'rotação externa no cabo manguito rotador'},
   {id:'jd1', n:'Supino inclinado na máquina', per:'pegada neutra se tiver', s:3, r:'6–10', rest:150, rir:'1–2', p:['peito'], q:['delt','triceps'], o:'Desce controlando até o peito esticar, sem deixar o ombro ir pra frente. <strong>Se o cross do dia acabou com o ombro, tira 1 série.</strong>', yt:'supino inclinado máquina'},
   {id:'jd2', n:'Voador (peck deck)', s:2, r:'12–15', rest:75, rir:'0–1', p:['peito'], q:[], al:true, o:'Abre até o peito esticar, sem deixar o ombro passar da linha do corpo. Junta as mãos apertando o peito.', yt:'voador peck deck execução'},
@@ -932,7 +1020,7 @@ const DAYS_JR = [
   {id:'jd4', n:'Tríceps no pulley', s:3, r:'10–15', rest:60, rir:'0–1', p:['triceps'], q:[], o:'Cotovelos colados no corpo, estica o braço todo lá embaixo.', yt:'tríceps pulley barra'},
   {id:'jd6', n:'Panturrilha sentado', s:4, r:'10–20', rest:60, rir:'0–1', p:['panturrilha'], q:[], al:true, o:'Pausa de 2 s lá embaixo. Sentado pega a parte de dentro da panturrilha (sóleo).', yt:'panturrilha sentado máquina'}
  ]},
- {key:'jC', dow:5, short:'Sex', title:'Treino D', sub:'Costas, ombro posterior e bíceps', ex:[
+ {key:'jC', dow:5, short:'Sex', title:'Academia', sub:'Complemento do cross', dyn:true, old:[
   {id:'jc1', n:'Puxada unilateral no cabo', per:'cada lado', s:3, r:'8–12', rest:90, rir:'1–2', p:['dorsal'], q:['biceps'], al:true, o:'Sentado ou ajoelhado, deixa o braço subir bem esticado e puxa o cotovelo em direção ao quadril.', yt:'puxada unilateral no cabo dorsal'},
   {id:'jc2', n:'Remada com peito apoiado', per:'cotovelo aberto', s:3, r:'8–12', rest:120, rir:'1–2', p:['dorsal','trap'], q:['deltpost','biceps'], o:'Peito colado no apoio, sem roubar com a lombar. Cotovelos abertos pegam a parte de cima das costas.', yt:'remada peito apoiado máquina'},
   {id:'jc3', n:'Face pull', s:3, r:'15–20', rest:60, rir:'1–2', p:['deltpost'], q:['trap'], o:'Corda na altura do rosto, puxa abrindo as mãos e girando pra fora no final. Ótimo pro manguito do ombro esquerdo.', yt:'face pull corda execução'},
@@ -940,13 +1028,16 @@ const DAYS_JR = [
   {id:'jc5', n:'Rosca no cabo com braço atrás', per:'Bayesian', s:4, r:'10–15', rest:75, rir:'0–1', p:['biceps'], q:[], al:true, o:'De costas pra polia, braço atrás da linha do corpo: o bíceps trabalha esticado o tempo todo.', yt:'rosca bayesian cabo'},
   {id:'jc6', n:'Mesa flexora', s:3, r:'8–12', rest:90, rir:'0–1', p:['posterior'], q:[], al:true, o:'O cross quase não trabalha a flexão do joelho. Se tiver a sentada, prefira: o posterior trabalha mais esticado.', yt:'mesa flexora execução'}
  ]},
- {key:'jcor', dow:6, short:'Sáb', title:'Coringa', sub:'Braços, panturrilha e abdômen', optional:true, note:'Só se a semana foi bem dormida e o ombro está tranquilo.', ex:[
+ {key:'jcor', dow:6, short:'Sáb', title:'Coringa', sub:'Montado a partir da semana', optional:true, dyn:true, note:'Só se a semana foi bem dormida e o ombro está tranquilo.', old:[
   {id:'je3', n:'Panturrilha em pé', s:3, r:'10–15', rest:60, rir:'0–1', p:['panturrilha'], q:[], al:true, o:'Pausa de 2 s lá embaixo.', yt:'panturrilha em pé máquina'},
   {id:'je4', n:'Rosca inclinada com halteres', s:2, r:'10–12', rest:75, rir:'0–1', p:['biceps'], q:[], al:true, o:'Banco a 45°, braço pendurado atrás do corpo.', yt:'rosca inclinada halteres banco'},
   {id:'je5', n:'Abdominal na polia', s:3, r:'10–15', rest:60, rir:'1–2', p:['abdomen'], q:[], o:'Enrola a coluna puxando as costelas em direção ao quadril. O quadril fica parado.', yt:'abdominal na polia ajoelhado'},
   {id:'je6', n:'Tríceps na polia com corda', s:3, r:'10–15', rest:60, rir:'0–1', p:['triceps'], q:[], o:'Cotovelos colados no corpo, abre a corda no final do movimento.', yt:'tríceps corda polia'}
  ]}
 ];
+/* dias dinâmicos: a lista de exercícios é o plano guardado na sessão da semana */
+DAYS_JR.filter(d=>d.dyn).forEach(d=>{ const base=d.title; Object.defineProperty(d,'title',{get(){ const s=session(this.key,false); return s&&s.plan ? dynTitle(planEx(s.plan)) : base; }, enumerable:true}); });
+DAYS_JR.filter(d=>d.dyn).forEach(d=>Object.defineProperty(d,'ex',{get(){ const s=session(this.key,false); return s&&s.plan ? planEx(s.plan) : (s&&hasWork(s) ? this.old : []); }, enumerable:true}));
 const PLANS={thai:DAYS_THAI, jr:DAYS_JR};
 const whoOf=h=>(h==='junior'||h==='painel-jr'||DAYS_JR.some(d=>d.key===h))?'jr':'thai';
 let WHO='thai'; try{ WHO=whoOf(location.hash.slice(1)); }catch(e){}
@@ -1057,6 +1148,7 @@ function dayState(key){
   const d=DAYS.find(x=>x.key===key); const s=session(key,false);
   if(!d||!s) return 'none';
   if(d.rest) return s.beach ? 'full' : 'none';
+  if(d.dyn && !s.plan && !hasWork(s)) return s.cardio ? 'full' : 'none';
   const n=d.ex.filter(e=>s.done[e.id]).length;
   return (n===d.ex.length || s.fin || s.cardio) ? 'full' : (n||hasWork(s)) ? 'part' : 'none';
 }
@@ -1118,14 +1210,19 @@ function metaHtml(e, plan, last){
   return `<div class="meta-box ${tag[0]}"><div class="meta-top"><span class="meta-k">Meta de hoje</span><span class="chip ${tag[0]}">${tag[1]}</span></div>
     <div class="meta-v">${kgTxt}${repTxt}</div><div class="meta-why">${why}</div>${lastTxt}</div>`;
 }
+const idsOf = exId => [exId, ...((typeof EX_ALIAS!=='undefined' && EX_ALIAS[exId])||[])];
+const doneOf = (s, ids) => { for(const i of ids){ const a=s.sets&&s.sets[i]; if(a && a.some(x=>x&&x.done)) return i; } return null; };
 function lastFor(dayKey, exId, anyWeek){
-  const list = Object.values(state.sessions).filter(s=>(anyWeek||weekOf(s)<WEEK) && s.sets && s.sets[exId] && s.sets[exId].some(x=>x&&x.done)).sort((a,b)=>a.date<b.date?1:-1);
-  return list[0] ? {date:list[0].date, sets:list[0].sets[exId].filter(x=>x&&x.done), rpe:(list[0].rpe||{})[exId]} : null;
+  const ids=idsOf(exId);
+  const list = Object.values(state.sessions).filter(s=>(anyWeek||weekOf(s)<WEEK) && doneOf(s,ids)).sort((a,b)=>a.date<b.date?1:-1);
+  if(!list[0]) return null; const k=doneOf(list[0],ids);
+  return {date:list[0].date, sets:list[0].sets[k].filter(x=>x&&x.done), rpe:(list[0].rpe||{})[k]};
 }
 /* histórico do exercício até uma data, do mais antigo pro mais novo */
 function histFor(exId, upto){
-  return Object.values(state.sessions).filter(s=>s.date<=upto && s.sets && s.sets[exId] && s.sets[exId].some(x=>x&&x.done))
-    .sort((a,b)=>a.date<b.date?-1:1).map(s=>({date:s.date, sets:s.sets[exId].filter(x=>x&&x.done)}));
+  const ids=idsOf(exId);
+  return Object.values(state.sessions).filter(s=>s.date<=upto && doneOf(s,ids))
+    .sort((a,b)=>a.date<b.date?-1:1).map(s=>({date:s.date, sets:s.sets[doneOf(s,ids)].filter(x=>x&&x.done)}));
 }
 const workOf = sets => Math.max(0,...sets.map(x=>+kgNorm(x.kg||0)||0));
 const repsOf = sets => sets.reduce((a,x)=>a+(+x.reps||0),0);
@@ -1196,15 +1293,372 @@ const CHECK = '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
 
 function renderTabs(){
   $('#tabs').innerHTML = DAYS.map(d=>{ const st=dayState(d.key); return `<button class="tab ${st}" role="tab" id="tab-${d.key}" aria-selected="${d.key===current}" data-k="${d.key}">
-     ${d.dow===dow?'<i class="today" title="Hoje"></i>':''}${st==='full'?'<i class="tdone" title="Feito esta semana">✓</i>':''}<b>${d.short}</b><span>${esc(d.rest?'Beach':d.optional?'Coringa':d.title.replace('Treino ',''))}</span></button>`; }).join('');
+     ${d.dow===dow?'<i class="today" title="Hoje"></i>':''}${st==='full'?'<i class="tdone" title="Feito esta semana">✓</i>':''}<b>${d.short}</b><span>${esc(d.rest?'Beach':d.optional?'Coringa':d.dyn?((session(d.key,false)||{}).plan?d.title.split(' e ')[0]:hasWork(session(d.key,false)||{})?'Treino':(session(d.key,false)||{}).soCross?'Só cross':'Cross'):d.title.replace('Treino ',''))}</span></button>`; }).join('');
 }
 function renderPhase(){}
+
+/* =====================================================================
+   Ficha dinâmica do Júnior: a academia sai do que o cross cobrou.
+   1) parseCross: lê o texto do quadro (colado do Texto ao Vivo do iPhone)
+   2) crossFatigue: quanto cada músculo foi cobrado (0 a 1)
+   3) buildPlan: escolhe de 4 a 6 exercícios do CARDAPIO pra noite
+   Os exercícios do cardápio são fixos (ids antigos), então a meta de cada série continua valendo.
+   ===================================================================== */
+const DYN_LV = v => v>=0.7 ? 'red' : v>=0.35 ? 'yel' : 'ok';
+/* movimentos do cross: músculo -> carga (0 a 3); ref = volume que conta como "cheio" */
+const CROSS_MOVES = [
+  {id:'cj', n:'Clean and jerk', re:/clean ?(and|&|e) ?jerk|\bc ?& ?j\b|\bcj\b/, m:{posterior:2,gluteomax:2,trap:2,quad:2,ombrof:2,delt:1,triceps:2}, ref:30},
+  {id:'snatch', n:'Snatch', re:/snatch|arranco/, m:{posterior:2,gluteomax:2,trap:2,quad:2,ombrof:1,delt:1,deltpost:1,triceps:1}, ref:30},
+  {id:'pp', n:'Push press', re:/push ?press|\bpp\b/, m:{ombrof:3,delt:1,triceps:2,quad:0.5,gluteomax:0.5}, ref:30},
+  {id:'jerk', n:'Jerk', re:/(push |split )?jerk/, m:{ombrof:3,delt:1,triceps:3,quad:0.5}, ref:30},
+  {id:'clean', n:'Clean', re:/clean|\bhpc\b|\bpc\b/, m:{posterior:2,gluteomax:2,trap:2,quad:1,lombar:1,dorsal:1}, ref:30},
+  {id:'thruster', n:'Thruster', re:/thrusters?/, m:{quad:3,gluteomax:2,ombrof:2,delt:1,triceps:1}, ref:30},
+  {id:'bsq', n:'Back squat', re:/back ?squat|\bbs\b|agachamento (livre|traseiro|costas)/, m:{quad:3,gluteomax:3,posterior:1,lombar:1}, ref:30},
+  {id:'fsq', n:'Front squat', re:/front ?squat|\bfs\b|agachamento frontal/, m:{quad:3,gluteomax:2,abdomen:1,trap:1}, ref:30},
+  {id:'ohs', n:'Overhead squat', re:/overhead ?squat|\bohs\b/, m:{quad:3,gluteomax:2,ombrof:1,delt:1,abdomen:1}, ref:30},
+  {id:'dl', n:'Deadlift', re:/deadlift|levantamento terra|\bterra\b|\bdl\b|\bsdhp\b|high pull/, m:{posterior:3,gluteomax:3,lombar:2,trap:2,dorsal:1,antebraco:1}, ref:30},
+  {id:'hspu', n:'HSPU', re:/hspu|handstand push|parada de m[aã]o/, m:{ombrof:3,delt:1,triceps:3}, ref:30},
+  {id:'hsw', n:'Handstand walk', re:/handstand walk|\bhsw\b/, m:{ombrof:2,delt:1,triceps:1}, ref:30},
+  {id:'press', n:'Shoulder press', re:/strict press|shoulder press|desenvolvimento|\bpress\b/, m:{ombrof:3,delt:1,triceps:2}, ref:30},
+  {id:'bench', n:'Supino', re:/bench|supino/, m:{peito:3,ombrof:2,triceps:2}, ref:30},
+  {id:'wb', n:'Wall ball', re:/wall ?balls?|\bwb\b/, m:{quad:2,gluteomax:1,ombrof:2,triceps:1}, ref:60},
+  {id:'kbs', n:'KB swing', re:/swings?|\bkbs\b/, m:{posterior:2,gluteomax:3,lombar:1,delt:1}, ref:50},
+  {id:'lunge', n:'Afundo', re:/lunges?|afundo|avan[cç]o/, m:{quad:2,gluteomax:3,posterior:1}, ref:40},
+  {id:'stepup', n:'Step up', re:/step ?ups?/, m:{quad:2,gluteomax:2}, ref:40},
+  {id:'bmu', n:'Bar muscle up', re:/bar muscle ?ups?|\bbmu\b/, m:{dorsal:3,triceps:2,peito:1,biceps:1,ombrof:1}, ref:20},
+  {id:'rmu', n:'Ring muscle up', re:/muscle ?ups?|\brmu\b/, m:{dorsal:2,triceps:3,peito:2,biceps:1,ombrof:1}, ref:20},
+  {id:'c2b', n:'Chest to bar', re:/chest ?to ?bar|\bc2b\b|\bctb\b/, m:{dorsal:3,biceps:2,deltpost:1}, ref:40},
+  {id:'pullup', n:'Pull-up', re:/pull ?-?ups?|barra fixa|\bpu\b/, m:{dorsal:3,biceps:2,deltpost:1,antebraco:1}, ref:40},
+  {id:'t2b', n:'Toes to bar', re:/toes ?to ?bar|\bt2b\b|\bttb\b/, m:{abdomen:3,dorsal:1,antebraco:1}, ref:40},
+  {id:'k2e', n:'Knees to elbow', re:/knees ?to ?elbows?|\bk2e\b/, m:{abdomen:2}, ref:40},
+  {id:'rope', n:'Rope climb', re:/rope ?climbs?|subida na corda/, m:{dorsal:2,biceps:2,antebraco:2}, ref:8},
+  {id:'dip', n:'Dip', re:/\bdips?\b|paralela/, m:{triceps:3,peito:2,ombrof:1}, ref:40},
+  {id:'pushup', n:'Push-up', re:/push ?-?ups?|flex[aã]o/, m:{peito:2,triceps:2,ombrof:1}, ref:60},
+  {id:'burpee', n:'Burpee', re:/burpees?/, m:{peito:1,quad:1,triceps:1}, ref:60},
+  {id:'boxjump', n:'Box jump', re:/box ?jumps?|\bbj\b/, m:{quad:2,gluteomax:1,panturrilha:2}, ref:50},
+  {id:'pistol', n:'Pistol', re:/pistols?/, m:{quad:2,gluteomax:2}, ref:40},
+  {id:'airsq', n:'Air squat', re:/air ?squats?/, m:{quad:2,gluteomax:1}, ref:100},
+  {id:'situp', n:'Abdominal', re:/sit ?-?ups?|abdominais?|\bghd\b/, m:{abdomen:2}, ref:80},
+  {id:'du', n:'Double under', re:/double ?unders?|\bdu\b/, m:{panturrilha:2}, ref:200},
+  {id:'su', n:'Single under', re:/single ?unders?|\bsu\b|pular corda/, m:{panturrilha:1}, ref:250},
+  {id:'run', n:'Corrida', re:/\brun\b|corrida|correr|\bcorri\b/, m:{quad:0.5,panturrilha:2,posterior:0.5}, dist:2000},
+  {id:'row', n:'Remo', re:/\brow\b|\bremo\b|rower/, m:{dorsal:1,posterior:1,quad:1}, dist:2000, cal:60},
+  {id:'bike', n:'Bike', re:/bike|assault|echo/, m:{quad:2}, cal:60},
+  {id:'ski', n:'Ski', re:/\bski\b|skierg/, m:{dorsal:1,triceps:1,abdomen:1}, cal:60}
+];
+const CMOVE = Object.fromEntries(CROSS_MOVES.map(x=>[x.id,x]));
+/* erro de digitação ("deadlifit", "trhuster"): compara as palavras com os nomes dos movimentos, aceitando 1 ou 2 letras trocadas */
+let CVOCAB=null; const cvocab=()=>CVOCAB||(CVOCAB=CROSS_MOVES.flatMap(m=>[m.n.toLowerCase(), ...m.re.source.split('|').map(s=>s.replace(/\\b|\\s[?*+]?/g,' ').replace(/\(\?:|\)\??/g,'').replace(/\s+/g,' ').trim())]
+  .map(w=>crossNorm(w.replace(/[-?]/g,' ')).replace(/\s+/g,' ').trim()).filter(w=>/^[a-z ]{4,}$/.test(w)).map(w=>({w, id:m.id}))));
+function lev(a,b){ const d=Array.from({length:a.length+1},(_,i)=>[i]); for(let j=1;j<=b.length;j++) d[0][j]=j;
+  for(let i=1;i<=a.length;i++) for(let j=1;j<=b.length;j++) d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1)); return d[a.length][b.length]; }
+function fuzzyMove(body){
+  const ws=body.replace(/[^a-z ]/g,' ').split(/\s+/).filter(Boolean); let best=null;
+  for(const v of cvocab()){ const n=v.w.split(' ').length;
+    for(let i=0;i+n<=ws.length;i++){ const s=ws.slice(i,i+n).join(' '); if(Math.abs(s.length-v.w.length)>2) continue;
+      const lim=v.w.length>=8?2:v.w.length>=5?1:0, d=lev(s,v.w); if(d<=lim && (!best||d<best.d)) best={d,id:v.id}; } }
+  return best && CMOVE[best.id];
+}
+const INT = {leve:0.5, medio:0.8, pesado:1};
+const INT_TXT = {leve:'Leve', medio:'Médio', pesado:'Pesado'};
+const crossNorm = t => String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
+  .replace(/[.]/g,'').replace(/(\d)([a-z])/g,'$1 $2').replace(/[\/|]+/g,' / ').replace(/\s+/g,' ').trim();
+const IGNORE = /^(by (in|off)|buy (in|out)|rest|descanso|rx|scale|time ?cap|cap|min|minutos?|obs|aquecimento|warm ?up|mobilidade|cool ?down)\b/;
+function crossAliases(){ return (state.config && state.config.crossAlias) || {}; }
+function parseCross(txt){
+  const blocks=[], unknown=[]; let cur=null, pendingSets=1;
+  const newBlock=(kind,title)=>{ cur={kind, title, int: kind==='forca'?'pesado':'medio', moves:[], mult:1}; blocks.push(cur); pendingSets=1; };
+  const alias=crossAliases();
+  for(const raw of String(txt||'').split(/\n+/)){
+    let l=crossNorm(raw); if(!l) continue;
+    l=l.replace(/^\(?\d+\)\s*/,'');                       // "2) forca" -> "forca"
+    const isForca=/\b(forca|strength|skill|lpo|tecnica|heavy)\b/.test(l), isWod=/\b(wod|metcon|amrap|emom|e\d+mom|for time|rft|chipper|tabata)\b/.test(l);
+    if((isForca||isWod) && l.split(' ').length<=6 && !CROSS_MOVES.some(m=>m.re.test(l))){
+      newBlock(isForca?'forca':'wod', isForca?'Força':'WOD');
+      const r=l.match(/(\d+)\s*(rounds?|rds|rft|rodadas?|vezes|x\b)/), am=l.match(/(amrap|emom)\s*(\d+)/);
+      if(r) cur.mult=+r[1]; else if(am) cur.mult=Math.max(1,+am[2]/(am[1]==='amrap'?4:6));
+      continue;
+    }
+    // linha que começa com "amrap 12 min:" ou "força:" e já traz os movimentos
+    const hd=l.match(/^((?:forca|strength|lpo|wod|metcon|amrap|emom|e\d+mom|for time|rft|tabata)[^:]*):\s*(.+)$/);
+    if(hd){ const h=hd[1], k=/^(forca|strength|lpo)/.test(h)?'forca':'wod'; newBlock(k, k==='forca'?'Força':'WOD');
+      const r=h.match(/(\d+)\s*(rounds?|rds|rft|rodadas?|vezes|x\b)/), am=h.match(/(amrap|emom)\s*(\d+)/);
+      if(r) cur.mult=+r[1]; else if(am) cur.mult=Math.max(1,+am[2]/(am[1]==='amrap'?4:6)); l=hd[2]; }
+    if(!cur){ const forte=/\d+\s*x\s*\d+|\d+\s*kg\b|\b\d*rm\b|\bpr\b/.test(l); newBlock(forte?'forca':'wod', forte?'Força':'WOD'); }
+    const rr=l.match(/^(\d+)\s*(rounds?|rds|rft)\b/); if(rr && !CROSS_MOVES.some(m=>m.re.test(l))){ cur.mult=+rr[1]; continue; }
+    const sx=l.match(/^(\d+)\s*x\s*$/); if(sx){ pendingSets=+sx[1]; continue; }
+    const sch=l.match(/^(\d+(?:\s*-\s*\d+)+)$/); if(sch){ cur.scheme=sch[1].split('-').reduce((a,v)=>a+(+v),0); continue; }
+    const sch2=l.match(/^(\d+(?:\s*-\s*\d+)+)\s+(.+)$/); if(sch2){ cur.scheme=sch2[1].split('-').reduce((a,v)=>a+(+v),0); l=sch2[2]; }   // "21-15-9 thruster, pull up"
+    // texto livre: uma linha pode ter vários movimentos ("30 burpees e corri 1 km", "15 wall ball, 10 pull up")
+    const segs=l.split(/\s*[,;]\s*|\s+e\s+(?=\D*\d|[a-z])|\s+\+\s+/).filter(Boolean);
+    const found=[], miss=[];
+    for(const seg of segs){
+      const body=seg.replace(/^(by (in|off)|buy (in|out))\s*:?\s*/,'');
+      let mv=null; const ak=Object.keys(alias).find(k=>k && body.includes(k)); if(ak) mv=CMOVE[alias[ak]];
+      if(!mv) mv=CROSS_MOVES.find(m=>m.re.test(body));
+      if(!mv) mv=fuzzyMove(body);
+      if(!mv){ miss.push(body); continue; }
+      let reps=null, dist=null, cal=null;
+      const d=body.match(/(\d+(?:,\d+)?)\s*(km|m)\b/); const c=body.match(/(\d+)\s*cal/);
+      if(d) dist=parseFloat(d[1].replace(',','.'))*(d[2]==='km'?1000:1);
+      else if(c) cal=+c[1];
+      else { const n=body.match(/^(\d+)\s*(?:x\s*(\d+))?/) || body.match(/(\d+)\s*x\s*(\d+)/) || body.match(/(\d+)(?!\s*(?:kg|min|s\b|seg|%))\s+[a-z]/);
+        if(n) reps=(n[2]? +n[1]*+n[2] : +n[1])*pendingSets; else if(cur.scheme) reps=cur.scheme; }
+      found.push({id:mv.id, reps, dist, cal});
+    }
+    if(found.length){ cur.moves.push(...found); continue; }   // o resto da linha é comentário ("acabei com 85 kg")
+    const w=l.replace(/\b\d+\s*x\b/g,' ').replace(/[\d:()\-*%,+]+/g,' ').replace(/\s+/g,' ').trim(); if(w.length>=3 && !IGNORE.test(l)) unknown.push({raw:raw.trim(), key:w});
+  }
+  return {blocks:blocks.filter(b=>b.moves.length), unknown};
+}
+function moveVol(mv, x){
+  if(mv.dist && x.dist) return x.dist/mv.dist;
+  if(mv.cal && x.cal) return x.cal/mv.cal;
+  if(mv.dist && x.cal) return x.cal*15/mv.dist;
+  if(x.reps) return x.reps/(mv.ref||30);
+  return 0.5;
+}
+/* cansaço do cross por músculo: soma saturada (nunca passa de 1) */
+function crossFatigue(cross){
+  const F={}; if(!cross || cross.none) return F;
+  for(const b of cross.blocks||[]) for(const x of b.moves){
+    const mv=CMOVE[x.id]; if(!mv) continue;
+    // força: cada repetição pesada cansa bem mais que uma rep de WOD (8 singles pesados ≈ uma série forte)
+    const fz=b.kind==='forca' && x.reps ? ({leve:1.3, medio:2, pesado:3}[b.int]||2) : 1;
+    const vol=Math.min(1.2, moveVol(mv,x)*(b.mult||1)*fz), k=INT[b.int]||0.8;
+    for(const [m,l] of Object.entries(mv.m)){ const c=Math.min(1, l/3*vol*k); F[m]=1-(1-(F[m]||0))*(1-c); }
+  }
+  return F;
+}
+const combF=(a,b)=>{ const o={...a}; for(const [m,v] of Object.entries(b)) o[m]=1-(1-(o[m]||0))*(1-v); return o; };
+/* o que sobrou de ontem: 40% do cross e o músculo que treinou na academia */
+function residualF(date){
+  const y=addDays(date,-1), R={}, keys=new Set(DAYS_JR.map(d=>d.key));
+  for(const s of Object.values(state.sessions)){
+    const dd=DAYS_JR.find(d=>d.key===s.day), sd=dd&&dd.rest&&s.week ? addDays(s.week, (dd.dow+6)%7) : s.date; // terça: o cross vale pro dia dele, mesmo registrado depois
+    if(!keys.has(s.day) || sd!==y) continue;
+    const F=crossFatigue(s.cross); for(const [m,v] of Object.entries(F)) R[m]=1-(1-(R[m]||0))*(1-0.4*v);
+    const cnt={}; doneSets(s).forEach(r=>{ const e=EXMAP[r.id]; if(e&&!e.warm) e.p.forEach(m=>cnt[m]=(cnt[m]||0)+1); });
+    for(const [m,n] of Object.entries(cnt)){ const v=n>=4?0.5:n>=2?0.3:0; if(v) R[m]=1-(1-(R[m]||0))*(1-v); }
+  }
+  return R;
+}
+/* séries da semana por grupo: academia (feito) + cross (equivalente estimado) */
+function weekVolume(skipKey){
+  const keys=new Set(DAYS_JR.map(d=>d.key)), G=GROUPS_BY.jr, out={};
+  G.forEach(g=>out[g.k]={gym:0, cross:0, g});
+  for(const s of Object.values(state.sessions)){
+    if(!keys.has(s.day) || weekOf(s)!==WEEK) continue;
+    doneSets(s).forEach(r=>{ const e=EXMAP[r.id]; if(!e||e.warm) return; G.forEach(g=>{ if(e.p.some(m=>g.m.includes(m))) out[g.k].gym++; }); });
+    const F=crossFatigue(s.cross); G.forEach(g=>{ out[g.k].cross+=Math.round(Math.max(0,...g.m.map(m=>F[m]||0))*4); });
+  }
+  return out;
+}
+/* Cardápio fixo: cada vaga tem o principal e o reserva (ids que já existiam, pra manter o histórico) */
+const CARDAPIO = [
+  {k:'lat',  g:'Ombro lateral',   star:true,  main:['delt'],             help:[],                 base:4, ids:['jb3','jc4']},
+  {k:'pux',  g:'Costas',          star:true,  main:['dorsal'],           help:['biceps'],         base:4, ids:['ja1','jc1'], comp:true},
+  {k:'pull', g:'Costas',          star:true,  main:['dorsal'],           help:[],                 base:3, ids:['ja3']},
+  {k:'rem',  g:'Costas',          star:false, main:['dorsal','trap'],    help:['biceps','lombar'],base:3, ids:['ja2','jc2'], comp:true},
+  {k:'sup',  g:'Peito',           star:true,  main:['peito'],            help:['ombrof','triceps'],base:3, ids:['jb1','jd1'], comp:true},
+  {k:'cxo',  g:'Peito',           star:true,  main:['peito'],            help:['ombrof'],         base:3, ids:['jb2','jd2'], hf:0.75, noMin:true},
+  {k:'post', g:'Ombro posterior', star:true,  main:['deltpost'],         help:[],                 base:3, ids:['ja4','jc3']},
+  {k:'pant', g:'Panturrilha',     star:true,  main:['panturrilha'],      help:[],                 base:4, ids:['jb5','jd6']},
+  {k:'tri',  g:'Tríceps',         star:false, main:['triceps'],          help:['ombrof'],         base:3, ids:['jb4','je6']},
+  {k:'bic',  g:'Bíceps',          star:false, main:['biceps'],           help:[],                 base:3, ids:['ja6','jc5']},
+  {k:'flex', g:'Posterior',       star:false, main:['posterior'],        help:[],                 base:3, ids:['jc6']},
+  {k:'abd',  g:null,              star:false, main:['abdomen'],          help:[],                 base:3, ids:['je5']}
+];
+/* histórico que conta junto (mesmo exercício com id antigo) */
+const EX_ALIAS = {jb3:['jd3'], je6:['jd4'], ja6:['je4'], jb5:['je3'], jb0:['jd0']};
+const DYN_MAX_EX = 6, DYN_MAX_SETS = 21;
+function slotFat(sl, F){
+  const mx=a=>Math.max(0,...a.map(m=>F[m]||0));
+  return Math.max(mx(sl.main), (sl.hf??(sl.comp?0.75:0.5))*mx(sl.help));
+}
+function buildPlan(F, opt={}){
+  const W=weekVolume(), today=(new Date(opt.date||TODAY).getDay()+6)%7+1;
+  const left=Math.max(1, DAYS_JR.filter(d=>!d.rest&&!d.optional&&d.dow>=today).length);
+  const planned={}, out=[]; let sets=0;
+  const maxEx=opt.optional?5:DYN_MAX_EX;
+  const need = sl => { if(!sl.g) return 0.15; const w=W[sl.g]; const have=w.gym+w.cross+(planned[sl.g]||0); return Math.max(0,(w.g.lo-have)/w.g.lo); };
+  const cand = CARDAPIO.map(sl=>{ const f=slotFat(sl,F), lv=DYN_LV(f); return {sl, f, lv}; });
+  while(out.length<maxEx && sets<DYN_MAX_SETS){
+    let best=null;
+    for(const c of cand){
+      if(c.used) continue;
+      const sl=c.sl; let n=sl.base, sc=(sl.star?1.5:1)*(0.35+need(sl));
+      if(c.lv==='red'){ if(sl.star && !sl.comp && !sl.noMin){ n=2; sc*=0.45; } else continue; }
+      else if(c.lv==='yel'){ n=Math.max(2, Math.ceil(sl.base*0.6)); sc*=0.8; }
+      if(sl.g && out.some(o=>o.sl.g===sl.g) && need(sl)<0.35) continue;  // segundo exercício do mesmo grupo só se ainda falta muito
+      if(!sl.g && out.length<4) continue;                                 // abdômen só completa
+      if(sets+n>DYN_MAX_SETS+1) continue;
+      if(!best || sc>best.sc) best={c, n, sc};
+    }
+    if(!best) break;
+    best.c.used=true; out.push({sl:best.c.sl, n:best.n, lv:best.c.lv, f:best.c.f});
+    sets+=best.n; if(best.c.sl.g) planned[best.c.sl.g]=(planned[best.c.sl.g]||0)+best.n;
+  }
+  // aquecimento do ombro conta no teto de 6 itens na tela: sai o último escolhido
+  const needWarm = o => ['sup','lat','cxo','tri'].includes(o.sl.k);
+  if(out.some(needWarm) && out.length>=maxEx){ const drop=[...out].reverse().find(o=>!needWarm(o)) || out[out.length-1]; out.splice(out.indexOf(drop),1); }
+  const order=o=>(o.sl.comp?0:10)+(o.sl.star?0:3)+(['pant','abd'].includes(o.sl.k)?20:0);
+  out.sort((a,b)=>order(a)-order(b));
+  const plan=out.map(o=>({id:o.sl.ids[0], s:o.n, slot:o.sl.k, why:dynWhy(o, W, F)}));
+  const shoulder = out.some(o=>['sup','lat','cxo','tri'].includes(o.sl.k));
+  if(shoulder) plan.unshift({id:'jb0', s:2, slot:'warm', why:'Aquecimento do manguito antes do trabalho de ombro e peito.'});
+  return plan;
+}
+const GNAME = g => g.toLowerCase().replace('ombro lateral','o ombro lateral').replace('ombro posterior','o ombro posterior');
+function dynWhy(o, W, F){
+  const sl=o.sl, w=sl.g?W[sl.g]:null, have=w?w.gym+w.cross:0;
+  const tired=[...sl.main,...sl.help].filter(m=>(F[m]||0)>=0.35).map(m=>m==='ombrof'?'ombro da frente':MNAME[m]).filter(Boolean);
+  if(o.lv==='red') return `${cap(MNAME[sl.main[0]])} muito cobrado no cross: só ${o.n} séries leves, pra não perder o estímulo do ponto fraco.`;
+  if(o.lv==='yel') return `${cap([...new Set(tired)].join(' e ')||'Músculo')} já trabalhou no cross: ${o.n} séries em vez de ${sl.base}.`;
+  if(w && have<w.g.lo) return `${sl.star?'Ponto fraco e livre hoje. ':'Livre hoje. '}Semana: ${have} de ${w.g.lo}–${w.g.hi} séries.`;
+  return sl.star ? 'Ponto fraco e livre hoje.' : 'Livre hoje.';
+}
+const cap = t => t ? t[0].toUpperCase()+t.slice(1) : t;
+function planEx(plan){ return (plan||[]).map(p=>{ const e=EXMAP[p.id]; return e ? {...e, s:p.s, why:p.why, slot:p.slot} : null; }).filter(Boolean); }
+/* lista de exercícios de uma sessão qualquer (dias dinâmicos guardam o plano na própria sessão) */
+function exOf(d, s){ if(!d) return []; if(!d.dyn) return d.ex||[]; return s && s.plan ? planEx(s.plan) : d.old; }
+const closedDay = (d,s) => { const L=exOf(d,s); return !!s && L.length>0 && L.every(e=>s.done[e.id]); };
+
+/* ---------- Telas da ficha dinâmica ---------- */
+let crossEditing = false; // terça: reabrindo o cross salvo pra editar
+let crossDraft = null;   // {txt, parsed} enquanto a pessoa cola o treino, antes de montar
+const DOW_NAME=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+function fatLists(F){
+  const show={...F}; show.delt=Math.max(F.delt||0, F.ombrof||0);   // no boneco, o ombro da frente pinta o ombro
+  const red=[], yel=[];
+  for(const [m,v] of Object.entries(show)){ if(m==='ombrof') continue; const lv=DYN_LV(v); if(lv==='red') red.push(m); else if(lv==='yel') yel.push(m); }
+  return {red, yel};
+}
+function fatNames(F){
+  const lst=[]; for(const [m,v] of Object.entries(F)){ const lv=DYN_LV(v); if(lv==='ok') continue; lst.push({m, v, lv, n: m==='ombrof'?'ombro da frente':m==='delt'?'ombro lateral':MNAME[m]||m}); }
+  return lst.sort((a,b)=>b.v-a.v);
+}
+function fatMap(F, big){
+  const {red, yel}=fatLists(F), L=fatNames(F);
+    const row=(lv,t,arr)=>arr.length?`<p class="fr ${lv}"><i></i><span><b>${t}</b>${esc(arr.join(', '))}</span></p>`:'';
+    const busy=new Set(L.map(x=>x.m==='ombrof'?'delt':x.m));
+    const free=['dorsal','deltpost','delt','peito','biceps','triceps','panturrilha','posterior'].filter(m=>!busy.has(m)).map(m=>m==='delt'?'ombro lateral':MNAME[m]);
+    return `<div class="fat ${big?'big':''}"><div class="fatfig">${bodySVG(red, yel, big, 'm')}</div>
+    <div class="fatlist">${row('red','Poupar hoje',L.filter(x=>x.lv==='red').map(x=>x.n))}${row('yel','Só um pouco',L.filter(x=>x.lv==='yel').map(x=>x.n))}${row('ok','Livre',free)}</div></div>`;
+}
+function crossChips(cross){
+  if(!cross || cross.none) return '<span class="cc none">Dia sem cross</span>';
+  return (cross.blocks||[]).map(b=>`<span class="cc"><b>${esc(b.title)}</b> ${b.moves.map(x=>esc(CMOVE[x.id].n)).filter((v,i,a)=>a.indexOf(v)===i).join(', ')}<em>${INT_TXT[b.int]}</em></span>`).join('');
+}
+function weekHtml(){
+  const W=weekVolume();
+  return `<details class="wk"><summary><b>Sua semana</b><span>academia + cross</span></summary>
+    <div class="wkl">${Object.values(W).map(w=>{ const mx=Math.max(w.g.hi, w.gym+w.cross), pg=w.gym/mx*100, pc=w.cross/mx*100, lo=w.g.lo/mx*100, hi=w.g.hi/mx*100, tot=w.gym+w.cross;
+      return `<div class="wkr ${tot>=w.g.lo?'ok':''}"><span class="wn">${esc(w.g.k)}</span><span class="wb"><i class="lo" style="left:${lo}%;width:${hi-lo}%"></i><u class="g" style="width:${pg}%"></u><u class="c" style="width:${pc}%"></u></span><span class="wv">${w.gym}${w.cross?`<small>+${w.cross}</small>`:''}<em>/${w.g.lo}–${w.g.hi}</em></span></div>`; }).join('')}
+      <p class="wkleg"><span><i class="g"></i>Academia</span><span><i class="c"></i>Cross (estimado)</span><span><i class="lo"></i>Meta</span></p></div></details>`;
+}
+function draftPreview(){
+  const P=crossDraft && crossDraft.parsed;
+  if(!P || (!P.blocks.length && !P.unknown.length)) return `<p class="cx-empty">Cole o texto do quadro aqui em cima. Eu reconheço os movimentos e mostro o que o cross cobrou.</p>`;
+  const F=crossFatigue({blocks:P.blocks});
+  const blocks=P.blocks.map((b,bi)=>`<div class="cxb"><div class="cxbh"><b>${esc(b.title)}</b>
+      <span class="seg" role="radiogroup" aria-label="Intensidade de ${esc(b.title)}">${Object.keys(INT).map(k=>`<button type="button" role="radio" aria-checked="${b.int===k}" class="${b.int===k?'on':''}" data-int="${bi}:${k}">${INT_TXT[k]}</button>`).join('')}</span></div>
+      ${b.kind==='wod'?`<div class="cxr"><span>Rodadas</span><button type="button" data-rd="${bi}:-1" aria-label="Menos uma rodada">−</button><b>${Math.max(1,Math.round(b.mult||1))}</b><button type="button" data-rd="${bi}:1" aria-label="Mais uma rodada">+</button></div>`:''}
+      <div class="cxm">${b.moves.map((x,mi)=>`<span class="mv">${esc(CMOVE[x.id].n)}${x.reps?` <small>${x.reps}</small>`:x.dist?` <small>${x.dist>=1000?(x.dist/1000).toLocaleString('pt-BR')+' km':x.dist+' m'}</small>`:x.cal?` <small>${x.cal} cal</small>`:''}<button type="button" class="mvx" data-mvx="${bi}:${mi}" aria-label="Tirar ${esc(CMOVE[x.id].n)}">✕</button></span>`).join('')}</div></div>`).join('');
+  const unk=P.unknown.map((u,ui)=>`<div class="cxu"><span>Não reconheci <b>“${esc(u.raw)}”</b></span>
+      <select data-teach="${ui}" aria-label="Qual movimento é ${esc(u.raw)}"><option value="">É qual movimento?</option>${CROSS_MOVES.map(m=>`<option value="${m.id}">${esc(m.n)}</option>`).join('')}<option value="__ign">Ignorar</option></select></div>`).join('');
+  return `${blocks}${unk}${P.blocks.length?`<div class="cx-fat"><h4>O que o cross cobrou</h4>${fatMap(F,true)}</div>`:''}`;
+}
+/* título do dia: os dois grupos com mais séries no plano ("Costas e ombros") */
+const GSHORT={'Ombro lateral':'ombros','Ombro posterior':'ombros','Costas':'costas','Peito':'peito','Bíceps':'bíceps','Tríceps':'tríceps','Panturrilha':'panturrilha','Posterior':'posterior'};
+function dynTitle(L){
+  const sets={}; L.filter(e=>!e.warm).forEach(e=>{ const sl=CARDAPIO.find(x=>x.k===e.slot); const g=sl&&sl.g&&GSHORT[sl.g]; if(g) sets[g]=(sets[g]||0)+e.s; });
+  const top=Object.entries(sets).sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>x[0]);
+  return top.length ? cap(top.join(' e ')) : 'Academia';
+}
+function dynSub(d){
+  const g=[...new Set(d.ex.filter(e=>!e.warm).map(e=>{ const sl=CARDAPIO.find(x=>x.k===e.slot); return sl&&sl.g; }).filter(Boolean))];
+  return g.length ? cap(g.map(x=>x.toLowerCase()).join(', ').replace(/, ([^,]*)$/,' e $1')) : 'Montado a partir do cross';
+}
+function renderCheckin(d, el, log){
+  const s=session(d.key,false);
+  if(!crossDraft){ const prev=s&&s.cross&&!s.cross.none ? s.cross.txt : ''; crossDraft={txt:prev, parsed:prev?parseCross(prev):null}; if(s&&s.cross&&s.cross.blocks) crossDraft.parsed.blocks=JSON.parse(JSON.stringify(s.cross.blocks)); }
+  const ok=crossDraft.parsed && crossDraft.parsed.blocks.length;
+  el.innerHTML = `
+   <section class="cx">
+     <div class="kicker">${d.optional?'Sábado · opcional':DOW_NAME[d.dow]}</div>
+     <h2>Qual foi o treino do cross hoje?</h2>
+     <p class="cx-lead">${log?'Escreve ou cola aqui o que você fez. Amanhã eu monto a academia levando ele em conta.':'Escreve ou cola aqui o que você fez, e eu monto a academia pra completar.'}</p>
+     <label class="cx-field"><span class="sr">Treino do cross</span>
+       <textarea id="crossTxt" rows="6" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="FORÇA&#10;5x 8 push press&#10;WOD&#10;30 hang power clean&#10;150 DU&#10;30 jerk">${esc(crossDraft.txt||'')}</textarea></label>
+     <button type="button" class="cx-ok" id="cxOk">Pronto, ler o treino</button>
+     <p class="cx-tip">No iPhone: abra a foto do quadro, toque no ícone de texto no canto e em <b>Copiar</b>.</p>
+     ${log?'':'<button type="button" class="cx-none" id="cxNone">Hoje sem cross</button>'}
+     <div id="cxPrev" class="cx-prev">${draftPreview()}</div>
+     <div class="cx-act" id="cxAct" ${ok?'':'hidden'}>
+       <button type="button" class="cx-go" id="cxGo">${log?'Salvar o cross':'Montar a academia'}</button>
+       ${log?'':`<button type="button" class="cardio-btn" id="cxSkip"><b>Hoje só cross, sem academia</b><span>Salva o cross e conta como dia de cardio · vale ${cardioPts()} pontos</span></button>`}
+     </div>
+   </section>
+   ${log?'':weekHtml()}`;
+  $('#evoSec').hidden=true;
+}
+function refreshDraft(){
+  const p=$('#cxPrev'); if(p) p.innerHTML=draftPreview();
+  const a=$('#cxAct'); if(a) a.hidden=!(crossDraft.parsed && crossDraft.parsed.blocks.length);
+}
+let draftT=null;
+function flushDraft(){ if(!crossDraft) return; clearTimeout(draftT); const old=crossDraft.parsed, P=parseCross(crossDraft.txt||'');
+  if(old) P.blocks.forEach((b,i)=>{ if(old.blocks[i] && old.blocks[i].kind===b.kind) b.int=old.blocks[i].int; });
+  crossDraft.parsed=P; refreshDraft(); }
+function onCrossInput(v){
+  crossDraft.txt=v; clearTimeout(draftT);
+  draftT=setTimeout(()=>{ const old=crossDraft.parsed; const P=parseCross(v);
+    if(old) P.blocks.forEach((b,i)=>{ if(old.blocks[i] && old.blocks[i].kind===b.kind) b.int=old.blocks[i].int; });
+    crossDraft.parsed=P; refreshDraft(); }, 250);
+}
+function makePlan(none){
+  const d=DAYS.find(x=>x.key===current); const s=session(current,true);
+  const cross = none ? {none:true, at:Date.now()} : {txt:crossDraft.txt, blocks:crossDraft.parsed.blocks, at:Date.now()};
+  if(d.rest){ s.cross=cross; touch(sid(current)); crossDraft=null; crossEditing=false; renderTabs(); renderDay(); renderHome(); window.scrollTo({top:0}); toast('Cross salvo: amanhã a academia leva ele em conta'); return; }
+  const F=combF(crossFatigue(cross), residualF(s.date||TODAY));
+  s.cross=cross; s.plan=buildPlan(F,{optional:d.optional, date:s.date});
+  touch(sid(current)); crossDraft=null;
+  renderTabs(); renderDay(); window.scrollTo({top:0});
+  toast(none?'Treino completo montado':'Academia montada');
+}
+function editCross(){
+  const s=session(current,false); if(!s) return;
+  if(DAYS.find(x=>x.key===current).rest){ crossDraft=null; crossEditing=true; renderDay(); return; }
+  if(hasWork(s)){ toast('O treino já começou: ele fica como está'); return; }
+  if(s.soCross){ delete s.soCross; delete s.cardio; delete s.cardioAt; }
+  crossDraft=null; delete s.plan; touch(sid(current)); renderTabs(); renderDay(); window.scrollTo({top:0});
+}
+function swapEx(id){
+  const s=session(current,false); if(!s||!s.plan) return;
+  const p=s.plan.find(x=>x.id===id); if(!p) return;
+  if(((s.sets||{})[id]||[]).some(x=>x&&x.done)){ toast('Esse exercício já começou'); return; }
+  const sl=CARDAPIO.find(x=>x.k===p.slot); if(!sl||sl.ids.length<2) return;
+  const nid=sl.ids[(sl.ids.indexOf(id)+1)%sl.ids.length]; if(s.plan.some(x=>x.id===nid)) return;
+  delete (s.sets||{})[id]; p.id=nid; touch(sid(current)); renderDay();
+  const el=$('#ex-'+nid); if(el) el.scrollIntoView({block:'center'});
+  toast('Trocado por '+EXMAP[nid].n);
+}
+function crossSumHtml(s, rest){
+  const F=combF(crossFatigue(s.cross), residualF(s.date||TODAY)), locked=!rest&&hasWork(s);
+  return `<section class="cxs"><div class="cxs-h"><b>${s.cross&&s.cross.none?'Hoje sem cross':'Cross de hoje'}</b>
+      ${locked?'':'<button type="button" class="cxs-ed" id="cxEdit">Editar</button>'}</div>
+    <div class="cxs-c">${crossChips(s.cross)}</div>${fatMap(F,false)}</section>`;
+}
 
 function renderDay(){
   const d = DAYS.find(x=>x.key===current);
   const el = $('#day');
   if(d.rest && d.restText){
-    el.innerHTML = `<div class="rest-card"><div class="kicker">${['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'][d.dow]}</div><h3>${esc(d.restTitle)}</h3><p>${esc(d.restText)}</p>
+    const sx=session(d.key,false), hasX=sx&&sx.cross&&!sx.cross.none;
+    let top='';
+    if(d.logCross){ if(!hasX||crossEditing){ renderCheckin(d, el, true); top=el.innerHTML; } else top=crossSumHtml(sx, true); }
+    el.innerHTML = top + `<div class="rest-card"${top?' style="margin-top:16px"':''}><div class="kicker">${['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'][d.dow]}</div><h3>${esc(d.restTitle)}</h3><p>${esc(d.restText)}</p>
       <ul>${d.restTips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>
       <div class="day-end" id="beachEnd">${beachAct(d)}</div>`;
     $('#evoSec').hidden=true; return;
@@ -1215,22 +1669,31 @@ function renderDay(){
       <ul><li>Quinta é Inferior B: chega com a perna descansada.</li><li>Se a perna estiver muito pesada na quinta, tira uma série do terra romeno.</li></ul></div>`;
     $('#evoSec').hidden=true; return;
   }
+  if(d.dyn){ const s0=session(d.key,false);
+    if(s0 && s0.soCross && !s0.plan && !hasWork(s0)){
+      el.innerHTML = crossSumHtml(s0, true) + `<div class="rest-card" style="margin-top:16px"><div class="kicker">${DOW_NAME[d.dow]}</div><h3>Hoje foi só cross</h3>
+        <p>Sem academia hoje. O cross fica salvo: o próximo treino já sai poupando o que ele cansou, e a semana soma o que você fez.</p></div>
+        <div class="day-end"><button type="button" class="end-btn done" id="cxUnskip"><b>Só cross ✓</b><span>+${cardioPts()} pontos na disputa · toque pra montar a academia</span></button></div>${weekHtml()}`;
+      $('#evoSec').hidden=true; return; }
+    if(!s0 || (!s0.plan && !hasWork(s0))){ renderCheckin(d, el); return; } }
   $('#evoSec').hidden=false;
   const s = session(d.key,false) || {sets:{},done:{}};
   const totalSets = d.ex.reduce((a,e)=>a+setsFor(e),0);
   el.innerHTML = `
    <div class="hero" id="hero">
      <div>
-       <div class="kicker">${d.optional?'Sábado · opcional':esc(['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][d.dow])}</div>
+       <div class="kicker">${d.dyn&&s.plan?(s.cross&&s.cross.none?'Sem cross hoje':'Complemento do cross'):d.optional?'Sábado · opcional':esc(['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][d.dow])}</div>
        <h2>${esc(d.title)}</h2>
-       <p>${esc(d.sub)}${d.optional?`. ${d.note?esc(d.note)+' ':''}Se for, ótimo; se não for, a semana já está completa.`:''}</p>
+       <p>${d.dyn&&s.plan?esc(dynSub(d)):esc(d.sub)}${d.optional&&!d.dyn?`. ${d.note?esc(d.note)+' ':''}Se for, ótimo; se não for, a semana já está completa.`:''}</p>
        <div class="meta"><span class="chip">${d.ex.length} exercícios</span><span class="chip">${totalSets} séries</span></div>
        <div class="hero-act">${heroAct(d,s)}</div>
      </div>
      <div class="ring"><svg viewBox="0 0 84 84"><circle class="bg" cx="42" cy="42" r="36"/><circle class="fg" id="ringfg" cx="42" cy="42" r="36" stroke-dasharray="226.2" stroke-dashoffset="226.2"/></svg>
        <div class="num"><span id="ringnum">0</span><small>de ${d.ex.length}</small></div></div>
    </div>
+   ${d.dyn&&s.plan?crossSumHtml(s):''}
    <div class="list" style="margin-top:12px">${d.ex.map((e,i)=>exCard(d,e,i,s)).join('')}</div>
+   ${d.dyn?weekHtml():''}
    <div class="day-end" id="dayEnd">${endAct(d,s)}</div>`;
   updateProgress();
   renderEvo();
@@ -1266,6 +1729,7 @@ function exCard(d,e,i,s){
       <div class="ex-title">
         <h3>${esc(e.n)} ${e.per?`<span class="per">· ${esc(e.per)}</span>`:''}</h3>
         <div class="chips"><span class="chip">${n} × ${e.r}</span>${e.warm?'<span class="chip">Aquecimento</span>':`<span class="chip">RIR ${rirFor(e)}</span>`}<span class="chip">${e.rest>=120?(e.rest/60).toString().replace('.',',')+' min':e.rest+' s'}</span>${e.al?'<span class="chip al">Alongado</span>':''}</div>
+        ${e.why?`<p class="why">${esc(e.why)}</p>`:''}
       </div>
       <button class="mapbtn" type="button" data-map="${e.id}" aria-label="Ver músculos trabalhados">${bodySVG(e.p,e.q,false)}</button>
     </div>
@@ -1281,6 +1745,7 @@ function exCard(d,e,i,s){
       <div class="sets">${setsHtml}</div>
       <div class="ex-foot">
         <a class="link" href="https://www.youtube.com/results?search_query=${encodeURIComponent(e.yt+' execução')}" target="_blank" rel="noopener">Ver execução no YouTube ↗</a>
+        ${e.slot && (CARDAPIO.find(x=>x.k===e.slot)||{ids:[]}).ids.length>1 && !rows.some(x=>x&&x.done) ? `<button class="swap" type="button" data-swap="${e.id}">Trocar exercício</button>` : ''}
         <button class="mark" type="button" data-mark="${e.id}">${done?'Exercício feito':'Marcar como feito'}</button>
       </div>
     </div>
@@ -1325,10 +1790,10 @@ function toggleCardio(btn){
 function endAct(d,s){
   const n=d.ex.filter(e=>s&&s.done[e.id]).length;
   if(s && (n===d.ex.length || s.fin)) return '<button type="button" class="end-btn done" data-resumo><b>Ver resumo do treino</b><span>Treino encerrado ✓</span></button>';
-  if(s && s.cardio) return `<button type="button" class="end-btn done" data-cardio><b>Hoje foi cardio 🏃</b><span>+${PTS.cardio} pontos na disputa · toque pra desfazer</span></button>`;
+  if(s && s.cardio) return `<button type="button" class="end-btn done" data-cardio><b>Hoje foi cardio 🏃</b><span>+${cardioPts()} pontos na disputa · toque pra desfazer</span></button>`;
   const started = s && (n || hasWork(s));
   return `<button type="button" class="end-btn" data-finish ${started?'':'disabled'}><b>Finalizar treino</b><span>${started?`${n} de ${d.ex.length} exercícios feitos`:'Marque a primeira série pra começar'}</span></button>
-  <button type="button" class="cardio-btn" data-cardio><b>Hoje só cardio</b><span>Cansado? Troque o treino por cardio · vale ${PTS.cardio} pontos</span></button>`;
+  <button type="button" class="cardio-btn" data-cardio><b>Hoje só cardio</b><span>Cansado? Troque o treino por cardio · vale ${cardioPts()} pontos</span></button>`;
 }
 let finArm=0;
 function finishDay(btn){
@@ -1343,7 +1808,7 @@ function finishDay(btn){
   renderTabs(); updateProgress(); confetti(); socialClosed(current); setTimeout(()=>openDone(current),700);
 }
 function updateProgress(){
-  const d = DAYS.find(x=>x.key===current); if(!d||d.rest) return;
+  const d = DAYS.find(x=>x.key===current); if(!d||d.rest||!d.ex.length) return;
   const s = session(d.key,false)||{done:{}};
   const n = d.ex.filter(e=>s.done[e.id]).length;
   const fg=$('#ringfg'); if(!fg) return;
@@ -1408,7 +1873,7 @@ function softRender(){
 /* ---------- Interação ---------- */
 document.addEventListener('click', ev=>{
   const tab=ev.target.closest('.tab');
-  if(tab){ current=tab.dataset.k; try{history.replaceState(null,'','#'+current);}catch(e){} renderTabs(); renderDay(); window.scrollTo({top:0,behavior:'smooth'}); return; }
+  if(tab){ current=tab.dataset.k; crossDraft=null; crossEditing=false; try{history.replaceState(null,'','#'+current);}catch(e){} renderTabs(); renderDay(); window.scrollTo({top:0,behavior:'smooth'}); return; }
   const ph=ev.target.closest('[data-phase]');
   if(ph){ state.config.phase=ph.dataset.phase; touch('config'); renderPhase(); renderDay(); return; }
   const mp=ev.target.closest('[data-map]');
@@ -1538,7 +2003,7 @@ function doneSummary(key){
   if(pvol) parts.push([Math.max(0,Math.min(1,1+(vol-pvol)/pvol*2)),20]);
   const score=Math.round(parts.reduce((a,[v,w])=>a+Math.min(1,v)*w,0)/parts.reduce((a,[,w])=>a+w,0)*100);
   ups.sort((a,b)=>b.su-a.su).slice(0,1).forEach(u=>ins.unshift({ic:'↗', t:`${u.n} em alta`, d:`Evoluiu ${u.su} treinos seguidos. Continua assim.`}));
-  const low=weekGap(); if(low) ins.push({ic:'!', t:`${low.k} abaixo da meta`, d:`Vai fechar a semana com ${low.proj} séries (meta ${low.lo}–${low.hi}). ${low.tip}`});
+  const low=weekGap(); if(low) ins.push({ic:'!', t:`${low.k} abaixo da meta`, d:`${low.dyn?`Está com ${low.proj} séries na semana`:`Vai fechar a semana com ${low.proj} séries`} (meta ${low.lo}–${low.hi}). ${low.tip}`});
   return {d, s, part:nDone<nEx, nEx, nDone, next, prs, prim:[...prim], sec:[...sec], sets, plan, vol, pvol, t0:ts.length>1?Math.min(...ts):0, t1:ts.length>1?Math.max(...ts):0,
     score, mHit, mTot, ins:ins.slice(0,2), nextDay:nextWorkout(key)};
 }
@@ -1554,7 +2019,10 @@ function weekGap(){
   const co=DAYS.find(d=>d.optional);
   const gm=GROUPS.find(g=>g.k===worst.k).m;
   const coHelps = co && !(state.sessions[sid(co.key)]||{}).sets && co.ex.some(e=>e.p.some(m=>gm.includes(m)));
-  worst.tip = coHelps ? `O coringa de sábado ajuda a completar.` : 'Vale priorizar na semana que vem.';
+  const dynLeft = DAYS.filter(d=>d.dyn&&!d.rest&&d.dow>today&&!(state.sessions[sid(d.key)]||{}).plan).length;
+  worst.dyn=!!dynLeft;
+  if(dynLeft) worst.tip = `Ele entra como prioridade nos próximos treinos da noite (faltam ${dynLeft}).`;
+  else worst.tip = coHelps ? `O coringa de sábado ajuda a completar.` : 'Vale priorizar na semana que vem.';
   return worst;
 }
 /* próximo dia de treino da ficha depois deste */
@@ -1563,6 +2031,7 @@ function nextWorkout(key){
   if(!list.length) return null;
   const nd=list.find(d=>d.dow>(cur?cur.dow:0) && !(state.sessions[sid(d.key)]||{}).sets) || list[0];
   const thisWeek = nd.dow>(cur?cur.dow:0);
+  if(nd.dyn) return {d:{...nd, title:'Depois do cross', sub:'Escreve o treino do box e a academia sai na hora.'}, when:(thisWeek?'':'Próxima ')+DOWN[nd.dow].toLowerCase(), items:[]};
   const items=nd.ex.filter(e=>!e.warm).slice(0,3).map(e=>{ const pl=planFor(e,lastFor(nd.key,e.id,true)); const t=pl.sets[0]||{};
     return {n:e.n, txt: pl.kind==='new' ? e.s+' × '+e.r : (t.kg!=null?fmtKgN(t.kg)+' kg × ':'')+t.reps, k:pl.kind}; });
   return {d:nd, when:(thisWeek?'':'Próxima ')+DOWN[nd.dow].toLowerCase(), items};
@@ -1593,7 +2062,7 @@ function openDone(key){
       <div class="dn-leg"><span><i style="background:var(--accent)"></i>Principal</span><span><i style="background:var(--aux)"></i>Auxiliar</span></div></section>
     ${R.prs.length?`<section class="dn-pr"><div class="pk">Mandou muito</div><h3>${R.prs.length===1?'Novo recorde!':`${R.prs.length} recordes novos!`}</h3>
       ${R.prs.map(p=>`<div class="pr"><span class="st">★</span><div><b>${esc(p.n)}</b><span>${fmtKgN(p.kg)} kg, antes era ${fmtKgN(p.before)} kg</span></div></div>`).join('')}</section>`:''}
-    ${R.next.length?`<section class="dn-next"><div class="kk">${d.optional?'Sábado':DOWN[d.dow]} que vem · ${esc(d.title)}</div><h3>Na próxima vez</h3><p class="lead">${lead}</p>
+    ${R.next.length?`<section class="dn-next"><div class="kk">${d.dyn?'Quando cada exercício voltar':(d.optional?'Sábado':DOWN[d.dow])+' que vem · '+esc(d.title)}</div><h3>Na próxima vez</h3><p class="lead">${lead}</p>
       ${R.next.filter(x=>x.k!=='keep').map(x=>`<div class="nx ${x.k}"><span class="ic">${x.k==='up'?'↑':x.k==='down'?'↓':'='}</span><b>${esc(x.n)}</b><span class="kg"><span class="to">${kgTxt(x.to)}</span>${x.from!==undefined?`<span class="from">${kgTxt(x.from)}</span>`:''}</span><span class="why">${esc(x.why)}</span></div>`).join('')}
       ${keep.length?`<div class="nx-keep"><div class="kh"><span class="ic">=</span><div><b>Mantém a carga</b><span>Dentro da faixa: tenta 1 repetição a mais em cada série</span></div></div>
         ${keep.map(x=>`<div class="kr"><span>${esc(x.n)}</span><b>${kgTxt(x.to)}</b></div>`).join('')}</div>`:''}</section>`:''}
@@ -1716,14 +2185,15 @@ const PTS={ficha:100, parcial:.5, cardio:.3, coringa:8, coringaParcial:4, beach:
 function maxBefore(exId, date){
   let m=0; for(const o of Object.values(state.sessions)){ if(!(o.date<date)) continue; for(const x of ((o.sets||{})[exId]||[])) if(x&&x.done&&+x.kg>m) m=+x.kg; } return m;
 }
+const cardioPts=()=>Math.round(PTS.ficha/Math.max(1,DAYS.filter(d=>!d.rest&&!d.optional).length)*PTS.cardio);
 function sessPoints(d, s){
   const r={treinos:0, coringa:0, parc:0, parcCor:0, beach:0, cardio:0, recs:0, ups:0, recN:[], upN:[]};
   if(!d||!s) return r;
   if(d.rest){ if(s.beach) r.beach++; return r; }
-  if(d.ex.every(e=>s.done[e.id])){ if(d.optional) r.coringa++; else r.treinos++; }
+  if(closedDay(d,s)){ if(d.optional) r.coringa++; else r.treinos++; }
   else if(s.fin){ if(d.optional) r.parcCor++; else r.parc++; }
   else if(s.cardio) r.cardio++;
-  for(const e of d.ex){
+  for(const e of exOf(d,s)){
     if(e.warm) continue;
     const rows=((s.sets||{})[e.id]||[]).filter(x=>x&&x.done); if(!rows.length) continue;
     const work=Math.max(0,...rows.map(x=>+x.kg||0)); if(!work) continue;
@@ -1737,11 +2207,11 @@ const dowOf=iso=>{ const [y,m,d]=String(iso||TODAY).split('-').map(Number); retu
 /* Desafio da semana: muda toda segunda, vale PTS.desafio pra quem cumprir */
 const CHALLENGES=[
   {t:'Caça-recordes', d:'Bater 2 recordes de carga na semana', goal:2, f:L=>L.reduce((a,[d,s])=>a+sessPoints(d,s).recs,0)},
-  {t:'No dia certo', d:'Fechar 3 treinos no dia marcado na ficha', goal:3, f:L=>L.filter(([d,s])=>!d.rest&&!d.optional&&(d.ex.every(e=>s.done[e.id])||s.fin)&&dowOf(s.date)===d.dow).length},
-  {t:'No capricho', d:'Responder o “Como foi?” em todos os exercícios de 3 treinos', goal:3, f:L=>L.filter(([d,s])=>!d.rest&&d.ex.filter(e=>!e.warm).every(e=>(s.rpe||{})[e.id])).length},
+  {t:'No dia certo', d:'Fechar 3 treinos no dia marcado na ficha', goal:3, f:L=>L.filter(([d,s])=>!d.rest&&!d.optional&&(closedDay(d,s)||s.fin)&&dowOf(s.date)===d.dow).length},
+  {t:'No capricho', d:'Responder o “Como foi?” em todos os exercícios de 3 treinos', goal:3, f:L=>L.filter(([d,s])=>!d.rest&&exOf(d,s).length>0&&exOf(d,s).filter(e=>!e.warm).every(e=>(s.rpe||{})[e.id])).length},
   {t:'Subir de nível', d:'Bater o topo da faixa em 3 exercícios', goal:3, f:L=>L.reduce((a,[d,s])=>a+sessPoints(d,s).ups,0)},
-  {t:'Sábado conta', d:'Fazer o coringa de sábado', goal:1, f:L=>L.filter(([d,s])=>d.optional&&(d.ex.every(e=>s.done[e.id])||s.fin)).length},
-  {t:'Sem atalho', d:'Fechar todos os treinos da ficha sem finalizar antes', goal:0, f:L=>L.filter(([d,s])=>!d.rest&&!d.optional&&d.ex.every(e=>s.done[e.id])).length},
+  {t:'Sábado conta', d:'Fazer o coringa de sábado', goal:1, f:L=>L.filter(([d,s])=>d.optional&&(closedDay(d,s)||s.fin)).length},
+  {t:'Sem atalho', d:'Fechar todos os treinos da ficha sem finalizar antes', goal:0, f:L=>L.filter(([d,s])=>!d.rest&&!d.optional&&closedDay(d,s)).length},
 ];
 function challenge(wk){ const i=Math.round((Date.parse(wk)-Date.parse('2026-01-05'))/6048e5); return CHALLENGES[((i%CHALLENGES.length)+CHALLENGES.length)%CHALLENGES.length]; }
 function weekScore(plan, wk, skipId){
@@ -1769,14 +2239,14 @@ function weekScore(plan, wk, skipId){
   return t;
 }
 function weekComplete(plan, wk){
-  return plan.filter(d=>!d.rest&&!d.optional).every(d=>Object.values(state.sessions).some(s=>s.day===d.key&&weekOf(s)===wk&&d.ex.every(e=>s.done[e.id])));
+  return plan.filter(d=>!d.rest&&!d.optional).every(d=>Object.values(state.sessions).some(s=>s.day===d.key&&weekOf(s)===wk&&closedDay(d,s)));
 }
 function streak(plan){
   let n=0; for(let i=0;i<104;i++){ const wk=addDays(WEEK,-7*i); if(weekComplete(plan,wk)) n++; else if(i===0) continue; else break; } return n;
 }
 /* Missão do casal: os dois fecham a semana. Conta os dias da ficha fechados por cada um. */
 function coupleData(wk){
-  const cnt=plan=>{ const ds=plan.filter(d=>!d.rest&&!d.optional); return [ds.filter(d=>Object.values(state.sessions).some(s=>s.day===d.key&&weekOf(s)===wk&&d.ex.every(e=>s.done[e.id]))).length, ds.length]; };
+  const cnt=plan=>{ const ds=plan.filter(d=>!d.rest&&!d.optional); return [ds.filter(d=>Object.values(state.sessions).some(s=>s.day===d.key&&weekOf(s)===wk&&closedDay(d,s))).length, ds.length]; };
   const [a,na]=cnt(DAYS_THAI), [b,nb]=cnt(DAYS_JR);
   let st=0; for(let i=0;i<104;i++){ const w=addDays(WEEK,-7*i); if(weekComplete(DAYS_THAI,w)&&weekComplete(DAYS_JR,w)) st++; else if(i===0) continue; else break; }
   return {n:a+b, total:na+nb, ok:a===na&&b===nb, st};
@@ -1834,6 +2304,35 @@ function openDuel(wk=WEEK){
   $('#duelSheet').hidden=false;
 }
 document.addEventListener('click',ev=>{
+  if(ev.target.id==='cxGo'){ if(crossDraft&&crossDraft.parsed&&crossDraft.parsed.blocks.length) makePlan(false); return; }
+  if(ev.target.id==='cxOk'){ const ta=$('#crossTxt'); if(ta) ta.blur(); flushDraft(); const c=ta&&ta.closest('.cx'); if(c) c.classList.remove('typing');
+    const pv=$('#cxPrev'); if(pv) setTimeout(()=>pv.scrollIntoView({block:'start',behavior:'smooth'}),250); return; }
+  const sk=ev.target.closest('#cxSkip'); if(sk){ if(!(crossDraft&&crossDraft.parsed&&crossDraft.parsed.blocks.length)) return;
+    if(!sk.classList.contains('armed')){ sk.classList.add('armed'); const o=sk.innerHTML; sk.innerHTML='<b>Toque de novo pra confirmar</b><span>Hoje sem academia</span>'; setTimeout(()=>{ if(sk.isConnected){ sk.classList.remove('armed'); sk.innerHTML=o; } },3000); return; }
+    const s=session(current,true); s.cross={txt:crossDraft.txt, blocks:crossDraft.parsed.blocks, at:Date.now()}; s.soCross=true; s.cardio=true; s.cardioAt=Date.now();
+    touch(sid(current)); crossDraft=null; confetti(); renderTabs(); renderDay(); renderHome(); window.scrollTo({top:0}); return; }
+  if(ev.target.closest('#cxUnskip')){ const s=session(current,false); if(s){ delete s.soCross; delete s.cardio; delete s.cardioAt; touch(sid(current)); } crossDraft=null; renderTabs(); renderDay(); renderHome(); return; }
+  if(ev.target.id==='cxNone'){ crossDraft=crossDraft||{}; makePlan(true); return; }
+  if(ev.target.id==='cxEdit'){ editCross(); return; }
+  const rd=ev.target.closest('[data-rd]'); if(rd){ const [bi,dv]=rd.dataset.rd.split(':').map(Number); const B=crossDraft.parsed.blocks[bi]; B.mult=Math.min(20,Math.max(1,Math.round(B.mult||1)+dv)); refreshDraft(); return; }
+  const ib=ev.target.closest('[data-int]'); if(ib){ const [bi,k]=ib.dataset.int.split(':'); crossDraft.parsed.blocks[+bi].int=k; refreshDraft(); return; }
+  const mx=ev.target.closest('[data-mvx]'); if(mx){ const [bi,mi]=mx.dataset.mvx.split(':').map(Number); const B=crossDraft.parsed.blocks; B[bi].moves.splice(mi,1); if(!B[bi].moves.length) B.splice(bi,1); refreshDraft(); return; }
+  const sw=ev.target.closest('[data-swap]'); if(sw){ swapEx(sw.dataset.swap); return; }
+});
+document.addEventListener('input',ev=>{ if(ev.target.id==='crossTxt') onCrossInput(ev.target.value); });
+/* enquanto digita, a leitura do quadro fica escondida (o teclado tampava); aparece ao fechar o teclado ou tocar em "Pronto" */
+document.addEventListener('focusin',ev=>{ if(ev.target.id==='crossTxt') ev.target.closest('.cx').classList.add('typing'); });
+document.addEventListener('focusout',ev=>{ if(ev.target.id!=='crossTxt') return; flushDraft(); const c=ev.target.closest('.cx'); if(c) c.classList.remove('typing'); });
+document.addEventListener('change',ev=>{
+  const t=ev.target.closest('[data-teach]'); if(!t || !crossDraft) return;
+  const u=crossDraft.parsed.unknown[+t.dataset.teach]; if(!u) return;
+  if(t.value && t.value!=='__ign'){ state.config.crossAlias=state.config.crossAlias||{}; state.config.crossAlias[crossNorm(u.key)]=t.value; touch('config'); toast('Aprendi: '+u.key+' = '+CMOVE[t.value].n); }
+  else if(t.value==='__ign'){ state.config.crossIgnore=1; }
+  const keepInt=crossDraft.parsed.blocks.map(b=>b.int); const P=parseCross(crossDraft.txt);
+  if(t.value==='__ign') P.unknown=P.unknown.filter(x=>x.key!==u.key);
+  P.blocks.forEach((b,i)=>{ if(keepInt[i]) b.int=keepInt[i]; }); crossDraft.parsed=P; refreshDraft();
+});
+document.addEventListener('click',ev=>{
   if(ev.target.closest('#scoreBtn') || ev.target.closest('#mission')){ openDuel(); return; }
   if(ev.target.closest('[data-duel-last]')){ openDuel(addDays(WEEK,-7)); $('#duelSheet .sheet').scrollTop=0; return; }
   if(ev.target.closest('[data-duel-close]') || ev.target.id==='duelSheet'){ $('#duelSheet').hidden=true; }
@@ -1864,6 +2363,7 @@ function todayTxt(plan){
   if(!d) return 'Hoje: descanso';
   if(d.rest){ const b=session(d.key,false); return (plan===DAYS_JR?'Hoje: cross e beach tennis':'Hoje: beach tennis')+(b&&b.beach?' ✓':''); }
   const s=session(d.key,false); const n=s?d.ex.filter(e=>s.done[e.id]).length:0;
+  if(d.dyn && !(s && (s.plan||hasWork(s)))) return s&&s.cardio ? (s.soCross?'Hoje: só cross ✓':'Hoje: só cardio ✓') : 'Hoje: escreve o treino do cross';
   if(s && s.cardio && n<d.ex.length && !s.fin) return 'Hoje: só cardio ✓';
   const min=Math.round(d.ex.reduce((a,e)=>a+e.s*(e.rest+45),0)/60/5)*5;
   if(s && (s.fin || n===d.ex.length)) return `Hoje: ${d.title} ✓`;
@@ -1987,7 +2487,7 @@ const EX_ARCHIVE={thai:[
 ], jr:[
   {id:'jd5', n:'Rosca martelo', s:2, r:'10–12', rest:60, rir:'0–1', p:['biceps','antebraco'], q:[], o:'Palmas viradas uma pra outra. Engrossa o braço visto de frente.', yt:'rosca martelo halteres', day:'jD', saiu:'v3'}
 ]};
-const EXMAP={}; [...DAYS_THAI,...DAYS_JR].forEach(d=>(d.ex||[]).forEach(e=>EXMAP[e.id]={...e,day:d.key}));
+const EXMAP={}; [...DAYS_THAI,...DAYS_JR].forEach(d=>((d.dyn?d.old:d.ex)||[]).forEach(e=>EXMAP[e.id]={...e,day:d.key}));
 [...EX_ARCHIVE.thai,...EX_ARCHIVE.jr].forEach(e=>{ if(!EXMAP[e.id]) EXMAP[e.id]=e; });
 const GROUPS_BY={jr:[
   {k:'Ombro lateral', m:['delt'], lo:10, hi:14},
@@ -2014,7 +2514,7 @@ let demo=null, liftSel=DEF_LIFT[WHO], liftTouched=false;
 function fillLiftSelect(){
   const selEl=$('#liftAll');
   if(!selEl.options.length){ const arq=(EX_ARCHIVE[WHO]||[]).filter(e=>SRC().some(x=>doneSets(x).some(y=>y.id===e.id)));
-    selEl.innerHTML=DAYS.filter(d=>!d.rest).map(d=>`<optgroup label="${esc(d.short+' · '+d.title)}">${d.ex.map(e=>`<option value="${e.id}">${esc(e.n)}</option>`).join('')}</optgroup>`).join('')
+    selEl.innerHTML=DAYS.filter(d=>!d.rest).map(d=>`<optgroup label="${esc(d.short+' · '+d.title)}">${(d.dyn?d.old:d.ex).map(e=>`<option value="${e.id}">${esc(e.n)}</option>`).join('')}</optgroup>`).join('')
       +(arq.length?`<optgroup label="Saíram da ficha">${arq.map(e=>`<option value="${e.id}">${esc(e.n)}</option>`).join('')}</optgroup>`:''); }
   selEl.value=liftSel;
 }
@@ -2024,9 +2524,20 @@ function pickLift(S){
   const weeksWith=id=>new Set(S.filter(s=>doneSets(s).some(x=>x.id===id&&x.kg>0)).map(weekOf)).size;
   const def=DEF_LIFT[WHO];
   if(weeksWith(def)){ liftSel=def; return; }
-  let best=def, n=0; DAYS.forEach(d=>(d.ex||[]).forEach(e=>{ const k=weeksWith(e.id); if(k>n){ n=k; best=e.id; } }));
+  let best=def, n=0; DAYS.forEach(d=>((d.dyn?d.old:d.ex)||[]).forEach(e=>{ const k=weeksWith(e.id); if(k>n){ n=k; best=e.id; } }));
   liftSel=best;
 }
+/* semana atual da demonstração: um cross de exemplo e o plano que o app montou */
+function mockDyn(d, date, rnd, BASE){
+  const txt=['FORÇA\n5x\n5 back squat\nWOD\n21-15-9\nthruster\npull-up','SKILL\nbar muscle up\nWOD\n5 rounds\n10 deadlift\n15 box jump','WOD\n20 min amrap\n10 wall ball\n10 toes to bar\n200 m run'][d.dow%3];
+  const P=parseCross(txt), cross={txt, blocks:P.blocks, at:1};
+  const s={day:d.key,week:WEEK,date,days:[date],sets:{},done:{},updatedAt:1, cross};
+  const keep=state.sessions; state.sessions={...keep, ...demoTmp}; s.plan=buildPlan(combF(crossFatigue(cross),{}),{date}); state.sessions=keep;
+  planEx(s.plan).forEach(e=>{ const [lo,hi]=e.r.split('–').map(Number); const b=BASE[e.id]??10;
+    s.sets[e.id]=Array.from({length:e.s},()=>({kg:String(b),reps:String(Math.round(lo+rnd()*((hi||lo)-lo))),done:true})); s.done[e.id]=true; });
+  demoTmp[`${WEEK}_${d.key}`]=s; return s;
+}
+let demoTmp={};
 function makeMock(){
   let seed=7; const rnd=()=>{ seed=(seed*16807)%2147483647; return seed/2147483647; };
   const BASE={ja1:60,ja2:55,ja3:20,ja4:35,ja5:7.5,ja6:12,jb0:5,jb1:28,jb2:12.5,jb3:7.5,jb4:20,jb5:80,jc1:30,jc2:50,jc3:25,jc4:30,jc5:10,jc6:40,jd0:5,jd1:50,jd2:45,jd3:7.5,jd4:30,jd5:16,jd6:40,je1:60,je2:20,je3:80,je4:12,je5:35,a1:50,a2:8,a3:12,a4:35,a5:25,b1:30,b2:12,b3:8,b4:4,b5:12,b6:6,b7:10,b8:30,c1:35,c2:25,c3:10,c4:80,c5:8,c6:20,d1:20,d2:5,d3:15,d4:15,d5:12,d6:8,d7:12,d8:0,d9:30,e1:30,e2:30,e3:15,e4:6,e5:8,e6:30};
@@ -2040,8 +2551,10 @@ function makeMock(){
       if(d.optional ? rnd()<0.55 : rnd()<0.08) continue;
       const partial = date===TODAY;
       const s={day:d.key,week:wk,date,days:[date],sets:{},done:{},updatedAt:1};
-      d.ex.forEach((e,ei)=>{
-        if(partial && ei>=Math.ceil(d.ex.length/2)) return;
+      if(d.dyn && wk===WEEK){ if(date<TODAY) out[`${wk}_${d.key}`]=mockDyn(d,date,rnd,BASE); continue; }
+      const L=d.dyn?d.old:d.ex;
+      L.forEach((e,ei)=>{
+        if(partial && ei>=Math.ceil(L.length/2)) return;
         const [lo,hi]=e.r.split('–').map(Number);
         const b=BASE[e.id]??10;
         const kg=b ? Math.round((b*(1+0.015*(17-w))+(rnd()-.5)*2)*2)/2 : 0;
@@ -2092,7 +2605,7 @@ function renderPanel(){
   const allDays=new Set([...days,...Object.keys(marks)]);
   const nDays=[...allDays].filter(d=>inR(d,R)).length;
   const SR=S.filter(s=>inR(s.date,R)), SP=S.filter(s=>inR(s.date,PR));
-  const closed=SR.filter(s=>{ const d=DAYS.find(x=>x.key===s.day); return d&&d.ex&&d.ex.every(e=>s.done[e.id]); }).length;
+  const closed=SR.filter(s=>{ const d=DAYS.find(x=>x.key===s.day); return d&&closedDay(d,s); }).length;
   const vol=SR.reduce((a,s)=>a+volOf(s),0), pvol=SP.reduce((a,s)=>a+volOf(s),0);
   const first=S.reduce((m,s)=>s.date&&s.date<m?s.date:m,'9999');
   const fullPrev = first<=PR[0];  /* só compara quando há registros cobrindo todo o período anterior */
