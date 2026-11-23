@@ -5,8 +5,7 @@ O app roda dentro de um iframe do tamanho do iPhone (375×667 e 390×844), num
 servidor local sem Supabase. Testa as duas fichas, o cross, o "Só cross",
 a tela de treino fechado, a disputa, o painel e o layout de cada tela.
 
-Quem chama: tools/teste_safari.py (Safari do Mac) e, no teste rápido,
-o Playwright (python3 tools/bateria.py roda com WebKit/Chromium).
+Uso: python3 tools/bateria.py (WebKit do Playwright; Chromium se o WebKit não abrir).
 """
 import http.server, threading, functools, time, json
 from pathlib import Path
