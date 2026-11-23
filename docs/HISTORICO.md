@@ -11,3 +11,5 @@
 | 18/11/2026 | Júnior | v4 | Ficha dinâmica: o treino da noite sai do cross do dia, com cardápio fixo por músculo (em teste na branch `ficha-dinamica`) | [junior-v4.md](fichas/junior-v4.md) |
 
 **Próxima revisão das duas fichas:** semana de 10/12/2026 (6 semanas depois da v1).
+
+**23/11/2026:** Júnior escolhe o tempo pra academia (45 min, 1 h, 1h30) e o plano cabe nele. Nas duas fichas, o dia seguinte ao beach repete a última vez nos exercícios de perna e ombro em vez de progredir (meta "Pós-beach"); pra Thai vale na quarta (Superior A, elevação lateral).

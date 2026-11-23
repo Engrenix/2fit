@@ -119,6 +119,9 @@ html:has(#v-login:not([hidden])),body:has(#v-login:not([hidden])){background:#FF
 .cx-empty{margin:0;font-size:13.5px;color:var(--muted);padding:12px 14px;border:1px dashed var(--line);border-radius:14px}
 .cx-prev{display:grid;gap:10px}
 .cxb{border:1px solid var(--line);border-radius:16px;padding:10px 12px;display:grid;gap:8px}
+.cx-tempo{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px;font:700 14px var(--f-body);color:var(--muted)}
+.cx-tempo .seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.cx-tempo .seg{flex:none}.cx-tempo .seg button{white-space:nowrap;min-height:44px}
 .cxr{display:flex;align-items:center;gap:6px;font:700 14px var(--f-body);color:var(--muted)}
 .cxr span{margin-right:auto}
 .cxr button{width:44px;height:40px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:800 18px var(--f-body)}
@@ -1144,7 +1147,24 @@ function incFor(e, kg){
   if(/m[aá]quina|cabo|polia|pulley|cadeira|mesa|leg|puxada|pulldown|pullover|crossover|voador|peck|face pull|remada baixa|tri[aâ]ngulo|panturrilha sentad/.test(n)) return kg<15 ? 2.5 : 5;
   return kg<20 ? 1 : 2;
 }
-function planFor(e, last){
+/* dia seguinte ao beach: perna e ombro repetem a última vez em vez de progredir */
+const BEACH_M=['delt','deltpost','ombrof','quad','gluteomax','gluteomed','posterior','panturrilha','adutor'];
+function afterBeach(dayKey){
+  const ALL=[...DAYS_THAI,...DAYS_JR], d=ALL.find(x=>x.key===dayKey); if(!d||d.rest) return false;
+  const mine=new Set((DAYS_THAI.includes(d)?DAYS_THAI:DAYS_JR).map(x=>x.key));
+  const y=addDays(addDays(WEEK,(d.dow+6)%7),-1);
+  return Object.values(state.sessions).some(s=>{ if(!s.beach||!mine.has(s.day)) return false; const bd=ALL.find(x=>x.key===s.day);
+    return (bd&&s.week ? addDays(s.week,(bd.dow+6)%7) : s.date)===y; });
+}
+function planFor(e, last, dayKey){
+  const p=planCore(e, last);
+  if(dayKey && ['up','keep','reps'].includes(p.kind) && e.p.some(m=>BEACH_M.includes(m)) && afterBeach(dayKey) && last && last.sets.length){
+    const L=last.sets, n=setsFor(e), at=k=>L[Math.min(k,L.length-1)];
+    return {kind:'beach', kg:p.kg, sets:Array.from({length:n},(_,k)=>({kg: p.kind==='up'||p.kind==='reps' ? (+kgNorm(at(k).kg||0)||null) : p.sets[k].kg, reps:+at(k).reps||botRep(e.r)}))};
+  }
+  return p;
+}
+function planCore(e, last){
   const n=setsFor(e), top=topRep(e.r), bot=botRep(e.r)||top;
   if(!last || !last.sets.length) return {kind:'new', sets:Array.from({length:n},()=>({kg:null, reps:bot}))};
   const L=last.sets, at=k=>L[Math.min(k,L.length-1)];
@@ -1176,13 +1196,14 @@ function metaHtml(e, plan, last){
   const T=plan.sets, kgs=[...new Set(T.map(x=>x.kg))], rp=T.map(x=>x.reps);
   const kgTxt = kgs[0]==null ? '' : (kgs.length===1 ? fmtKgN(kgs[0])+' kg × ' : '');
   const repTxt = kgs.length>1 ? T.map(x=>`${fmtKgN(x.kg)}×${x.reps}`).join(' · ') : (new Set(rp).size===1 ? rp[0]+' reps' : rp.join(' · ')+' reps');
-  const tag = {up:['up','Subiu a carga'], down:['down','Carga ajustada'], keep:['keep',plan.rpe==='facil'?'+2 reps':plan.rpe==='limite'?'Repete':'+1 rep'], reps:['up','Mais reps'], deload:['down','Destravar'], hold:['keep','Segura a carga']}[plan.kind];
+  const tag = {up:['up','Subiu a carga'], down:['down','Carga ajustada'], keep:['keep',plan.rpe==='facil'?'+2 reps':plan.rpe==='limite'?'Repete':'+1 rep'], reps:['up','Mais reps'], deload:['down','Destravar'], hold:['keep','Segura a carga'], beach:['keep','Pós-beach']}[plan.kind];
   const why = {up:`Você fez ${topRep(e.r)}+ em todas as séries: +${fmtKgN(plan.kg-plan.from)} kg e volta pras ${T[0].reps} reps.`,
                down:`Ficou abaixo de ${botRep(e.r)} reps: baixa ${fmtKgN(plan.from-plan.kg)} kg e reconstrói.`,
                keep: plan.rpe==='facil' ? `Foi fácil da última vez: mesma carga e 2 reps a mais em cada série.` : plan.rpe==='limite' ? `Foi no limite: repete as mesmas reps, agora com mais controle.` : `Mesma carga, 1 rep a mais em cada série até chegar a ${topRep(e.r)}.`,
                reps:`Bateu ${topRep(e.r)} em todas: agora busca mais repetições.`,
                deload:`Parado há 3 treinos na mesma carga: baixa pra ${fmtKgN(plan.kg)} kg e vai até ${topRep(e.r)} reps. É assim que destrava.`,
-               hold:`Bateu o topo, mas foi no limite: segura ${fmtKgN(plan.kg)} kg até ficar mais fácil.`}[plan.kind];
+               hold:`Bateu o topo, mas foi no limite: segura ${fmtKgN(plan.kg)} kg até ficar mais fácil.`,
+               beach:`O beach de ontem cansou perna e ombro: repete a última vez. A progressão volta no próximo treino.`}[plan.kind];
   const lastTxt = last ? `<div class="meta-last">Última vez (${fmtDate(last.date)}): ${last.sets.map(x=>`${x.kg?kgShow(x.kg):'–'}×${x.reps||'–'}`).join(' · ')}</div>` : '';
   return `<div class="meta-box ${tag[0]}"><div class="meta-top"><span class="meta-k">Meta de hoje</span><span class="chip ${tag[0]}">${tag[1]}</span></div>
     <div class="meta-v">${kgTxt}${repTxt}</div><div class="meta-why">${why}</div>${lastTxt}</div>`;
@@ -1415,6 +1436,7 @@ function residualF(date){
     const dd=DAYS_JR.find(d=>d.key===s.day), sd=dd&&dd.rest&&s.week ? addDays(s.week, (dd.dow+6)%7) : s.date; // terça: o cross vale pro dia dele, mesmo registrado depois
     if(!keys.has(s.day) || sd!==y) continue;
     const F=crossFatigue(s.cross); for(const [m,v] of Object.entries(F)) R[m]=1-(1-(R[m]||0))*(1-0.4*v);
+    if(s.beach) for(const m of ['panturrilha','quad','gluteomax','delt','ombrof']) R[m]=1-(1-(R[m]||0))*(1-0.2);  // beach: cardio moderado, cansa um pouco perna e ombro
     const cnt={}; doneSets(s).forEach(r=>{ const e=EXMAP[r.id]; if(e&&!e.warm) e.p.forEach(m=>cnt[m]=(cnt[m]||0)+1); });
     for(const [m,n] of Object.entries(cnt)){ const v=n>=4?0.5:n>=2?0.3:0; if(v) R[m]=1-(1-(R[m]||0))*(1-v); }
   }
@@ -1449,6 +1471,11 @@ const CARDAPIO = [
 /* histórico que conta junto (mesmo exercício com id antigo) */
 const EX_ALIAS = {jb3:['jd3'], je6:['jd4'], ja6:['je4'], jb5:['je3'], jb0:['jd0']};
 const DYN_MAX_EX = 6, DYN_MAX_SETS = 21;
+/* tempo disponível na academia: teto de itens e séries, e depois corta até caber no relógio */
+const DYN_TEMPO = {45:{ex:5, sets:14}, 60:{ex:6, sets:19}, 90:{ex:6, sets:25}};
+const dynTempo = () => +((state.config||{}).jrTempo) || 60;
+// conta do relógio: cada série = descanso + 1 min fazendo; cada exercício = +3 min de troca e ajuste da máquina
+const planMin = plan => Math.round(plan.reduce((a,x)=>{ const e=EXMAP[x.id]; return a + x.s*((e&&e.rest||75)+60) + (e&&e.warm?60:180); },0)/60);
 function slotFat(sl, F){
   const mx=a=>Math.max(0,...a.map(m=>F[m]||0));
   return Math.max(mx(sl.main), (sl.hf??(sl.comp?0.75:0.5))*mx(sl.help));
@@ -1457,10 +1484,11 @@ function buildPlan(F, opt={}){
   const W=weekVolume(), today=(new Date(opt.date||TODAY).getDay()+6)%7+1;
   const left=Math.max(1, DAYS_JR.filter(d=>!d.rest&&!d.optional&&d.dow>=today).length);
   const planned={}, out=[]; let sets=0;
-  const maxEx=opt.optional?5:DYN_MAX_EX;
+  const TL=DYN_TEMPO[opt.min]||{ex:DYN_MAX_EX, sets:DYN_MAX_SETS};
+  const maxEx=Math.min(opt.optional?5:6, TL.ex), MAXS=opt.optional?Math.min(TL.sets,19):TL.sets;
   const need = sl => { if(!sl.g) return 0.15; const w=W[sl.g]; const have=w.gym+w.cross+(planned[sl.g]||0); return Math.max(0,(w.g.lo-have)/w.g.lo); };
   const cand = CARDAPIO.map(sl=>{ const f=slotFat(sl,F), lv=DYN_LV(f); return {sl, f, lv}; });
-  while(out.length<maxEx && sets<DYN_MAX_SETS){
+  while(out.length<maxEx && sets<MAXS){
     let best=null;
     for(const c of cand){
       if(c.used) continue;
@@ -1469,16 +1497,22 @@ function buildPlan(F, opt={}){
       else if(c.lv==='yel'){ n=Math.max(2, Math.ceil(sl.base*0.6)); sc*=0.8; }
       if(sl.g && out.some(o=>o.sl.g===sl.g) && need(sl)<0.35) continue;  // segundo exercício do mesmo grupo só se ainda falta muito
       if(!sl.g && out.length<4) continue;                                 // abdômen só completa
-      if(sets+n>DYN_MAX_SETS+1) continue;
+      if(sets+n>MAXS+1) continue;
       if(!best || sc>best.sc) best={c, n, sc};
     }
     if(!best) break;
-    best.c.used=true; out.push({sl:best.c.sl, n:best.n, lv:best.c.lv, f:best.c.f});
+    best.c.used=true; out.push({sl:best.c.sl, n:best.n, lv:best.c.lv, f:best.c.f, sc:best.sc});
     sets+=best.n; if(best.c.sl.g) planned[best.c.sl.g]=(planned[best.c.sl.g]||0)+best.n;
   }
   // aquecimento do ombro conta no teto de 6 itens na tela: sai o último escolhido
   const needWarm = o => ['sup','lat','cxo','tri'].includes(o.sl.k);
   if(out.some(needWarm) && out.length>=maxEx){ const drop=[...out].reverse().find(o=>!needWarm(o)) || out[out.length-1]; out.splice(out.indexOf(drop),1); }
+  // cabe no tempo? corta o item de menor prioridade (o aquecimento vai junto se o ombro sair)
+  if(opt.min){ const mins=()=>planMin(out.map(o=>({id:o.sl.ids[0], s:o.n})).concat(out.some(needWarm)?[{id:'jb0',s:2}]:[]));
+    while(out.length>2 && mins()>opt.min){ const low=out.reduce((a,b)=>b.sc<a.sc?b:a); if(low.n>2 && out.length<=3){ low.n--; continue; } out.splice(out.indexOf(low),1); } }
+  // sobrou tempo (1h30)? +1 série nos pontos fracos que estão livres
+  if(opt.min){ const mins=()=>planMin(out.map(o=>({id:o.sl.ids[0], s:o.n})).concat(out.some(needWarm)?[{id:'jb0',s:2}]:[]));
+    for(const o of [...out].filter(o=>o.lv==='ok').sort((a,b)=>b.sc-a.sc)){ if(o.n>o.sl.base||mins()+3>opt.min||out.reduce((a,x)=>a+x.n,0)>=MAXS) continue; o.n++; } }
   const order=o=>(o.sl.comp?0:10)+(o.sl.star?0:3)+(['pant','abd'].includes(o.sl.k)?20:0);
   out.sort((a,b)=>order(a)-order(b));
   const plan=out.map(o=>({id:o.sl.ids[0], s:o.n, slot:o.sl.k, why:dynWhy(o, W, F)}));
@@ -1570,6 +1604,7 @@ function renderCheckin(d, el, log){
        <textarea id="crossTxt" rows="6" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="FORÇA&#10;5x 8 push press&#10;WOD&#10;30 hang power clean&#10;150 DU&#10;30 jerk">${esc(crossDraft.txt||'')}</textarea></label>
      <button type="button" class="cx-ok" id="cxOk">Pronto, ler o treino</button>
      <p class="cx-tip">No iPhone: abra a foto do quadro, toque no ícone de texto no canto e em <b>Copiar</b>.</p>
+     ${log?'':`<div class="cx-tempo"><span>Tempo pra academia</span><div class="seg" role="group" aria-label="Tempo pra academia">${[45,60,90].map(m=>`<button type="button" data-tempo="${m}" aria-pressed="${dynTempo()===m}">${m===45?'45 min':m===60?'1 h':'1h30'}</button>`).join('')}</div></div>`}
      ${log?'':'<button type="button" class="cx-none" id="cxNone">Hoje sem cross</button>'}
      <div id="cxPrev" class="cx-prev">${draftPreview()}</div>
      <div class="cx-act" id="cxAct" ${ok?'':'hidden'}>
@@ -1599,7 +1634,7 @@ function makePlan(none){
   const cross = none ? {none:true, at:Date.now()} : {txt:crossDraft.txt, blocks:crossDraft.parsed.blocks, at:Date.now()};
   if(d.rest){ s.cross=cross; touch(sid(current)); crossDraft=null; crossEditing=false; renderTabs(); renderDay(); renderHome(); window.scrollTo({top:0}); toast('Cross salvo: amanhã a academia leva ele em conta'); return; }
   const F=combF(crossFatigue(cross), residualF(s.date||TODAY));
-  s.cross=cross; s.plan=buildPlan(F,{optional:d.optional, date:s.date});
+  s.cross=cross; s.tempo=dynTempo(); s.plan=buildPlan(F,{optional:d.optional, date:s.date, min:s.tempo});
   touch(sid(current)); crossDraft=null;
   renderTabs(); renderDay(); window.scrollTo({top:0});
   toast(none?'Treino completo montado':'Academia montada');
@@ -1662,7 +1697,7 @@ function renderDay(){
        <div class="kicker">${d.dyn&&s.plan?(s.cross&&s.cross.none?'Sem cross hoje':'Complemento do cross'):d.optional?'Sábado · opcional':esc(['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][d.dow])}</div>
        <h2>${esc(d.title)}</h2>
        <p>${d.dyn&&s.plan?esc(dynSub(d)):esc(d.sub)}${d.optional&&!d.dyn?`. ${d.note?esc(d.note)+' ':''}Se for, ótimo; se não for, a semana já está completa.`:''}</p>
-       <div class="meta"><span class="chip">${d.ex.length} exercícios</span><span class="chip">${totalSets} séries</span></div>
+       <div class="meta"><span class="chip">${d.ex.length} exercícios</span><span class="chip">${totalSets} séries</span>${d.dyn&&s.plan?`<span class="chip">~${planMin(s.plan)} min</span>`:''}</div>
        <div class="hero-act">${heroAct(d,s)}</div>
      </div>
      <div class="ring"><svg viewBox="0 0 84 84"><circle class="bg" cx="42" cy="42" r="36"/><circle class="fg" id="ringfg" cx="42" cy="42" r="36" stroke-dasharray="226.2" stroke-dashoffset="226.2"/></svg>
@@ -1686,7 +1721,7 @@ function setRpe(id,v){
 }
 function exCard(d,e,i,s){
   const n=setsFor(e), rows=s.sets[e.id]||[], last=e.warm?null:lastFor(d.key,e.id);
-  const plan=e.warm?{kind:'new',sets:Array.from({length:n},()=>({kg:null,reps:botRep(e.r)}))}:planFor(e,last);
+  const plan=e.warm?{kind:'new',sets:Array.from({length:n},()=>({kg:null,reps:botRep(e.r)}))}:planFor(e,last,d.key);
   const done = !!s.done[e.id];
   const lastTxt = e.warm ? '' : metaHtml(e, plan, last);
   let setsHtml='';
@@ -1894,7 +1929,7 @@ function toggleSet(row){
   row.classList.toggle('ok', r.done);
   row.querySelector('.chk').setAttribute('aria-pressed', r.done);
   const d=DAYS.find(x=>x.key===current), e=d.ex.find(x=>x.id===ex), n=setsFor(e);
-  { const vmEl=row.querySelector('.vm'); if(vmEl && !e.warm){ const pl=planFor(e,lastFor(current,ex)); const vm=pl.kind==='new'?null:vsMeta(r,pl.sets[i]);
+  { const vmEl=row.querySelector('.vm'); if(vmEl && !e.warm){ const pl=planFor(e,lastFor(current,ex),current); const vm=pl.kind==='new'?null:vsMeta(r,pl.sets[i]);
       vmEl.className='vm '+(vm?(vm.v>0?'beat':vm.v<0?'miss':'hit'):''); vmEl.textContent=vm?vm.txt:''; } }
   const allDone = Array.from({length:n},(_,k)=>s.sets[ex][k]&&s.sets[ex][k].done).every(Boolean);
   if(allDone !== !!s.done[ex]){ s.done[ex]=allDone; refreshCard(ex); }
@@ -1959,7 +1994,7 @@ function doneSummary(key){
     const allTop = rows.length>=e.s && reps.every(r=>r>=top);
     const under = reps.some(r=>r>0 && r<bot);
     // meta de hoje x feito
-    const pl0=planFor(e,lastFor(key,e.id));
+    const pl0=planFor(e,lastFor(key,e.id),key);
     if(pl0.kind!=='new') (s.sets[e.id]||[]).forEach((x,k)=>{ const v=vsMeta(x,pl0.sets[k]); if(v){ mTot++; if(v.v>=0) mHit++; } });
     if(!work){ next.push({k:'keep', n:e.n, to:'sem carga'}); continue; }
     const pl=planFor(e,{date:s.date, sets:rows, rpe:(s.rpe||{})[e.id]});
@@ -2293,6 +2328,7 @@ document.addEventListener('click',ev=>{
   if(ev.target.id==='cxNone'){ crossDraft=crossDraft||{}; makePlan(true); return; }
   if(ev.target.id==='cxEdit'){ editCross(); return; }
   const rd=ev.target.closest('[data-rd]'); if(rd){ const [bi,dv]=rd.dataset.rd.split(':').map(Number); const B=crossDraft.parsed.blocks[bi]; B.mult=Math.min(20,Math.max(1,Math.round(B.mult||1)+dv)); refreshDraft(); return; }
+  const tp=ev.target.closest('[data-tempo]'); if(tp){ state.config.jrTempo=+tp.dataset.tempo; touch('config'); document.querySelectorAll('[data-tempo]').forEach(b=>b.setAttribute('aria-pressed', String(b===tp))); return; }
   const ib=ev.target.closest('[data-int]'); if(ib){ const [bi,k]=ib.dataset.int.split(':'); crossDraft.parsed.blocks[+bi].int=k; refreshDraft(); return; }
   const mx=ev.target.closest('[data-mvx]'); if(mx){ const [bi,mi]=mx.dataset.mvx.split(':').map(Number); const B=crossDraft.parsed.blocks; B[bi].moves.splice(mi,1); if(!B[bi].moves.length) B.splice(bi,1); refreshDraft(); return; }
   const sw=ev.target.closest('[data-swap]'); if(sw){ swapEx(sw.dataset.swap); return; }

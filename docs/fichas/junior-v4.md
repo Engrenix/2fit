@@ -46,3 +46,7 @@ Os ids são os mesmos da ficha antiga, então a meta de cada série continua. Id
 ## Painel (23/11/2026)
 
 As séries por músculo do painel e a leitura do consultor ("músculo abaixo da meta") somam o cross: cada músculo ganha até 4 séries por dia de cross, conforme o quanto ele cansou (a mesma conta do "Sua semana"). No gráfico, a parte listrada da barra é o cross.
+
+## Tempo pra academia (23/11/2026)
+
+Antes de montar, escolhe 45 min, 1 h (padrão) ou 1h30. O plano respeita o teto de itens e séries de cada tempo e corta o item de menor prioridade até caber. No 1h30, os pontos fracos que estão livres ganham +1 série. O beach de terça entra um pouco no cansaço de quarta (perna e ombro).
