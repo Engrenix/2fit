@@ -42,3 +42,7 @@ Os ids são os mesmos da ficha antiga, então a meta de cada série continua. Id
 - A dose bateu com o cansaço real? Algum músculo chegou mais cansado do que o app previu?
 - Os pesos dos movimentos (`CROSS_MOVES`) precisam de ajuste? Anotar o movimento e o que sentiu.
 - Ler o texto do quadro deu trabalho? Quais palavras ele teve que ensinar?
+
+## Painel (23/11/2026)
+
+As séries por músculo do painel e a leitura do consultor ("músculo abaixo da meta") somam o cross: cada músculo ganha até 4 séries por dia de cross, conforme o quanto ele cansou (a mesma conta do "Sua semana"). No gráfico, a parte listrada da barra é o cross.

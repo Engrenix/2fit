@@ -246,6 +246,8 @@ html:has(#v-login:not([hidden])),body:has(#v-login:not([hidden])){background:#FF
 .mrow .band{position:absolute;top:0;bottom:0;background:var(--ok-soft)}
 .mrow .f{position:absolute;left:0;top:2px;bottom:2px;border-radius:99px;background:var(--accent);transform-origin:left;animation:growx .8s cubic-bezier(.2,.8,.2,1) both}
 .mrow .f.ok{background:var(--ok)}
+.mrow .f.cx{background:repeating-linear-gradient(135deg,var(--accent) 0 4px,color-mix(in srgb,var(--accent) 45%,transparent) 4px 8px)}
+.mrow .f.cx.ok{background:repeating-linear-gradient(135deg,var(--ok) 0 4px,color-mix(in srgb,var(--ok) 45%,transparent) 4px 8px)}
 @keyframes growx{from{transform:scaleX(0)}}
 .mrow .n{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
 .mrow .n small{font-weight:500;color:var(--muted)}
@@ -2014,6 +2016,7 @@ function doneSummary(key){
 function weekGap(){
   const keys=new Set(DAYS.map(d=>d.key)), cnt={};
   Object.values(state.sessions).filter(x=>keys.has(x.day)&&weekOf(x)===WEEK).forEach(x=>doneSets(x).forEach(r=>{ const e=EXMAP[r.id]; if(e) e.p.forEach(m=>cnt[m]=(cnt[m]||0)+1); }));
+  Object.values(state.sessions).filter(x=>keys.has(x.day)&&weekOf(x)===WEEK&&x.cross&&x.cross.blocks).forEach(x=>{ const F=crossFatigue(x.cross); Object.keys(F).forEach(m=>cnt[m]=(cnt[m]||0)+Math.round(F[m]*4)); });  // o cross também conta
   const today=(new Date().getDay()+6)%7+1;
   DAYS.filter(d=>!d.rest&&!d.optional&&d.dow>today&&!(state.sessions[sid(d.key)]||{}).sets).forEach(d=>d.ex.forEach(e=>{ if(!e.warm) e.p.forEach(m=>cnt[m]=(cnt[m]||0)+e.s); }));
   let worst=null;
@@ -2657,8 +2660,13 @@ function drawVol(labels,vals,tips,hl){
   el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Peso total"><line x1="0" x2="${W}" y1="${H-pb}" y2="${H-pb}" stroke="var(--line)"/><g class="bar-g">${g}</g></svg>`;
 }
 /* Resumo do painel em linguagem simples: o que está bem, o que falta e o que evoluiu */
-function musCount(list){ const cnt={}; GROUPS.forEach(g=>cnt[g.k]=0);
+function gymCount(list){ const cnt={}; GROUPS.forEach(g=>cnt[g.k]=0);
   list.forEach(s=>doneSets(s).forEach(x=>{ const e=EXMAP[x.id]; if(!e||e.warm) return; GROUPS.forEach(g=>{ if(e.p.some(m=>g.m.includes(m))) cnt[g.k]++; }); })); return cnt; }
+/* o cross conta como séries: cada músculo ganha até 4 por dia, conforme o quanto o cross cansou (mesma conta do "Sua semana") */
+function crossCount(list){ const cnt={}; GROUPS.forEach(g=>cnt[g.k]=0);
+  list.forEach(s=>{ if(!s.cross||s.cross.none||!s.cross.blocks) return; const F=crossFatigue(s.cross);
+    GROUPS.forEach(g=>{ cnt[g.k]+=Math.round(Math.max(0,...g.m.map(m=>F[m]||0))*4); }); }); return cnt; }
+function musCount(list){ const a=gymCount(list), b=crossCount(list); Object.keys(a).forEach(k=>a[k]+=b[k]); return a; }
 function panelInsights(S,SR,wk,nDays){
   const cnt=musCount(SR), out=[], per=period==='semana'?'nesta semana':'por semana';
   const rows=GROUPS.map(g=>({g, v:Math.round(cnt[g.k]/wk)}));
@@ -2676,11 +2684,12 @@ function panelInsights(S,SR,wk,nDays){
   return out.slice(0,3).map(([c,ic,t,d])=>`<div class="pin ${c}"><span class="ic">${ic}</span><div><b>${esc(t)}</b><span>${esc(d)}</span></div></div>`).join('');
 }
 function drawMus(SR,wk){
-  const cnt={}; GROUPS.forEach(g=>cnt[g.k]=0);
-  SR.forEach(s=>doneSets(s).forEach(x=>{ const e=EXMAP[x.id]; if(!e||e.warm) return; GROUPS.forEach(g=>{ if(e.p.some(m=>g.m.includes(m))) cnt[g.k]++; }); }));
+  const gym=gymCount(SR), cx=crossCount(SR), temCross=Object.values(cx).some(v=>v>0);
   const scale=26;
-  $('#chMus').innerHTML=GROUPS.map((g,i)=>{ const v=Math.round(cnt[g.k]/wk), ok=v>=g.lo;
-    return `<div class="mrow"><span>${g.k}</span><span class="t"><span class="band" style="left:${g.lo/scale*100}%;width:${(g.hi-g.lo)/scale*100}%"></span><span class="f ${ok?'ok':''}" style="width:${Math.min(100,v/scale*100)}%;animation-delay:${i*50}ms"></span></span><span class="n">${v}<small>/${g.lo}</small></span></div>`; }).join('');
+  const hint=$('#chMus').closest('.panel').querySelector('.hint');
+  if(temCross && !hint.textContent.includes('cross')) hint.textContent+=' · parte listrada = cross';
+  $('#chMus').innerHTML=GROUPS.map((g,i)=>{ const vg=Math.round(gym[g.k]/wk), v=Math.round((gym[g.k]+cx[g.k])/wk), ok=v>=g.lo;
+    return `<div class="mrow"><span>${g.k}</span><span class="t"><span class="band" style="left:${g.lo/scale*100}%;width:${(g.hi-g.lo)/scale*100}%"></span>${v>vg?`<span class="f cx ${ok?'ok':''}" style="width:${Math.min(100,v/scale*100)}%;animation-delay:${i*50}ms"></span>`:''}<span class="f ${ok?'ok':''}" style="width:${Math.min(100,vg/scale*100)}%;animation-delay:${i*50}ms"></span></span><span class="n">${v}<small>/${g.lo}</small></span></div>`; }).join('');
 }
 function drawLift(weeks,S){
   fillLiftSelect();
