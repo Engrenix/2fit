@@ -147,6 +147,12 @@ html:has(#v-login:not([hidden])),body:has(#v-login:not([hidden])){background:#FF
 .cx-empty{margin:0;font-size:13.5px;color:var(--muted);padding:12px 14px;border:1px dashed var(--line);border-radius:14px}
 .cx-prev{display:grid;gap:10px}
 .cxb{border:1px solid var(--line);border-radius:16px;padding:10px 12px;display:grid;gap:8px}
+.bch-lv{margin-top:14px;text-align:center}
+.bch-lv b{display:block;font:800 15px var(--f-body);margin-bottom:8px}
+.bch-lv .seg{background:var(--chip)}
+.bch-lv .seg button{min-height:44px;white-space:nowrap}
+.bch-lv .seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.bch-lv p{margin:8px 0 0;font-size:13.5px;color:var(--muted)}
 .cx-tempo{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px;font:700 14px var(--f-body);color:var(--muted)}
 .cx-tempo .seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
 .cx-tempo .seg{flex:none}.cx-tempo .seg button{white-space:nowrap;min-height:44px}
@@ -1182,7 +1188,7 @@ function afterBeach(dayKey){
   const mine=new Set((DAYS_THAI.includes(d)?DAYS_THAI:DAYS_JR).map(x=>x.key));
   const y=addDays(addDays(WEEK,(d.dow+6)%7),-1);
   return Object.values(state.sessions).some(s=>{ if(!s.beach||!mine.has(s.day)) return false; const bd=ALL.find(x=>x.key===s.day);
-    return (bd&&s.week ? addDays(s.week,(bd.dow+6)%7) : s.date)===y; });
+    return (s.beachLv==='puxado'||s.beachLv==='forte') && (bd&&s.week ? addDays(s.week,(bd.dow+6)%7) : s.date)===y; });
 }
 function planFor(e, last, dayKey){
   const p=planCore(e, last);
@@ -1464,7 +1470,7 @@ function residualF(date){
     const dd=DAYS_JR.find(d=>d.key===s.day), sd=dd&&dd.rest&&s.week ? addDays(s.week, (dd.dow+6)%7) : s.date; // terça: o cross vale pro dia dele, mesmo registrado depois
     if(!keys.has(s.day) || sd!==y) continue;
     const F=crossFatigue(s.cross); for(const [m,v] of Object.entries(F)) R[m]=1-(1-(R[m]||0))*(1-0.4*v);
-    if(s.beach) for(const m of ['panturrilha','quad','gluteomax','delt','ombrof']) R[m]=1-(1-(R[m]||0))*(1-0.2);  // beach: cardio moderado, cansa um pouco perna e ombro
+    const bv={puxado:0.2, forte:0.4}[s.beach&&s.beachLv]; if(bv) for(const m of ['panturrilha','quad','gluteomax','delt','ombrof']) R[m]=1-(1-(R[m]||0))*(1-bv);  // beach leve (diversão) não conta
     const cnt={}; doneSets(s).forEach(r=>{ const e=EXMAP[r.id]; if(e&&!e.warm) e.p.forEach(m=>cnt[m]=(cnt[m]||0)+1); });
     for(const [m,n] of Object.entries(cnt)){ const v=n>=4?0.5:n>=2?0.3:0; if(v) R[m]=1-(1-(R[m]||0))*(1-v); }
   }
@@ -1799,16 +1805,19 @@ function heroAct(d,s){
   return '';
 }
 /* Dia de beach: marca o jogo como feito e vale ponto na disputa */
+const BEACH_LV=[['leve','Leve'],['puxado','Puxado'],['forte','Muito puxado']];
 function beachAct(d){
   const s=session(d.key,false);
   return s&&s.beach
-    ? `<button type="button" class="end-btn done" data-beach><b>Beach feito 🎾</b><span>+${PTS.beach} pontos na disputa · toque pra desfazer</span></button>`
+    ? `<button type="button" class="end-btn done" data-beach><b>Beach feito 🎾</b><span>+${PTS.beach} pontos na disputa · toque pra desfazer</span></button>
+       <div class="bch-lv"><b>Como foi o jogo?</b><div class="seg" role="group" aria-label="Como foi o jogo">${BEACH_LV.map(([k,l])=>`<button type="button" data-blv="${k}" aria-pressed="${(s.beachLv||'leve')===k}">${l}</button>`).join('')}</div>
+       <p>${{leve:'Diversão: o treino de amanhã segue normal.', puxado:'Amanhã, perna e ombro repetem a última vez em vez de subir.', forte:'Amanhã, perna e ombro repetem a última vez e o app poupa mais esses músculos.'}[s.beachLv||'leve']}</p></div>`
     : `<button type="button" class="end-btn" data-beach><b>Joguei beach hoje</b><span>Marque quando terminar o jogo · vale ${PTS.beach} pontos</span></button>`;
 }
 function toggleBeach(){
   const d=DAYS.find(x=>x.key===current); if(!d||!d.rest) return;
   const s=session(current,true);
-  if(s.beach){ delete s.beach; delete s.beachAt; }
+  if(s.beach){ delete s.beach; delete s.beachAt; delete s.beachLv; }
   else { s.beach=true; s.beachAt=Date.now(); confetti(); }
   touch(sid(current)); $('#beachEnd').innerHTML=beachAct(d); renderTabs(); renderHome();
 }
@@ -2131,6 +2140,7 @@ document.addEventListener('click',ev=>{
   const hd=ev.target.closest('.ex.done:not(.open) .ex-head'); if(hd && !ev.target.closest('.mapbtn')){ hd.closest('.ex').classList.add('open'); return; }
   const rb=ev.target.closest('[data-rpe]'); if(rb){ setRpe(rb.dataset.rpeEx, rb.dataset.rpe); return; }
   if(ev.target.closest('[data-beach]')){ toggleBeach(); return; }
+  const blv=ev.target.closest('[data-blv]'); if(blv){ const d=DAYS.find(x=>x.key===current), s=session(current,false); if(d&&s&&s.beach){ s.beachLv=blv.dataset.blv; touch(sid(current)); $('#beachEnd').innerHTML=beachAct(d); } return; }
   const cb=ev.target.closest('[data-cardio]'); if(cb){ toggleCardio(cb); return; }
   if(ev.target.closest('[data-resumo]')){ openDone(current); return; }
   const fb=ev.target.closest('[data-finish]'); if(fb){ finishDay(fb); return; }
