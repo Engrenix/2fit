@@ -3177,6 +3177,20 @@ saveLocal=function(){}; queueRemote=function(){};
 renderTabs(); renderPhase(); renderDay(); renderCal(); renderHome(); route();
 setTimeout(()=>restoreFoco(true),60);
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible' && window.scrollY<80) restoreFoco(true); });
+/* iPhone: ao voltar pro app (ou fechar o teclado) o Safari às vezes deixa o cronômetro e o relógio "presos" na posição antiga
+   e eles passam a rolar junto com a página. Tirar e repor o position:fixed força o Safari a recalcular. */
+function fixFixed(){
+  const els=[...document.querySelectorAll('.timer, #wclock')]; if(!els.length) return;
+  els.forEach(e=>{ e.style.position='absolute'; }); void document.body.offsetHeight;
+  requestAnimationFrame(()=>{ els.forEach(e=>{ e.style.position=''; }); window.scrollTo(window.scrollX, window.scrollY); });
+}
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='hidden'){ const a=document.activeElement; if(a&&/^(INPUT|TEXTAREA)$/.test(a.tagName)) a.blur(); }   // não deixa o teclado "aberto" enquanto o app dorme
+  else { fixFixed(); setTimeout(fixFixed, 350); }
+});
+window.addEventListener('pageshow', ()=>setTimeout(fixFixed, 50));
+document.addEventListener('focusout', ev=>{ if(/^(INPUT|TEXTAREA)$/.test(ev.target.tagName)) setTimeout(fixFixed, 300); });
+if(window.visualViewport) visualViewport.addEventListener('resize', ()=>setTimeout(fixFixed, 50));
 </script>
 
 </body>
