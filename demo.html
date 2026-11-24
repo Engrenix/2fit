@@ -160,6 +160,7 @@ html:has(#v-login:not([hidden])),body:has(#v-login:not([hidden])){background:#FF
 .bch-lv .seg button{min-height:44px;white-space:nowrap}
 .bch-lv .seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
 .bch-lv p{margin:8px 0 0;font-size:13.5px;color:var(--muted)}
+.short-pick{margin-top:12px}
 .cx-tempo{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px;font:700 14px var(--f-body);color:var(--muted)}
 .cx-tempo .seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
 .cx-tempo .seg{flex:none}.cx-tempo .seg button{white-space:nowrap;min-height:44px}
@@ -998,6 +999,22 @@ const DAYS_THAI = [
 /* Ficha do Júnior (v1): estética em cima do crossfit. Detalhes e motivos em docs/fichas/junior-v1.md */
 const OMBRO='<strong>Ombro esquerdo:</strong> se doer mais que 3 de 10, ou continuar doendo no dia seguinte, corta 1 série de ombro na semana.';
 const LAT='Sobe com o braço <strong>um pouco à frente do corpo</strong> (uns 30°), polegar pra cima, só até a altura do ombro. Nunca com o polegar pra baixo.';
+/* "Resumir o treino de hoje" (ficha fixa, ex.: Thai): com pouco tempo, o app corta séries e os exercícios
+   menos importantes até caber. A ficha completa fica em d.full; o que vale no dia vem de s.short (minutos). */
+const exMin = list => Math.round(list.reduce((a,e)=>a + e.s*((e.rest||75)+60) + (e.warm?60:180), 0)/60);
+function shortEx(full, min){
+  let L=full.map((e,i)=>({...e, _i:i})); if(!min || exMin(L)<=min) return full;
+  const low=e=>e._i + (e.p.some(m=>['abdomen','obliquo','panturrilha'].includes(m))?100:0);   // abdômen e panturrilha saem primeiro
+  for(const e of [...L].reverse()){ if(exMin(L)<=min) break; if(!e.warm && e.s>3) e.s=3; }              // 1º: tira a 4ª série
+  while(exMin(L)>min){   // 2º: se falta pouco, tira uma série do menos importante; se falta muito, tira o exercício inteiro
+    const nw=L.filter(e=>!e.warm), gap=exMin(L)-min, sc=nw.filter(e=>e.s>2).sort((a,b)=>low(b)-low(a))[0];
+    if(sc && (gap<=6 || nw.length<=3)) { sc.s--; continue; }
+    if(nw.length<=3) break;
+    L.splice(L.indexOf(nw.reduce((a,b)=>low(b)>low(a)?b:a)),1);
+  }
+  for(const e of [...L].reverse()){ if(exMin(L)<=min) break; if(!e.warm && e.s>2) e.s=2; }              // 3º: 2 séries
+  return L;
+}
 const DAYS_JR = [
  {key:'jB', dow:1, short:'Seg', title:'Academia', sub:'Complemento do cross', dyn:true, old:[
   {id:'jb0', n:'Rotação externa no cabo', per:'aquecimento', warm:true, s:2, r:'15', rest:45, rir:'leve', p:['deltpost'], q:[], o:'<strong>Leve, só pra aquecer o manguito.</strong> Cotovelo colado no corpo a 90°, gira o antebraço pra fora devagar. Protege o ombro esquerdo.', yt:'rotação externa no cabo manguito rotador'},
@@ -1042,6 +1059,7 @@ const DAYS_JR = [
 ];
 /* dias dinâmicos: a lista de exercícios é o plano guardado na sessão da semana */
 DAYS_JR.filter(d=>d.dyn).forEach(d=>{ const base=d.title; Object.defineProperty(d,'title',{get(){ const s=session(this.key,false); return s&&s.plan ? dynTitle(planEx(s.plan)) : base; }, enumerable:true}); });
+DAYS_THAI.filter(d=>!d.rest&&d.ex).forEach(d=>{ d.full=d.ex; Object.defineProperty(d,'ex',{get(){ let s=null; try{ s=session(this.key,false); }catch(e){} return s&&s.short ? shortEx(this.full, s.short) : this.full; }, enumerable:true}); });
 DAYS_JR.filter(d=>d.dyn).forEach(d=>Object.defineProperty(d,'ex',{get(){ const s=session(this.key,false); return s&&s.plan ? planEx(s.plan) : (s&&hasWork(s) ? this.old : []); }, enumerable:true}));
 const PLANS={thai:DAYS_THAI, jr:DAYS_JR};
 const whoOf=h=>(h==='junior'||h==='painel-jr'||DAYS_JR.some(d=>d.key===h))?'jr':'thai';
@@ -1576,7 +1594,7 @@ function dynWhy(o, W, F){
 const cap = t => t ? t[0].toUpperCase()+t.slice(1) : t;
 function planEx(plan){ return (plan||[]).map(p=>{ const e=EXMAP[p.id]; return e ? {...e, s:p.s, why:p.why, slot:p.slot} : null; }).filter(Boolean); }
 /* lista de exercícios de uma sessão qualquer (dias dinâmicos guardam o plano na própria sessão) */
-function exOf(d, s){ if(!d) return []; if(!d.dyn) return d.ex||[]; return s && s.plan ? planEx(s.plan) : d.old; }
+function exOf(d, s){ if(!d) return []; if(d.full) return s&&s.short ? shortEx(d.full, s.short) : d.full; if(!d.dyn) return d.ex||[]; return s && s.plan ? planEx(s.plan) : d.old; }
 const closedDay = (d,s) => { const L=exOf(d,s); return !!s && L.length>0 && L.every(e=>s.done[e.id]); };
 
 /* ---------- Telas da ficha dinâmica ---------- */
@@ -1713,6 +1731,11 @@ function crossSumHtml(s, rest){
     <div class="cxs-c">${crossChips(s.cross)}</div>${fatMap(F,false)}</section>`;
 }
 
+function shortPick(d,s){
+  const full=exMin(d.full), opts=[30,45,60].filter(m=>m<full-5);
+  if(!opts.length) return '';
+  return `<div class="cx-tempo short-pick"><span>Tempo hoje</span><div class="seg" role="group" aria-label="Tempo pra treinar hoje">${opts.map(m=>`<button type="button" data-short="${m}" aria-pressed="${s.short===m}">${m===60?'1 h':m+' min'}</button>`).join('')}<button type="button" data-short="0" aria-pressed="${!s.short}">Completo</button></div></div>`;
+}
 function renderDay(){
   const d = DAYS.find(x=>x.key===current);
   const el = $('#day');
@@ -1747,7 +1770,8 @@ function renderDay(){
        <div class="kicker">${d.dyn&&s.plan?(s.cross&&s.cross.none?'Sem cross hoje':'Complemento do cross'):d.optional?'Sábado · opcional':esc(['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][d.dow])}</div>
        <h2>${esc(d.title)}</h2>
        <p>${d.dyn&&s.plan?esc(dynSub(d)):esc(d.sub)}${d.optional&&!d.dyn?`. ${d.note?esc(d.note)+' ':''}Se for, ótimo; se não for, a semana já está completa.`:''}</p>
-       <div class="meta"><span class="chip">${d.ex.length} exercícios</span><span class="chip">${totalSets} séries</span>${d.dyn&&s.plan?`<span class="chip">~${planMin(s.plan)} min</span>`:''}</div>
+       <div class="meta"><span class="chip">${d.ex.length} exercícios</span><span class="chip">${totalSets} séries</span>${d.dyn&&s.plan?`<span class="chip">~${planMin(s.plan)} min</span>`:''}${d.full?`<span class="chip">~${exMin(d.ex)} min${s.short?' · resumido':''}</span>`:''}</div>
+       ${d.full&&!hasWork(s)?shortPick(d,s):''}
        <div class="hero-act">${heroAct(d,s)}</div>
      </div>
      <div class="ring"><svg viewBox="0 0 84 84"><circle class="bg" cx="42" cy="42" r="36"/><circle class="fg" id="ringfg" cx="42" cy="42" r="36" stroke-dasharray="226.2" stroke-dashoffset="226.2"/></svg>
@@ -1878,6 +1902,7 @@ function finishDay(btn){
 function updateProgress(){
   const d = DAYS.find(x=>x.key===current); if(!d||d.rest||!d.ex.length) return;
   const s = session(d.key,false)||{done:{}};
+  if(hasWork(s)){ const sp=document.querySelector('.short-pick'); if(sp) sp.remove(); }   // começou o treino: o tempo fica travado
   const n = d.ex.filter(e=>s.done[e.id]).length;
   const fg=$('#ringfg'); if(!fg) return;
   fg.setAttribute('stroke-dashoffset', 226.2*(1-n/d.ex.length));
@@ -2388,6 +2413,8 @@ document.addEventListener('click',ev=>{
   if(ev.target.id==='cxNone'){ crossDraft=crossDraft||{}; makePlan(true); return; }
   if(ev.target.id==='cxEdit'){ editCross(); return; }
   const rd=ev.target.closest('[data-rd]'); if(rd){ const [bi,dv]=rd.dataset.rd.split(':').map(Number); const B=crossDraft.parsed.blocks[bi]; B.mult=Math.min(20,Math.max(1,Math.round(B.mult||1)+dv)); refreshDraft(); return; }
+  const sp=ev.target.closest('[data-short]'); if(sp){ const s=session(current,true); if(hasWork(s)) return; const m=+sp.dataset.short;
+    if(m) s.short=m; else delete s.short; touch(sid(current)); renderDay(); renderTabs(); renderHome(); toast(m?`Treino resumido pra ~${exMin(DAYS.find(x=>x.key===current).ex)} min`:'Treino completo'); return; }
   const tp=ev.target.closest('[data-tempo]'); if(tp){ state.config.jrTempo=+tp.dataset.tempo; touch('config'); document.querySelectorAll('[data-tempo]').forEach(b=>b.setAttribute('aria-pressed', String(b===tp))); return; }
   const ib=ev.target.closest('[data-int]'); if(ib){ const [bi,k]=ib.dataset.int.split(':'); crossDraft.parsed.blocks[+bi].int=k; refreshDraft(); return; }
   const mx=ev.target.closest('[data-mvx]'); if(mx){ const [bi,mi]=mx.dataset.mvx.split(':').map(Number); const B=crossDraft.parsed.blocks; B[bi].moves.splice(mi,1); if(!B[bi].moves.length) B.splice(bi,1); refreshDraft(); return; }
@@ -2561,7 +2588,7 @@ const EX_ARCHIVE={thai:[
 ], jr:[
   {id:'jd5', n:'Rosca martelo', s:2, r:'10–12', rest:60, rir:'0–1', p:['biceps','antebraco'], q:[], o:'Palmas viradas uma pra outra. Engrossa o braço visto de frente.', yt:'rosca martelo halteres', day:'jD', saiu:'v3'}
 ]};
-const EXMAP={}; [...DAYS_THAI,...DAYS_JR].forEach(d=>((d.dyn?d.old:d.ex)||[]).forEach(e=>EXMAP[e.id]={...e,day:d.key}));
+const EXMAP={}; [...DAYS_THAI,...DAYS_JR].forEach(d=>((d.dyn?d.old:d.full||d.ex)||[]).forEach(e=>EXMAP[e.id]={...e,day:d.key}));
 [...EX_ARCHIVE.thai,...EX_ARCHIVE.jr].forEach(e=>{ if(!EXMAP[e.id]) EXMAP[e.id]=e; });
 const GROUPS_BY={jr:[
   {k:'Ombro lateral', m:['delt'], lo:10, hi:14},

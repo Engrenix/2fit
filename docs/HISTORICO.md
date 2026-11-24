@@ -17,3 +17,5 @@
 **23/11/2026 (ajuste):** o beach ganhou nível (Leve, Puxado, Muito puxado). Os dois ainda são iniciantes no beach e ele é mais diversão: só Puxado ou Muito puxado mudam o treino do dia seguinte. Sem nível marcado, conta como leve.
 
 **24/11/2026:** na terça, quando não tiver beach, os dois podem marcar "Fiz cardio" (mesmos pontos do beach) ou fazer o coringa na academia no lugar.
+
+**24/11/2026:** Thai ganhou "Tempo hoje" (30 min, 45 min, 1 h, completo): o app resume o treino do dia cortando séries e os exercícios menos importantes. Treino resumido fechado conta como dia completo.
