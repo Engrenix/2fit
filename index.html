@@ -1326,29 +1326,47 @@ function renderPhase(){}
 const DYN_LV = v => v>=0.7 ? 'red' : v>=0.35 ? 'yel' : 'ok';
 /* movimentos do cross: músculo -> carga (0 a 3); ref = volume que conta como "cheio" */
 const CROSS_MOVES = [
-  {id:'cj', n:'Clean and jerk', re:/clean ?(and|&|e) ?jerk|\bc ?& ?j\b|\bcj\b/, m:{posterior:2,gluteomax:2,trap:2,quad:2,ombrof:2,delt:1,triceps:2}, ref:30},
-  {id:'snatch', n:'Snatch', re:/snatch|arranco/, m:{posterior:2,gluteomax:2,trap:2,quad:2,ombrof:1,delt:1,deltpost:1,triceps:1}, ref:30},
-  {id:'pp', n:'Push press', re:/push ?press|\bpp\b/, m:{ombrof:3,delt:1,triceps:2,quad:0.5,gluteomax:0.5}, ref:30},
-  {id:'jerk', n:'Jerk', re:/(push |split )?jerk/, m:{ombrof:3,delt:1,triceps:3,quad:0.5}, ref:30},
-  {id:'clean', n:'Clean', re:/clean|\bhpc\b|\bpc\b/, m:{posterior:2,gluteomax:2,trap:2,quad:1,lombar:1,dorsal:1}, ref:30},
-  {id:'thruster', n:'Thruster', re:/thrusters?/, m:{quad:3,gluteomax:2,ombrof:2,delt:1,triceps:1}, ref:30},
-  {id:'bsq', n:'Back squat', re:/back ?squat|\bbs\b|agachamento (livre|traseiro|costas)/, m:{quad:3,gluteomax:3,posterior:1,lombar:1}, ref:30},
-  {id:'fsq', n:'Front squat', re:/front ?squat|\bfs\b|agachamento frontal/, m:{quad:3,gluteomax:2,abdomen:1,trap:1}, ref:30},
-  {id:'ohs', n:'Overhead squat', re:/overhead ?squat|\bohs\b/, m:{quad:3,gluteomax:2,ombrof:1,delt:1,abdomen:1}, ref:30},
-  {id:'dl', n:'Deadlift', re:/deadlift|levantamento terra|\bterra\b|\bdl\b|\bsdhp\b|high pull/, m:{posterior:3,gluteomax:3,lombar:2,trap:2,dorsal:1,antebraco:1}, ref:30},
+  // os mais específicos primeiro: o primeiro nome que bater vale
+  {id:'devil', n:'Devil press', re:/devil ?press|man ?makers?/, m:{posterior:1,gluteomax:1,ombrof:2,peito:1,triceps:1,quad:1}, ref:30},
+  {id:'sdhp', bar:1, n:'Sumo deadlift high pull', re:/\bsdhp\b|high ?pull|sumo deadlift high/, m:{posterior:2,gluteomax:2,trap:2,delt:1}, ref:40},
+  {id:'bbjo', n:'Burpee box over', re:/burpees? ?(box )?(jump|step)? ?-?overs?|burpees?.*\bbox\b|\bbbjo\b|\bbbso\b/, m:{quad:2,gluteomax:1,peito:1,triceps:1,panturrilha:1}, ref:40},
+  {id:'boxover', n:'Box over', re:/box (jump|step) ?-?overs?|(jump|step) ?-?overs?|\bbjo\b/, m:{quad:2,gluteomax:2,panturrilha:1}, ref:40},
+  {id:'gm', bar:1, n:'Good morning', re:/good ?mornings?|bom dia/, m:{posterior:2,lombar:2,gluteomax:1}, ref:30},
+  {id:'backext', n:'Extensão lombar', re:/back ext|hip ext|hip.?back|hiperextens|extens[aã]o lombar/, m:{lombar:2,gluteomax:1,posterior:1}, ref:40},
+  {id:'core', n:'Core', re:/l-? ?sits?|hollow|v-? ?ups?|plank|prancha|russian twist|abmat|canivete|windshield/, m:{abdomen:2,obliquo:1}, ref:60},
+  {id:'ringrow', n:'Remada', re:/ring ?rows?|remada|bent ?-?over ?rows?|pendlay|renegade|(db|dumbbell|kb|halter) ?rows?/, m:{dorsal:2,deltpost:1,biceps:1}, ref:40},
+  {id:'pullover', n:'Pull-over', re:/pull ?-?overs?/, m:{dorsal:2,peito:1}, ref:30},
+  {id:'carry', n:'Carregamento', re:/farmers?|carry|carregamento|yoke/, m:{trap:2,antebraco:2,abdomen:1,gluteomax:1}, dist:200},
+  {id:'sled', n:'Trenó', re:/sled|tren[oó]/, m:{quad:3,gluteomax:2,panturrilha:1}, dist:100},
+  {id:'slam', n:'Slam ball', re:/slam ?balls?|\bslams?\b/, m:{abdomen:1,dorsal:1,ombrof:1,quad:1}, ref:40},
+  {id:'tgu', n:'Turkish get-up', re:/turkish|\btgu\b|levantamento turco/, m:{ombrof:1,abdomen:2,gluteomax:1}, ref:10},
+  {id:'wallwalk', n:'Wall walk', re:/wall ?walks?/, m:{ombrof:2,triceps:1,abdomen:1}, ref:10},
+  {id:'battle', n:'Corda naval', re:/battle ?ropes?|corda naval/, m:{ombrof:1,delt:1,abdomen:1}, ref:60},
+  {id:'crawl', n:'Bear crawl', re:/bear ?crawl|urso/, m:{ombrof:1,abdomen:1,quad:1}, dist:100},
+  {id:'jsq', n:'Jump squat', re:/jump(ing)? ?squats?|squat jumps?|agachamento (com )?salto|jumping lunges?/, m:{quad:2,gluteomax:1,panturrilha:1}, ref:60},
+  {id:'cj', bar:1, n:'Clean and jerk', re:/clean ?(and|&|e) ?jerk|\bc ?& ?j\b|\bcj\b/, m:{posterior:2,gluteomax:2,trap:2,quad:2,ombrof:2,delt:1,triceps:2}, ref:30},
+  {id:'snatch', bar:1, n:'Snatch', re:/snatch|arranco/, m:{posterior:2,gluteomax:2,trap:2,quad:2,ombrof:1,delt:1,deltpost:1,triceps:1}, ref:30},
+  {id:'pp', bar:1, n:'Push press', re:/push ?press|\bpp\b/, m:{ombrof:3,delt:1,triceps:2,quad:0.5,gluteomax:0.5}, ref:30},
+  {id:'jerk', bar:1, n:'Jerk', re:/(push |split )?jerk/, m:{ombrof:3,delt:1,triceps:3,quad:0.5}, ref:30},
+  {id:'clean', bar:1, n:'Clean', re:/clean|\bhpc\b|\bpc\b/, m:{posterior:2,gluteomax:2,trap:2,quad:1,lombar:1,dorsal:1}, ref:30},
+  {id:'thruster', bar:1, n:'Thruster', re:/thrusters?|clusters?/, m:{quad:3,gluteomax:2,ombrof:2,delt:1,triceps:1}, ref:30},
+  {id:'bsq', bar:1, n:'Back squat', re:/back ?squat|\bbs\b|agachamento (livre|traseiro|costas)/, m:{quad:3,gluteomax:3,posterior:1,lombar:1}, ref:30},
+  {id:'fsq', bar:1, n:'Front squat', re:/front ?squat|\bfs\b|agachamento frontal|goblet|zercher/, m:{quad:3,gluteomax:2,abdomen:1,trap:1}, ref:30},
+  {id:'ohs', bar:1, n:'Overhead squat', re:/overhead ?squat|\bohs\b/, m:{quad:3,gluteomax:2,ombrof:1,delt:1,abdomen:1}, ref:30},
+  {id:'dl', bar:1, n:'Deadlift', re:/deadlift|levantamento terra|\bterra\b|\bdl\b|stiff|\brdl\b/, m:{posterior:3,gluteomax:3,lombar:2,trap:2,dorsal:1,antebraco:1}, ref:30},
   {id:'hspu', n:'HSPU', re:/hspu|handstand push|parada de m[aã]o/, m:{ombrof:3,delt:1,triceps:3}, ref:30},
-  {id:'hsw', n:'Handstand walk', re:/handstand walk|\bhsw\b/, m:{ombrof:2,delt:1,triceps:1}, ref:30},
-  {id:'press', n:'Shoulder press', re:/strict press|shoulder press|desenvolvimento|\bpress\b/, m:{ombrof:3,delt:1,triceps:2}, ref:30},
-  {id:'bench', n:'Supino', re:/bench|supino/, m:{peito:3,ombrof:2,triceps:2}, ref:30},
+  {id:'hsw', n:'Handstand walk', re:/handstand (walk|hold)|\bhsw\b|wall hold/, m:{ombrof:2,delt:1,triceps:1}, ref:30},
+  {id:'press', bar:1, n:'Shoulder press', re:/strict press|shoulder press|desenvolvimento|\bpress\b/, m:{ombrof:3,delt:1,triceps:2}, ref:30},
+  {id:'bench', bar:1, n:'Supino', re:/bench|supino/, m:{peito:3,ombrof:2,triceps:2}, ref:30},
   {id:'wb', n:'Wall ball', re:/wall ?balls?|\bwb\b/, m:{quad:2,gluteomax:1,ombrof:2,triceps:1}, ref:60},
   {id:'kbs', n:'KB swing', re:/swings?|\bkbs\b/, m:{posterior:2,gluteomax:3,lombar:1,delt:1}, ref:50},
-  {id:'lunge', n:'Afundo', re:/lunges?|afundo|avan[cç]o/, m:{quad:2,gluteomax:3,posterior:1}, ref:40},
-  {id:'stepup', n:'Step up', re:/step ?ups?/, m:{quad:2,gluteomax:2}, ref:40},
+  {id:'lunge', bar:1, n:'Afundo', re:/lunges?|afundo|avan[cç]o/, m:{quad:2,gluteomax:3,posterior:1}, ref:40},
+  {id:'stepup', bar:1, n:'Step up', re:/step ?ups?/, m:{quad:2,gluteomax:2}, ref:40},
   {id:'bmu', n:'Bar muscle up', re:/bar muscle ?ups?|\bbmu\b/, m:{dorsal:3,triceps:2,peito:1,biceps:1,ombrof:1}, ref:20},
   {id:'rmu', n:'Ring muscle up', re:/muscle ?ups?|\brmu\b/, m:{dorsal:2,triceps:3,peito:2,biceps:1,ombrof:1}, ref:20},
   {id:'c2b', n:'Chest to bar', re:/chest ?to ?bar|\bc2b\b|\bctb\b/, m:{dorsal:3,biceps:2,deltpost:1}, ref:40},
   {id:'pullup', n:'Pull-up', re:/pull ?-?ups?|barra fixa|\bpu\b/, m:{dorsal:3,biceps:2,deltpost:1,antebraco:1}, ref:40},
-  {id:'t2b', n:'Toes to bar', re:/toes ?to ?bar|\bt2b\b|\bttb\b/, m:{abdomen:3,dorsal:1,antebraco:1}, ref:40},
+  {id:'t2b', n:'Toes to bar', re:/toes ?to ?(bar|rings?)|\bt2b\b|\bttb\b|\bt2r\b/, m:{abdomen:3,dorsal:1,antebraco:1}, ref:40},
   {id:'k2e', n:'Knees to elbow', re:/knees ?to ?elbows?|\bk2e\b/, m:{abdomen:2}, ref:40},
   {id:'rope', n:'Rope climb', re:/rope ?climbs?|subida na corda/, m:{dorsal:2,biceps:2,antebraco:2}, ref:8},
   {id:'dip', n:'Dip', re:/\bdips?\b|paralela/, m:{triceps:3,peito:2,ombrof:1}, ref:40},
@@ -1356,13 +1374,13 @@ const CROSS_MOVES = [
   {id:'burpee', n:'Burpee', re:/burpees?/, m:{peito:1,quad:1,triceps:1}, ref:60},
   {id:'boxjump', n:'Box jump', re:/box ?jumps?|\bbj\b/, m:{quad:2,gluteomax:1,panturrilha:2}, ref:50},
   {id:'pistol', n:'Pistol', re:/pistols?/, m:{quad:2,gluteomax:2}, ref:40},
-  {id:'airsq', n:'Air squat', re:/air ?squats?/, m:{quad:2,gluteomax:1}, ref:100},
+  {id:'airsq', n:'Air squat', re:/air ?squats?|\bsquats?\b|agachamentos?/, m:{quad:2,gluteomax:1}, ref:100},
   {id:'situp', n:'Abdominal', re:/sit ?-?ups?|abdominais?|\bghd\b/, m:{abdomen:2}, ref:80},
   {id:'du', n:'Double under', re:/double ?unders?|\bdu\b/, m:{panturrilha:2}, ref:200},
   {id:'su', n:'Single under', re:/single ?unders?|\bsu\b|pular corda/, m:{panturrilha:1}, ref:250},
-  {id:'run', n:'Corrida', re:/\brun\b|corrida|correr|\bcorri\b/, m:{quad:0.5,panturrilha:2,posterior:0.5}, dist:2000},
+  {id:'run', n:'Corrida', re:/\brun\b|corrida|correr|\bcorri\b|shuttle|sprint/, m:{quad:0.5,panturrilha:2,posterior:0.5}, dist:2000},
   {id:'row', n:'Remo', re:/\brow\b|\bremo\b|rower/, m:{dorsal:1,posterior:1,quad:1}, dist:2000, cal:60},
-  {id:'bike', n:'Bike', re:/bike|assault|echo/, m:{quad:2}, cal:60},
+  {id:'bike', n:'Bike', re:/bike|assault|echo|bicicleta/, m:{quad:2}, cal:60},
   {id:'ski', n:'Ski', re:/\bski\b|skierg/, m:{dorsal:1,triceps:1,abdomen:1}, cal:60}
 ];
 const CMOVE = Object.fromEntries(CROSS_MOVES.map(x=>[x.id,x]));
@@ -1405,7 +1423,7 @@ function parseCross(txt){
       if(r) cur.mult=+r[1]; else if(am) cur.mult=Math.max(1,+am[2]/(am[1]==='amrap'?4:6)); l=hd[2]; }
     if(!cur){ const forte=/\d+\s*x\s*\d+|\d+\s*kg\b|\b\d*rm\b|\bpr\b/.test(l); newBlock(forte?'forca':'wod', forte?'Força':'WOD'); }
     const rr=l.match(/^(\d+)\s*(rounds?|rds|rft)\b/); if(rr && !CROSS_MOVES.some(m=>m.re.test(l))){ cur.mult=+rr[1]; continue; }
-    const sx=l.match(/^(\d+)\s*x\s*$/); if(sx){ pendingSets=+sx[1]; continue; }
+    const sx=l.match(/^(\d+)\s*x\s*$/); if(sx){ if(cur.kind==='wod') cur.mult=+sx[1]; else pendingSets=+sx[1]; continue; }   // no WOD, "3x" sozinho são rodadas
     const sch=l.match(/^(\d+(?:\s*-\s*\d+)+)$/); if(sch){ cur.scheme=sch[1].split('-').reduce((a,v)=>a+(+v),0); continue; }
     const sch2=l.match(/^(\d+(?:\s*-\s*\d+)+)\s+(.+)$/); if(sch2){ cur.scheme=sch2[1].split('-').reduce((a,v)=>a+(+v),0); l=sch2[2]; }   // "21-15-9 thruster, pull up"
     // texto livre: uma linha pode ter vários movimentos ("30 burpees e corri 1 km", "15 wall ball, 10 pull up")
@@ -1418,12 +1436,13 @@ function parseCross(txt){
       if(!mv) mv=fuzzyMove(body);
       if(!mv){ miss.push(body); continue; }
       let reps=null, dist=null, cal=null;
+      const imp=/\b(db|dbs|dumbbells?|halter(es)?)\b/.test(body)?'DB':/\b(kb|kettlebells?)\b/.test(body)&&mv.id!=='kbs'?'KB':null;
       const d=body.match(/(\d+(?:,\d+)?)\s*(km|m)\b/); const c=body.match(/(\d+)\s*cal/);
       if(d) dist=parseFloat(d[1].replace(',','.'))*(d[2]==='km'?1000:1);
       else if(c) cal=+c[1];
       else { const n=body.match(/^(\d+)\s*(?:x\s*(\d+))?/) || body.match(/(\d+)\s*x\s*(\d+)/) || body.match(/(\d+)(?!\s*(?:kg|min|s\b|seg|%))\s+[a-z]/);
         if(n) reps=(n[2]? +n[1]*+n[2] : +n[1])*pendingSets; else if(cur.scheme) reps=cur.scheme; }
-      found.push({id:mv.id, reps, dist, cal});
+      found.push({id:mv.id, reps, dist, cal, ...(imp&&mv.bar?{imp}:{})});
     }
     if(found.length){ cur.moves.push(...found); continue; }   // o resto da linha é comentário ("acabei com 85 kg")
     const w=l.replace(/\b\d+\s*x\b/g,' ').replace(/[\d:()\-*%,+]+/g,' ').replace(/\s+/g,' ').trim(); if(w.length>=3 && !IGNORE.test(l)) unknown.push({raw:raw.trim(), key:w});
@@ -1444,7 +1463,7 @@ function crossFatigue(cross){
     const mv=CMOVE[x.id]; if(!mv) continue;
     // força: cada repetição pesada cansa bem mais que uma rep de WOD (8 singles pesados ≈ uma série forte)
     const fz=b.kind==='forca' && x.reps ? ({leve:1.3, medio:2, pesado:3}[b.int]||2) : 1;
-    const vol=Math.min(1.2, moveVol(mv,x)*(b.mult||1)*fz), k=INT[b.int]||0.8;
+    const vol=Math.min(1.2, moveVol(mv,x)*(b.mult||1)*fz*(x.imp?0.65:1)), k=INT[b.int]||0.8;   // com halter/kettlebell a carga é menor
     for(const [m,l] of Object.entries(mv.m)){ const c=Math.min(1, l/3*vol*k); F[m]=1-(1-(F[m]||0))*(1-c); }
   }
   return F;
@@ -1579,7 +1598,7 @@ function fatMap(F, big){
 }
 function crossChips(cross){
   if(!cross || cross.none) return '<span class="cc none">Dia sem cross</span>';
-  return (cross.blocks||[]).map(b=>`<span class="cc"><b>${esc(b.title)}</b> ${b.moves.map(x=>esc(CMOVE[x.id].n)).filter((v,i,a)=>a.indexOf(v)===i).join(', ')}<em>${INT_TXT[b.int]}</em></span>`).join('');
+  return (cross.blocks||[]).map(b=>`<span class="cc"><b>${esc(b.title)}</b> ${b.moves.map(x=>esc((x.imp?x.imp+' ':'')+CMOVE[x.id].n)).filter((v,i,a)=>a.indexOf(v)===i).join(', ')}<em>${INT_TXT[b.int]}</em></span>`).join('');
 }
 function weekHtml(){
   const W=weekVolume();
@@ -1595,7 +1614,7 @@ function draftPreview(){
   const blocks=P.blocks.map((b,bi)=>`<div class="cxb"><div class="cxbh"><b>${esc(b.title)}</b>
       <span class="seg" role="radiogroup" aria-label="Intensidade de ${esc(b.title)}">${Object.keys(INT).map(k=>`<button type="button" role="radio" aria-checked="${b.int===k}" class="${b.int===k?'on':''}" data-int="${bi}:${k}">${INT_TXT[k]}</button>`).join('')}</span></div>
       ${b.kind==='wod'?`<div class="cxr"><span>Rodadas</span><button type="button" data-rd="${bi}:-1" aria-label="Menos uma rodada">−</button><b>${Math.max(1,Math.round(b.mult||1))}</b><button type="button" data-rd="${bi}:1" aria-label="Mais uma rodada">+</button></div>`:''}
-      <div class="cxm">${b.moves.map((x,mi)=>`<span class="mv">${esc(CMOVE[x.id].n)}${x.reps?` <small>${x.reps}</small>`:x.dist?` <small>${x.dist>=1000?(x.dist/1000).toLocaleString('pt-BR')+' km':x.dist+' m'}</small>`:x.cal?` <small>${x.cal} cal</small>`:''}<button type="button" class="mvx" data-mvx="${bi}:${mi}" aria-label="Tirar ${esc(CMOVE[x.id].n)}">✕</button></span>`).join('')}</div></div>`).join('');
+      <div class="cxm">${b.moves.map((x,mi)=>`<span class="mv">${esc((x.imp?x.imp+" ":"")+CMOVE[x.id].n)}${x.reps?` <small>${x.reps}</small>`:x.dist?` <small>${x.dist>=1000?(x.dist/1000).toLocaleString('pt-BR')+' km':x.dist+' m'}</small>`:x.cal?` <small>${x.cal} cal</small>`:''}<button type="button" class="mvx" data-mvx="${bi}:${mi}" aria-label="Tirar ${esc(CMOVE[x.id].n)}">✕</button></span>`).join('')}</div></div>`).join('');
   const unk=P.unknown.map((u,ui)=>`<div class="cxu"><span>Não reconheci <b>“${esc(u.raw)}”</b></span>
       <select data-teach="${ui}" aria-label="Qual movimento é ${esc(u.raw)}"><option value="">É qual movimento?</option>${CROSS_MOVES.map(m=>`<option value="${m.id}">${esc(m.n)}</option>`).join('')}<option value="__ign">Ignorar</option></select></div>`).join('');
   return `${blocks}${unk}${P.blocks.length?`<div class="cx-fat"><h4>O que o cross cobrou</h4>${fatMap(F,true)}</div>`:''}`;

@@ -50,3 +50,7 @@ As séries por músculo do painel e a leitura do consultor ("músculo abaixo da 
 ## Tempo pra academia (23/11/2026)
 
 Antes de montar, escolhe 45 min, 1 h (padrão) ou 1h30. O plano respeita o teto de itens e séries de cada tempo e corta o item de menor prioridade até caber. No 1h30, os pontos fracos que estão livres ganham +1 série. O beach de terça entra um pouco no cansaço de quarta (perna e ombro).
+
+## Movimentos do cross (23/11/2026)
+
+A lista foi completada com a lista oficial de movimentos do CrossFit (crossfit.com/crossfit-movements): devil press, SDHP, burpee box jump/step over, box over, good morning, extensão lombar (GHD), core (L-sit, hollow, V-up, prancha), remada (ring row, DB row), pull-over, farmers carry, trenó, slam ball, turkish get-up, wall walk, corda naval, bear crawl, jump squat, goblet/zercher, toes to rings, cluster. "DB"/"KB" na frente de um movimento de barra conta como halter/kettlebell (cansa ~35% menos). No WOD, "3x" sozinho numa linha são 3 rodadas.
