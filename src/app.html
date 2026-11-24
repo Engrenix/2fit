@@ -482,8 +482,6 @@ details.meta-box[open] .meta-arr{transform:rotate(90deg)}
 .back::after,.link::after{content:'';position:absolute;inset:-12px -8px}
 .sheet-x::after{content:'';position:absolute;inset:-6px}
 .link:hover{text-decoration:underline}
-.mark{border:1px solid var(--line);background:transparent;border-radius:99px;padding:6px 12px;font-size:13px;font-weight:600}
-.ex.done .mark{background:var(--ok-soft);border-color:var(--ok)}
 
 /* Dia de descanso */
 .rest-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:10px}
@@ -1778,7 +1776,6 @@ function exCard(d,e,i,s){
       <div class="ex-foot">
         <a class="link" href="https://www.youtube.com/results?search_query=${encodeURIComponent(e.yt+' execução')}" target="_blank" rel="noopener">Ver execução no YouTube ↗</a>
         ${e.slot && (CARDAPIO.find(x=>x.k===e.slot)||{ids:[]}).ids.length>1 && !rows.some(x=>x&&x.done) ? `<button class="swap" type="button" data-swap="${e.id}">Trocar exercício</button>` : ''}
-        <button class="mark" type="button" data-mark="${e.id}">${done?'Exercício feito':'Marcar como feito'}</button>
       </div>
     </div>
   </article>`;
@@ -1915,8 +1912,6 @@ document.addEventListener('click', ev=>{
   if(mp){ const m=$('#map-'+mp.dataset.map); m.hidden=!m.hidden; return; }
   const chk=ev.target.closest('.chk');
   if(chk){ const row=chk.closest('.set'); toggleSet(row); return; }
-  const mk=ev.target.closest('[data-mark]');
-  if(mk){ const s=session(current,true); const id=mk.dataset.mark; s.done[id]=!s.done[id]; touch(sid(current)); refreshCard(id); checkDay(); return; }
 });
 document.addEventListener('input', ev=>{
   const inp=ev.target.closest('.set input'); if(!inp) return;
@@ -1982,7 +1977,6 @@ function refreshCard(id){
     setTimeout(()=>{ card.classList.remove('closing'); const y=card.getBoundingClientRect().top; if(y<70||y>innerHeight*.6) window.scrollTo({top:scrollY+y-70,behavior:'smooth'}); },450); }
   if(!s.done[id]) card.classList.remove('open');
   card.querySelector('.idx').textContent = s.done[id]?'✓':i+1;
-  card.querySelector('[data-mark]').textContent = s.done[id]?'Exercício feito':'Marcar como feito';
   updateProgress(); renderEvo(); renderTabs(); renderCal();
 }
 let celebrated={};
