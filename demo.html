@@ -160,10 +160,13 @@ html:has(#v-login:not([hidden])),body:has(#v-login:not([hidden])){background:#FF
 .bch-lv .seg button{min-height:44px;white-space:nowrap}
 .bch-lv .seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
 .bch-lv p{margin:8px 0 0;font-size:13.5px;color:var(--muted)}
-.short-pick{margin-top:12px}
-.cx-tempo{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px;font:700 14px var(--f-body);color:var(--muted)}
+/* tempo do treino: rótulo pequeno em cima e opções do mesmo tamanho ocupando a largura toda */
+.short-pick{grid-column:1/-1;margin-top:-2px;padding-top:14px;border-top:1px solid var(--line)}
+.cx-tempo{display:grid;gap:6px;margin-top:4px}
+.cx-tempo>span{font:700 12.5px var(--f-body);color:var(--muted);letter-spacing:.02em}
+.cx-tempo .seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;width:100%}
+.cx-tempo .seg button{white-space:nowrap;min-height:40px;padding:0 6px;font-size:13.5px}
 .cx-tempo .seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
-.cx-tempo .seg{flex:none}.cx-tempo .seg button{white-space:nowrap;min-height:44px}
 .cxr{display:flex;align-items:center;gap:6px;font:700 14px var(--f-body);color:var(--muted)}
 .cxr span{margin-right:auto}
 .cxr button{width:44px;height:40px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:800 18px var(--f-body)}
@@ -756,6 +759,7 @@ html.dn-open #v-thai, html.dn-open #v-painel, html.dn-open #v-home{visibility:hi
   .hero{grid-template-columns:1fr;}
   .hero .ring{position:absolute;right:16px;top:16px;width:64px;height:64px}
   .hero{position:relative;padding-right:92px}
+  .hero .short-pick{margin-right:-74px}   /* o seletor de tempo ocupa a largura toda, por baixo do anel */
   .ring .num{font-size:16px}
 }
 </style>
@@ -1771,11 +1775,11 @@ function renderDay(){
        <h2>${esc(d.title)}</h2>
        <p>${d.dyn&&s.plan?esc(dynSub(d)):esc(d.sub)}${d.optional&&!d.dyn?`. ${d.note?esc(d.note)+' ':''}Se for, ótimo; se não for, a semana já está completa.`:''}</p>
        <div class="meta"><span class="chip">${d.ex.length} exercícios</span><span class="chip">${totalSets} séries</span>${d.dyn&&s.plan?`<span class="chip">~${planMin(s.plan)} min</span>`:''}${d.full?`<span class="chip">~${exMin(d.ex)} min${s.short?' · resumido':''}</span>`:''}</div>
-       ${d.full&&!hasWork(s)?shortPick(d,s):''}
        <div class="hero-act">${heroAct(d,s)}</div>
      </div>
      <div class="ring"><svg viewBox="0 0 84 84"><circle class="bg" cx="42" cy="42" r="36"/><circle class="fg" id="ringfg" cx="42" cy="42" r="36" stroke-dasharray="226.2" stroke-dashoffset="226.2"/></svg>
        <div class="num"><span id="ringnum">0</span><small>de ${d.ex.length}</small></div></div>
+     ${d.full&&!hasWork(s)?shortPick(d,s):''}
    </div>
    ${d.dyn&&s.plan?crossSumHtml(s):''}
    <div class="list" style="margin-top:12px">${d.ex.map((e,i)=>exCard(d,e,i,s)).join('')}</div>
