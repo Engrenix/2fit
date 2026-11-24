@@ -15,3 +15,5 @@
 **23/11/2026:** Júnior escolhe o tempo pra academia (45 min, 1 h, 1h30) e o plano cabe nele. Nas duas fichas, o dia seguinte ao beach repete a última vez nos exercícios de perna e ombro em vez de progredir (meta "Pós-beach"); pra Thai vale na quarta (Superior A, elevação lateral).
 
 **23/11/2026 (ajuste):** o beach ganhou nível (Leve, Puxado, Muito puxado). Os dois ainda são iniciantes no beach e ele é mais diversão: só Puxado ou Muito puxado mudam o treino do dia seguinte. Sem nível marcado, conta como leve.
+
+**24/11/2026:** na terça, quando não tiver beach, os dois podem marcar "Fiz cardio" (mesmos pontos do beach) ou fazer o coringa na academia no lugar.

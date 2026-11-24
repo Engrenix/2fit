@@ -122,6 +122,10 @@ html:has(#v-login:not([hidden])),body:has(#v-login:not([hidden])){background:#FF
 .cx-empty{margin:0;font-size:13.5px;color:var(--muted);padding:12px 14px;border:1px dashed var(--line);border-radius:14px}
 .cx-prev{display:grid;gap:10px}
 .cxb{border:1px solid var(--line);border-radius:16px;padding:10px 12px;display:grid;gap:8px}
+.bch-alt{margin-top:14px;text-align:center}
+.bch-alt b{display:block;font:800 15px var(--f-body);margin-bottom:8px}
+.bch-alt-r{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bch-alt p{margin:8px 0 0;font-size:13.5px;color:var(--muted)}
 .bch-lv{margin-top:14px;text-align:center}
 .bch-lv b{display:block;font:800 15px var(--f-body);margin-bottom:8px}
 .bch-lv .seg{background:var(--chip)}
@@ -1120,7 +1124,7 @@ const hasWork = s => Object.values(s.done||{}).some(Boolean) || Object.values(s.
 function dayState(key){
   const d=DAYS.find(x=>x.key===key); const s=session(key,false);
   if(!d||!s) return 'none';
-  if(d.rest) return s.beach ? 'full' : 'none';
+  if(d.rest) return s.beach||s.bcardio ? 'full' : 'none';
   if(d.dyn && !s.plan && !hasWork(s)) return s.cardio ? 'full' : 'none';
   const n=d.ex.filter(e=>s.done[e.id]).length;
   return (n===d.ex.length || s.fin || s.cardio) ? 'full' : (n||hasWork(s)) ? 'part' : 'none';
@@ -1795,7 +1799,11 @@ function beachAct(d){
     ? `<button type="button" class="end-btn done" data-beach><b>Beach feito 🎾</b><span>+${PTS.beach} pontos na disputa · toque pra desfazer</span></button>
        <div class="bch-lv"><b>Como foi o jogo?</b><div class="seg" role="group" aria-label="Como foi o jogo">${BEACH_LV.map(([k,l])=>`<button type="button" data-blv="${k}" aria-pressed="${(s.beachLv||'leve')===k}">${l}</button>`).join('')}</div>
        <p>${{leve:'Diversão: o treino de amanhã segue normal.', puxado:'Amanhã, perna e ombro repetem a última vez em vez de subir.', forte:'Amanhã, perna e ombro repetem a última vez e o app poupa mais esses músculos.'}[s.beachLv||'leve']}</p></div>`
-    : `<button type="button" class="end-btn" data-beach><b>Joguei beach hoje</b><span>Marque quando terminar o jogo · vale ${PTS.beach} pontos</span></button>`;
+    : s&&s.bcardio
+    ? `<button type="button" class="end-btn done" data-bcardio><b>Cardio feito 🏃</b><span>No lugar do beach · +${PTS.beach} pontos · toque pra desfazer</span></button>`
+    : `<button type="button" class="end-btn" data-beach><b>Joguei beach hoje</b><span>Marque quando terminar o jogo · vale ${PTS.beach} pontos</span></button>
+       <div class="bch-alt"><b>Sem beach hoje?</b><div class="bch-alt-r"><button type="button" class="cx-none" data-bcardio>Fiz cardio</button><button type="button" class="cx-none" data-bgym>Treino na academia</button></div>
+       <p>O cardio vale os mesmos ${PTS.beach} pontos. Na academia, você adianta o coringa de sábado pra hoje.</p></div>`;
 }
 function toggleBeach(){
   const d=DAYS.find(x=>x.key===current); if(!d||!d.rest) return;
@@ -2120,6 +2128,12 @@ document.addEventListener('click',ev=>{
   const hd=ev.target.closest('.ex.done:not(.open) .ex-head'); if(hd && !ev.target.closest('.mapbtn')){ hd.closest('.ex').classList.add('open'); return; }
   const rb=ev.target.closest('[data-rpe]'); if(rb){ setRpe(rb.dataset.rpeEx, rb.dataset.rpe); return; }
   if(ev.target.closest('[data-beach]')){ toggleBeach(); return; }
+  if(ev.target.closest('[data-bcardio]')){ const d=DAYS.find(x=>x.key===current); if(!d||!d.rest) return; const s=session(current,true);
+    if(s.bcardio){ delete s.bcardio; delete s.bcardioAt; } else { s.bcardio=true; s.bcardioAt=Date.now(); confetti(); }
+    touch(sid(current)); $('#beachEnd').innerHTML=beachAct(d); renderTabs(); renderHome(); return; }
+  if(ev.target.closest('[data-bgym]')){ const cor=DAYS.find(x=>x.optional); if(!cor) return;   // adianta o coringa pra hoje
+    current=cor.key; crossDraft=null; crossEditing=false; try{history.replaceState(null,'','#'+current);}catch(e){} renderTabs(); renderDay(); window.scrollTo({top:0});
+    toast('Coringa adiantado pra hoje'); return; }
   const blv=ev.target.closest('[data-blv]'); if(blv){ const d=DAYS.find(x=>x.key===current), s=session(current,false); if(d&&s&&s.beach){ s.beachLv=blv.dataset.blv; touch(sid(current)); $('#beachEnd').innerHTML=beachAct(d); } return; }
   const cb=ev.target.closest('[data-cardio]'); if(cb){ toggleCardio(cb); return; }
   if(ev.target.closest('[data-resumo]')){ openDone(current); return; }
@@ -2220,7 +2234,7 @@ const cardioPts=()=>Math.round(PTS.ficha/Math.max(1,DAYS.filter(d=>!d.rest&&!d.o
 function sessPoints(d, s){
   const r={treinos:0, coringa:0, parc:0, parcCor:0, beach:0, cardio:0, recs:0, ups:0, recN:[], upN:[]};
   if(!d||!s) return r;
-  if(d.rest){ if(s.beach) r.beach++; return r; }
+  if(d.rest){ if(s.beach||s.bcardio) r.beach++; if(s.bcardio&&!s.beach) r.bcard=1; return r; }
   if(closedDay(d,s)){ if(d.optional) r.coringa++; else r.treinos++; }
   else if(s.fin){ if(d.optional) r.parcCor++; else r.parc++; }
   else if(s.cardio) r.cardio++;
@@ -2256,7 +2270,7 @@ function weekScore(plan, wk, skipId){
     if(r.cardio) t.items.push([`${nm} trocado por cardio`, Math.round(per*PTS.cardio)]);
     if(r.coringa) t.bonusItems.push(['Coringa fechado', PTS.coringa]);
     if(r.parcCor) t.bonusItems.push(['Coringa finalizado antes', PTS.coringaParcial]);
-    if(r.beach) t.bonusItems.push(['Beach tennis', PTS.beach]);
+    if(r.beach) t.bonusItems.push([r.bcard?'Cardio no lugar do beach':'Beach tennis', PTS.beach]);
     recAll.push(...r.recN); upAll.push(...r.upN);
   }
   const nomes=a=>a.slice(0,3).join(', ')+(a.length>3?` e mais ${a.length-3}`:'');
@@ -2393,7 +2407,7 @@ function duelCard(key){
 function todayTxt(plan){
   const d=plan.find(x=>x.dow===dow);
   if(!d) return 'Hoje: descanso';
-  if(d.rest){ const b=session(d.key,false); return (plan===DAYS_JR?'Hoje: cross e beach tennis':'Hoje: beach tennis')+(b&&b.beach?' ✓':''); }
+  if(d.rest){ const b=session(d.key,false); if(b&&b.bcardio&&!b.beach) return 'Hoje: cardio ✓'; return (plan===DAYS_JR?'Hoje: cross e beach tennis':'Hoje: beach tennis')+(b&&b.beach?' ✓':''); }
   const s=session(d.key,false); const n=s?d.ex.filter(e=>s.done[e.id]).length:0;
   if(d.dyn && !(s && (s.plan||hasWork(s)))) return s&&s.cardio ? (s.soCross?'Hoje: só cross ✓':'Hoje: só cardio ✓') : 'Hoje: escreve o treino do cross';
   if(s && s.cardio && n<d.ex.length && !s.fin) return 'Hoje: só cardio ✓';
